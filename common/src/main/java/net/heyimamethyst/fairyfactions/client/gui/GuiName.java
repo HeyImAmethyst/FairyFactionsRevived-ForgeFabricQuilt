@@ -19,7 +19,7 @@ public class GuiName extends Screen
     private int updateCounter;
     private String nameText;
 
-    private PlainTextButton done;
+    private Button done;
 
     public GuiName(FairyEntity fairyEntity)
     {
@@ -40,11 +40,10 @@ public class GuiName extends Screen
     @Override
     public void init()
     {
-        done = new PlainTextButton((width / 2 - 100) + 50, height / 4 + 120, 98, 20, Component.literal("Done"),
-        (p_96788_) ->
-        {
-            ConfirmName();
-        }, this.font);
+        done = Button.builder(Component.literal("Done"), (p_96788_) -> { ConfirmName(); })
+                .pos((width / 2 - 100) + 50, height / 4 + 120)
+                .size(98, 20)
+                .build();
 
         this.addRenderableWidget(done);
 
