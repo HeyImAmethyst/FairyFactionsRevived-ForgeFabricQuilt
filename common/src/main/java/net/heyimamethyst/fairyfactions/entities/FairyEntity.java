@@ -11,6 +11,8 @@ import net.heyimamethyst.fairyfactions.registry.ModSounds;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.heyimamethyst.fairyfactions.world.FairyGroupGenerator;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -28,7 +30,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.EntityDamageSource;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffectUtil;
@@ -835,7 +837,7 @@ public class FairyEntity extends FairyEntityBase
                     {
                         this.attackAnim = 0;
                         //doHurtTarget(this.getVehicle());
-                        this.getVehicle().hurt(DamageSource.mobAttack(this), 0);
+                        this.getVehicle().hurt(this.damageSources().mobAttack(this), 0);
                         liftFlag = false;
                     }
                     else if (tamed())
@@ -959,19 +961,15 @@ public class FairyEntity extends FairyEntityBase
     // TODO: give this a real name
     public boolean snowballFight(DamageSource damagesource)
     {
-        if (damagesource instanceof EntityDamageSource)
+
+        if (damagesource.getDirectEntity() != null && damagesource
+                .getDirectEntity() instanceof Snowball)
         {
-            EntityDamageSource snowdamage = (EntityDamageSource) damagesource;
+            this.snowballin++;
 
-            if (snowdamage.getDirectEntity() != null && snowdamage
-                    .getDirectEntity() instanceof Snowball)
+            if (attackAnim < 10)
             {
-                this.snowballin++;
-
-                if (attackAnim < 10)
-                {
-                    attackAnim = 10;
-                }
+                attackAnim = 10;
             }
         }
 
@@ -1640,7 +1638,7 @@ public class FairyEntity extends FairyEntityBase
 
     public float getBrightness()
     {
-        return this.level.hasChunkAt(this.getBlockX(), this.getBlockZ()) ? this.level.getBrightness(LightLayer.SKY, new BlockPos(this.getX(), this.getEyeY(), this.getZ())) : 0.0F;
+        return this.level.hasChunkAt(this.getBlockX(), this.getBlockZ()) ? this.level.getBrightness(LightLayer.SKY, new BlockPos((int) this.getX(), (int) this.getEyeY(), (int) this.getZ())) : 0.0F;
     }
 
     @Override
@@ -2237,7 +2235,7 @@ public class FairyEntity extends FairyEntityBase
             }
         }
 
-        if(damagesource == DamageSource.SWEET_BERRY_BUSH)
+        if(damagesource == damageSources().sweetBerryBush())
         {
             return false;
         }
@@ -2363,14 +2361,14 @@ public class FairyEntity extends FairyEntityBase
 
         if (rogue() && this.healTime <= 0 && entity != null && entity instanceof LivingEntity)
         {
-            boolean flag = entity.hurt(DamageSource.mobAttack(this), attackStrength());
+            boolean flag = entity.hurt(this.damageSources().mobAttack(this), attackStrength());
             if (flag)
                 applyPoison((LivingEntity)entity);
 
             return flag;
         }
 
-        return entity.hurt(DamageSource.mobAttack(this), attackStrength());
+        return entity.hurt(this.damageSources().mobAttack(this), attackStrength());
     }
 
     protected int attackStrength()

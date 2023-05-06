@@ -86,41 +86,26 @@ public class FairyRenderer extends MobRenderer<FairyEntity, FairyModel<FairyEnti
     @Override
     protected void renderNameTag(FairyEntity pEntity, Component component, PoseStack poseStack, MultiBufferSource pBuffer, int pPackedLight)
     {
-        double d0 = this.entityRenderDispatcher.distanceToSqr(pEntity);
-
-        //net.minecraftforge.client.ForgeHooksClient.isNameplateInRenderDistance(pEntity, d0)
-        if (!(d0 > 4096.0))
-        {
-            if(component != null)
-            {
-                boolean flag = !pEntity.isDiscrete();
-                float f = pEntity.getBbHeight() + 0.5F;
-
-                int i = "deadmau5".equals(component.getString()) ? -10 : 0;
-
-                poseStack.pushPose();
-                poseStack.translate(0.0D, (double)f, 0.0D);
-                poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
-                poseStack.scale(-0.025F, -0.025F, 0.025F);
-                Matrix4f matrix4f = poseStack.last().pose();
-                float f1 = Minecraft.getInstance().options.getBackgroundOpacity(0.25F);
-                int j = (int)(f1 * 255.0F) << 24;
-
-                Font font = this.getFont();
-
-                if(font != null && component != null)
-                {
-                    float f2 = (float)(-font.width(component.getString()) / 2);
-                    font.drawInBatch(component, f2, (float)i, 553648127, false, matrix4f, pBuffer, flag, j, pPackedLight);
-
-                    if (flag)
-                    {
-                        font.drawInBatch(component, f2, (float)i, -1, false, matrix4f, pBuffer, false, 0, pPackedLight);
-                    }
-                }
-
-                poseStack.popPose();
+        double d = this.entityRenderDispatcher.distanceToSqr(pEntity);
+        if (!(d > 4096.0)) {
+            boolean bl = !pEntity.isDiscrete();
+            float f = pEntity.getBbHeight() + 0.5F;
+            int j = "deadmau5".equals(component.getString()) ? -10 : 0;
+            poseStack.pushPose();
+            poseStack.translate(0.0F, f, 0.0F);
+            poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
+            poseStack.scale(-0.025F, -0.025F, 0.025F);
+            Matrix4f matrix4f = poseStack.last().pose();
+            float g = Minecraft.getInstance().options.getBackgroundOpacity(0.25F);
+            int k = (int)(g * 255.0F) << 24;
+            Font font = this.getFont();
+            float h = (float)(-font.width(component) / 2);
+            font.drawInBatch(component, h, (float)j, 553648127, false, matrix4f, pBuffer, bl ? Font.DisplayMode.SEE_THROUGH : Font.DisplayMode.NORMAL, k, pPackedLight);
+            if (bl) {
+                font.drawInBatch(component, h, (float)j, -1, false, matrix4f, pBuffer, Font.DisplayMode.NORMAL, 0, pPackedLight);
             }
+
+            poseStack.popPose();
         }
     }
 

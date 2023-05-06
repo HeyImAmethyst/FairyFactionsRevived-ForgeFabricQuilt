@@ -13,4 +13,4 @@ include("fabric")
 include("quilt")
 include("forge")
 
-rootProject.name = "FairyFactions-ForgeFabricQuilt-1.19.3"
+rootProject.name = "FairyFactions-ForgeFabricQuilt-1.19.4"
