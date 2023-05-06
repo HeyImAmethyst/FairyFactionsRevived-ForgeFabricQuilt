@@ -1,0 +1,78 @@
+{
+  "fairy_idle":
+  {
+    "subtitle": "sounds.fairyfactions.fairy_idle",
+    "sounds":
+    [
+      "fairyfactions:fairyidle1",
+      "fairyfactions:fairyidle2",
+      "fairyfactions:fairyidle3",
+      "fairyfactions:fairyidle4"
+    ]
+  },
+  "fairy_queen_idle":
+  {
+    "subtitle": "sounds.fairyfactions.fairy_queen_idle",
+    "sounds":
+    [
+      "fairyfactions:idle1",
+      "fairyfactions:idle2",
+      "fairyfactions:idle3"
+    ]
+  },
+  "fairy_hurt":
+  {
+    "subtitle": "sounds.fairyfactions.fairy_hurt",
+    "sounds":
+    [
+      "fairyfactions:fairyhurt1",
+      "fairyfactions:fairyhurt2",
+      "fairyfactions:fairyhurt3"
+    ]
+  },
+  "fairy_queen_hurt":
+  {
+    "subtitle": "sounds.fairyfactions.fairy_queen_hurt",
+    "sounds":
+    [
+      "fairyfactions:hurt1",
+      "fairyfactions:hurt2"
+    ]
+  },
+  "fairy_death":
+  {
+    "subtitle": "sounds.fairyfactions.fairy_death",
+    "sounds":
+    [
+      "fairyfactions:fairydeath1",
+      "fairyfactions:fairydeath2"
+    ]
+  },
+  "fairy_queen_death":
+  {
+    "subtitle": "sounds.fairyfactions.fairy_queen_death",
+    "sounds":
+    [
+      "fairyfactions:death1"
+    ]
+  },
+  "fairy_angry":
+  {
+    "subtitle": "sounds.fairyfactions.fairy_angry",
+    "sounds":
+    [
+      "fairyfactions:fairyangry1",
+      "fairyfactions:fairyangry2",
+      "fairyfactions:fairyangry3"
+    ]
+  },
+  "fairy_queen_angry":
+  {
+    "subtitle": "sounds.fairyfactions.fairy_queen_angry",
+    "sounds":
+    [
+      "fairyfactions:angry1",
+      "fairyfactions:angry2"
+    ]
+  }
+}

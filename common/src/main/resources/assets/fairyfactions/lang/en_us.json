@@ -1,0 +1,69 @@
+{
+
+	//Mobs
+
+	"entity.fairyfactions.fairy_entity": "Fairy",
+	"entity.fairyfactions.fairy_fishing_bobber_entity": "Fairy Fishing Bobber",
+	"item.fairyfactions.fairy_spawn_egg": "Fairy Spawn Egg",
+
+	//Other
+
+	"text.queen.prefix" : "Queen ",
+
+	"text.faction.1.name" :	"Aviary Army",
+	"text.faction.2.name" : "Bantam Brawlers",
+	"text.faction.3.name" : "Charging Cherubs",
+	"text.faction.4.name" : "Dainty Demons",
+	"text.faction.5.name" : "Enigmatic Escorts",
+	"text.faction.6.name" : "Floating Fury",
+	"text.faction.7.name" : "Graceful Gliders",
+	"text.faction.8.name" : "Hardy Handmaids",
+	"text.faction.9.name" : "Iron Imps",
+	"text.faction.10.name" : "Opulent  Order",
+	"text.faction.11.name" : "Kute Killers",
+	"text.faction.12.name" : "Lethal Ladies",
+	"text.faction.13.name" : "Maiden Militia",
+	"text.faction.14.name" : "Nimble Nymphs",
+	"text.faction.15.name" : "Petite Pugilists",
+
+	"text.disband.queen.1.message" : "§9 was greatly offended by your offering.",
+	"text.disband.queen.2.message" : "§9 called you a 'dirty peasant' and stormed out.",
+	"text.disband.other.1.message" : "§9 threw it on the ground and had a fit.",
+	"text.disband.other.2.message" : "§9 called you a 'poopy-head' and ran away.",
+	"text.disband.other.3.message" : "§9 would rather die than eat that gross thing.",
+	"text.disband.other.4.message" : "§9 decided not to be your friend anymore.",
+	"text.disband.other.5.message" : "§9 gave you a dirty look and headed off.",
+	"text.disband.other.6.message" : "§9 says that's the grossest thing she's ever seen.",
+
+	"text.tame.queen.1.message" : "§a reluctantly joined your party.",
+	"text.tame.queen.2.message" : "§a sighed and became your follower.",
+	"text.tame.queen.3.message" : "§a really enjoys eating glistering melons.",
+	"text.tame.other.1.message" : "§a was kind of lonely without a leader.",
+	"text.tame.other.2.message" : "§a shrugged and decided to follow you.",
+	"text.tame.other.3.message" : "§a put the past behind her and joined you.",
+	"text.tame.other.4.message" : "§a was easily persuaded by that yummy snack.",
+	"text.tame.other.5.message" : "§a introduced herself properly to you.",
+	"text.tame.other.6.message" : "§a ate that snack like there was no tomorrow.",
+
+	"text.tame.fail.prefix": "*§9 You can't",
+	"text.tame.fail.angry.message" : "§9 tame this fairy because she's angry right now.",
+	"text.tame.fail.crying.message" : "§9 tame this fairy because she's upset right now.",
+	"text.tame.fail.has_followers.message" : "§9 tame a fairy queen until you defeat her minions.",
+	"text.tame.fail.has_queen.message" : "§9 tame this fairy until you defeat her queen.",
+	"text.tame.fail.tame_queen.message" : "§9 steal a fairy queen owned by someone else.",
+	"text.tame.fail.tame_fairy.message" : "§9 steal a fairy owned by someone else.",
+	"text.tame.fail.posted.message" : "§9 steal a fairy who's assigned to a post.",
+	"text.tame.fail.glowstone.message" : "§9 seriously be trying to feed a fairy something that resembles its own guts.",
+	"text.tame.fail.not_melon.message" : "§9 tame a fairy queen without a slice of speckled melon.",
+	"text.tame.fail.not_snack.message" : "§9 tame a fairy without a sweet-tasting snack.",
+
+	"text.death.1.message" : "§9 bit the dust.",
+	"text.death.2.message" : "§9 ran into some problems.",
+	"text.death.3.message" : "§9 went to the big forest in the sky.",
+	"text.death.4.message" : "§9 had to go away for a while.",
+	"text.death.5.message" : "§9 lived a good life.",
+	"text.death.6.message" : "§9 is in a better place now.",
+	"text.death.7.message" : "§9 kicked the bucket."
+	//"key.category.fairyfactions" : "Fairy Factions",
+	//"keyfairyfactions.unmount_fairy_key" : "Unmount Fairy"
+}

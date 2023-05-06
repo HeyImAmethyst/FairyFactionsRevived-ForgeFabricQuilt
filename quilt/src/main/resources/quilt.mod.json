@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "${group}",
+    "id": "fairyfactions",
+    "version": "${version}",
+    "metadata": {
+      "name": "Fairy Factions",
+      "description": "A mod that adds fairies!",
+      "contributors": {
+        "Me!": "HeyImAmethyst, KodaichiZero - original mod, 1.7.10 version - Allaryin, pau101"
+      },
+      "contact": {
+        "sources": "https://github.com/architectury/architectury-templates"
+      },
+      "icon": "assets/fairyfactions/icon.png"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "entrypoints": {
+      "init": [
+        "net.heyimamethyst.fairyfactions.quilt.ModQuilt"
+      ],
+      "client":
+      [
+        "net.heyimamethyst.fairyfactions.quilt.ModQuiltClient"
+      ]
+    },
+    "depends": [
+      {
+        "id": "quilt_loader",
+        "version": ">=0.16.0-"
+      },
+      {
+        "id": "quilt_base",
+        "version": "*"
+      },
+      {
+        "id": "minecraft",
+        "version": ">=1.18.2"
+      },
+      {
+        "id": "architectury",
+        "version": ">=4.9.83"
+      }
+    ]
+  },
+
+  "mixin": [
+
+  ]
+}

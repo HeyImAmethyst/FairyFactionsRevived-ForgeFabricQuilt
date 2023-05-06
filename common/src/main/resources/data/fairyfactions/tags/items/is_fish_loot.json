@@ -1,0 +1,22 @@
+{
+	"replace": false,
+	"values": 
+	[
+		"minecraft:lily_pad",
+		"minecraft:leather_boots",
+		"minecraft:leather",
+		"minecraft:bone",
+		"minecraft:bowl",
+		"minecraft:ink_sac",
+		"minecraft:tripwire_hook",
+		"minecraft:rotten_flesh",
+		"minecraft:bamboo",
+		"minecraft:potion",
+		"minecraft:name_tag",
+		"minecraft:saddle",
+		"minecraft:bow",
+		"minecraft:book",
+		"minecraft:enchanted_book",
+		"minecraft:nautilus_shell"
+	]
+}

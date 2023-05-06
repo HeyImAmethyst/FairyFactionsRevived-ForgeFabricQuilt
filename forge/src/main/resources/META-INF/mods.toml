@@ -1,0 +1,37 @@
+modLoader = "javafml"
+loaderVersion = "[40,)"
+#issueTrackerURL = ""
+license = "MIT"
+
+[[mods]]
+modId = "fairyfactions"
+version = "${version}"
+displayName = "Fairy Factions"
+authors = "HeyImAmethyst"
+description = '''
+A mod that adds fairies!
+'''
+logoFile = "assets/fairyfactions/icon.png"
+
+credits="KodaichiZero - original mod, 1.7.10 version - Allaryin, pau101"
+
+[[dependencies.fairyfactions]]
+modId = "forge"
+mandatory = true
+versionRange = "[40,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.fairyfactions]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.18.2,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.fairyfactions]]
+modId = "architectury"
+mandatory = true
+versionRange = "[4.11.91,)"
+ordering = "AFTER"
+side = "BOTH"

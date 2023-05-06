@@ -1,0 +1,58 @@
+package net.heyimamethyst.fairyfactions.forge.events.mod;
+
+
+import net.heyimamethyst.fairyfactions.FairyFactions;
+import net.heyimamethyst.fairyfactions.client.model.ModModelLayers;
+import net.heyimamethyst.fairyfactions.client.model.entity.FairyEyesModel;
+import net.heyimamethyst.fairyfactions.client.model.entity.FairyModel;
+import net.heyimamethyst.fairyfactions.client.model.entity.FairyProps2Model;
+import net.heyimamethyst.fairyfactions.client.model.entity.FairyPropsModel;
+import net.heyimamethyst.fairyfactions.client.render.entity.FairyFishHookEntityRenderer;
+import net.heyimamethyst.fairyfactions.client.render.entity.FairyRenderer;
+import net.heyimamethyst.fairyfactions.items.ModSpawnEggItem;
+import net.heyimamethyst.fairyfactions.registry.ModEntities;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.world.entity.EntityType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+
+@Mod.EventBusSubscriber(modid = FairyFactions.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD , value = Dist.CLIENT)
+public class ModClientEvents
+{
+    @SubscribeEvent
+	public static void onRegisterEntities(final RegistryEvent.Register<EntityType<?>> event)
+	{
+		ModSpawnEggItem.InitSpawnEggs();
+	}
+    
+	@SubscribeEvent
+	public static void doClientStuff(final FMLClientSetupEvent event)
+	{
+		Minecraft mc = Minecraft.getInstance();
+		EntityRenderDispatcher manager = mc.getEntityRenderDispatcher();
+		//ModKeyBinds.register(event);
+	}
+	
+	@SubscribeEvent
+	public static void RegisterLayers(EntityRenderersEvent.RegisterLayerDefinitions event)
+	{
+		event.registerLayerDefinition(ModModelLayers.FAIRY_LAYER_LOCATION, FairyModel::createBodyLayer);
+		event.registerLayerDefinition(ModModelLayers.FAIRY_EYES_LAYER_LOCATION, FairyEyesModel::createBodyLayer);
+		event.registerLayerDefinition(ModModelLayers.FAIRY_PROPS_LAYER_LOCATION, FairyPropsModel::createBodyLayer);
+		event.registerLayerDefinition(ModModelLayers.FAIRY_PROPS2_LAYER_LOCATION, FairyProps2Model::createBodyLayer);
+		event.registerLayerDefinition(ModModelLayers.FAIRY_WITHERED_LAYER_LOCATION, FairyModel::createBodyLayer);
+	}
+	
+	@SubscribeEvent
+	public static void RegisterRenderers(EntityRenderersEvent.RegisterRenderers event)
+	{
+		event.registerEntityRenderer(ModEntities.FAIRY_ENTITY.get(), FairyRenderer::new);
+		event.registerEntityRenderer(ModEntities.FAIRY_FISHING_BOBBER_ENTITY.get(), FairyFishHookEntityRenderer::new);
+	}
+
+}
