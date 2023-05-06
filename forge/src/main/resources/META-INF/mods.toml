@@ -11,7 +11,7 @@ authors = "HeyImAmethyst"
 description = '''
 A mod that adds fairies!
 '''
-logoFile = "assets/fairyfactions/icon.png"
+logoFile = "icon.png"
 
 credits="KodaichiZero - original mod, 1.7.10 version - Allaryin, pau101"
 
