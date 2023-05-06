@@ -11,11 +11,14 @@ import net.heyimamethyst.fairyfactions.client.render.entity.FairyFishHookEntityR
 import net.heyimamethyst.fairyfactions.client.render.entity.FairyRenderer;
 import net.heyimamethyst.fairyfactions.items.ModSpawnEggItem;
 import net.heyimamethyst.fairyfactions.registry.ModEntities;
+import net.heyimamethyst.fairyfactions.registry.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -29,7 +32,16 @@ public class ModClientEvents
 	{
 		ModSpawnEggItem.InitSpawnEggs();
 	}
-    
+
+	@SubscribeEvent
+	public static void addCreative(CreativeModeTabEvent.BuildContents event)
+	{
+		if(event.getTab() == CreativeModeTabs.SPAWN_EGGS)
+		{
+			event.accept(ModItems.FAIRY_SPAWN_EGG);
+		}
+	}
+
 	@SubscribeEvent
 	public static void doClientStuff(final FMLClientSetupEvent event)
 	{

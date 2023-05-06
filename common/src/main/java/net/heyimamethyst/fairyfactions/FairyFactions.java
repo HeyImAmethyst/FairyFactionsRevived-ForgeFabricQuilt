@@ -4,7 +4,6 @@ import com.google.common.base.Suppliers;
 import com.mojang.logging.LogUtils;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
-import dev.architectury.registry.registries.Registries;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.network.ModNetwork;
@@ -31,12 +30,6 @@ public class FairyFactions
 
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
-
-    // We can use this if we don't want to use DeferredRegister
-    public static final Supplier<Registries> REGISTRIES = Suppliers.memoize(() -> Registries.get(MOD_ID));
-    // Registering a new creative tab
-//    public static final CreativeModeTab EXAMPLE_TAB = CreativeTabRegistry.create(new ResourceLocation(MOD_ID, "example_tab"), () ->
-//            new ItemStack(FairyFactions.EXAMPLE_ITEM.get()));
     
     public static void init()
     {

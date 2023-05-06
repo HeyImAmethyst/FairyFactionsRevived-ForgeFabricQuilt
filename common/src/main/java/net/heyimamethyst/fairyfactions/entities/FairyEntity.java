@@ -6,6 +6,7 @@ import net.heyimamethyst.fairyfactions.Loc;
 import net.heyimamethyst.fairyfactions.entities.ai.*;
 import net.heyimamethyst.fairyfactions.proxy.ClientMethods;
 import net.heyimamethyst.fairyfactions.proxy.CommonMethods;
+import net.heyimamethyst.fairyfactions.registry.ModEntities;
 import net.heyimamethyst.fairyfactions.registry.ModSounds;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.heyimamethyst.fairyfactions.world.FairyGroupGenerator;
@@ -148,6 +149,12 @@ public class FairyEntity extends FairyEntityBase
 
         fairyTasks = new FairyTasks(this, speedModifier);
         switchNavigator(flymode());
+    }
+
+    @Override
+    public EntityType<?> getType()
+    {
+        return ModEntities.FAIRY_ENTITY.get();
     }
 
     @Override

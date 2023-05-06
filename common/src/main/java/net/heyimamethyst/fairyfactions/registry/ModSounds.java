@@ -4,12 +4,13 @@ import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 
 public class ModSounds
 {
-    public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(FairyFactions.MOD_ID, Registry.SOUND_EVENT_REGISTRY);
+    public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(FairyFactions.MOD_ID, Registries.SOUND_EVENT);
 
     public static void Init()
     {
@@ -31,6 +32,6 @@ public class ModSounds
 
     private static RegistrySupplier<SoundEvent> registerSoundEvent(String name)
     {
-        return SOUND_EVENTS.register(name, () -> new SoundEvent(new ResourceLocation(FairyFactions.MOD_ID, name)));
+        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(FairyFactions.MOD_ID, name)));
     }
 }

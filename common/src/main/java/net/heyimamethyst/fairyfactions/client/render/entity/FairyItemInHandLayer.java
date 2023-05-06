@@ -1,7 +1,7 @@
 package net.heyimamethyst.fairyfactions.client.render.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.EntityModel;
@@ -51,8 +51,8 @@ public class FairyItemInHandLayer <T extends LivingEntity, M extends EntityModel
         {
             poseStack.pushPose();
             this.getParentModel().translateToHand(humanoidArm, poseStack);
-            poseStack.mulPose(Vector3f.XP.rotationDegrees(-90.0F));
-            poseStack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
+            poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
             boolean flag = humanoidArm == HumanoidArm.LEFT;
             poseStack.translate((double)((float)(flag ? -1 : 1) / 200.0F), 0.105D, -0.325D);
             //Minecraft.getInstance().getItemInHandRenderer().renderItem(livingEntity, itemStack, transformType, flag, poseStack, multiBufferSource, p_117191_);

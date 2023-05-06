@@ -2,12 +2,15 @@ package net.heyimamethyst.fairyfactions.items;
 
 import com.google.common.collect.Maps;
 import dev.architectury.registry.registries.RegistrySupplier;
+import net.heyimamethyst.fairyfactions.registry.ModEntities;
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.DispenserBlock;
@@ -24,9 +27,9 @@ public class ModSpawnEggItem extends SpawnEggItem
 	protected static final List<ModSpawnEggItem> UNADDED_EGGS = new ArrayList<>();
 	private final RegistrySupplier<? extends EntityType<?>> entityTypeSupplier;
 
-	public ModSpawnEggItem(final RegistrySupplier<? extends EntityType<?>> entityTypeSupplier, int p_i48465_2_, int p_i48465_3_, Properties p_i48465_4_)
+	public ModSpawnEggItem(final RegistrySupplier<? extends EntityType<?>> entityTypeSupplier, int primaryColor, int secondaryColor, Properties p_i48465_4_)
 	{
-		super(null, p_i48465_2_, p_i48465_3_, p_i48465_4_);
+		super(null, primaryColor, secondaryColor, p_i48465_4_);
 		this.entityTypeSupplier = entityTypeSupplier;
 		UNADDED_EGGS.add(this);
 	}
@@ -36,7 +39,13 @@ public class ModSpawnEggItem extends SpawnEggItem
 	{
 		return this.entityTypeSupplier.get();
 	}
-	
+
+	@Override
+	public FeatureFlagSet requiredFeatures()
+	{
+		return getType(null).requiredFeatures();
+	}
+
 	public static void InitSpawnEggs() 
 	{
 		//final Map<EntityType<?>, SpawnEggItem> EGGS = ObfuscationReflectionHelper.getPrivateValue(SpawnEggItem.class, null, "f_43201_");

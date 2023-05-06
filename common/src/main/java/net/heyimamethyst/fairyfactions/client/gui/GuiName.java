@@ -8,6 +8,7 @@ import net.heyimamethyst.fairyfactions.proxy.CommonMethods;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.PlainTextButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -18,7 +19,7 @@ public class GuiName extends Screen
     private int updateCounter;
     private String nameText;
 
-    private Button done;
+    private PlainTextButton done;
 
     public GuiName(FairyEntity fairyEntity)
     {
@@ -39,11 +40,11 @@ public class GuiName extends Screen
     @Override
     public void init()
     {
-        done = new Button((width / 2 - 100) + 50, height / 4 + 120, 98, 20, Component.literal("Done"),
+        done = new PlainTextButton((width / 2 - 100) + 50, height / 4 + 120, 98, 20, Component.literal("Done"),
         (p_96788_) ->
         {
             ConfirmName();
-        });
+        }, this.font);
 
         this.addRenderableWidget(done);
 

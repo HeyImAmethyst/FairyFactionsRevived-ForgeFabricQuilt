@@ -7,13 +7,14 @@ import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.entities.FairyFishHookEntity;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 
 public class ModEntities
 {
-	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(FairyFactions.MOD_ID, Registry.ENTITY_TYPE_REGISTRY);
+	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(FairyFactions.MOD_ID, Registries.ENTITY_TYPE);
 
 	public static void Init()
 	{
