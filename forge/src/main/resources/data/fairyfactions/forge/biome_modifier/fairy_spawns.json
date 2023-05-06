@@ -1,0 +1,10 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#fairyfactions:is_fairy_biome",
+  "spawners": {
+    "type": "fairyfactions:fairy_entity",
+    "maxCount": 4,
+    "minCount": 1,
+    "weight": 40
+  }
+}

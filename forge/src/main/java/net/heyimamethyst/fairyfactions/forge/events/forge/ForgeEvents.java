@@ -4,7 +4,7 @@ package net.heyimamethyst.fairyfactions.forge.events.forge;
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.event.RenderNameEvent;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.client.event.RenderNameplateEvent;
+import net.minecraftforge.client.event.RenderNameTagEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.Mod;
 public class ForgeEvents
 {
 	@SubscribeEvent
-	public void onRenderName(RenderNameplateEvent event)
+	public void onRenderName(RenderNameTagEvent event)
 	{
 		Entity entity = event.getEntity();
 

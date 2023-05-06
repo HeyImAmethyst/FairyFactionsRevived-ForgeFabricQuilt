@@ -5,6 +5,7 @@ import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
@@ -15,9 +16,12 @@ import net.minecraft.world.item.ItemStack;
 
 public class FairyItemInHandLayer <T extends LivingEntity, M extends EntityModel<T> & ArmedModel> extends RenderLayer<T, M>
 {
-    public FairyItemInHandLayer(RenderLayerParent<T, M> renderLayerParent)
+    private final ItemInHandRenderer itemInHandRenderer;
+
+    public FairyItemInHandLayer(RenderLayerParent<T, M> renderLayerParent, ItemInHandRenderer p_234847_)
     {
         super(renderLayerParent);
+        this.itemInHandRenderer = p_234847_;
     }
 
     public void render(PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, T pLivingEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTick, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch)
@@ -51,7 +55,8 @@ public class FairyItemInHandLayer <T extends LivingEntity, M extends EntityModel
             poseStack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
             boolean flag = humanoidArm == HumanoidArm.LEFT;
             poseStack.translate((double)((float)(flag ? -1 : 1) / 200.0F), 0.105D, -0.325D);
-            Minecraft.getInstance().getItemInHandRenderer().renderItem(livingEntity, itemStack, transformType, flag, poseStack, multiBufferSource, p_117191_);
+            //Minecraft.getInstance().getItemInHandRenderer().renderItem(livingEntity, itemStack, transformType, flag, poseStack, multiBufferSource, p_117191_);
+            this.itemInHandRenderer.renderItem(livingEntity, itemStack, transformType, flag, poseStack, multiBufferSource, p_117191_);
             poseStack.popPose();
         }
     }

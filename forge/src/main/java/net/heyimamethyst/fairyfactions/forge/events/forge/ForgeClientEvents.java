@@ -30,7 +30,7 @@ public class ForgeClientEvents
 	public static Random random = new Random();
 
 	@SubscribeEvent
-	public static void onKeyPress(InputEvent.MouseInputEvent event)
+	public static void onKeyPress(InputEvent.MouseButton event)
 	{
 		Minecraft mc = Minecraft.getInstance();
 

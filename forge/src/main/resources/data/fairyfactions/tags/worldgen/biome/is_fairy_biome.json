@@ -1,0 +1,11 @@
+{
+	"replace": false,
+	"values": 
+	[
+		"#fairyfactions:is_plains",
+		"#minecraft:is_forest",
+		"#minecraft:is_mountain",
+		"#forge:is_mountain",
+		"#forge:is_mushroom"
+	]
+}

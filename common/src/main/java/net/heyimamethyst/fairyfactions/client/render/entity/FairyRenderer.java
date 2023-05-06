@@ -27,7 +27,7 @@ public class FairyRenderer extends MobRenderer<FairyEntity, FairyModel<FairyEnti
         this.addLayer(new FairyProps2Layer(this, renderManagerIn.getModelSet()));
         this.addLayer(new FairyEyesLayer(this, renderManagerIn.getModelSet()));
         this.addLayer(new FairyWitheredLayer(this, renderManagerIn.getModelSet()));
-        this.addLayer(new FairyItemInHandLayer<>(this));
+        this.addLayer(new FairyItemInHandLayer<>(this, renderManagerIn.getItemInHandRenderer()));
     }
 
 

@@ -9,7 +9,7 @@ import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 
 public class GuiName extends Screen
 {
@@ -22,7 +22,7 @@ public class GuiName extends Screen
 
     public GuiName(FairyEntity fairyEntity)
     {
-        super(new TextComponent(""));
+        super(Component.literal(""));
 
         FairyFactions.LOGGER.info("GuiName: constructed");
 
@@ -39,7 +39,7 @@ public class GuiName extends Screen
     @Override
     public void init()
     {
-        done = new Button((width / 2 - 100) + 50, height / 4 + 120, 98, 20, new TextComponent("Done"),
+        done = new Button((width / 2 - 100) + 50, height / 4 + 120, 98, 20, Component.literal("Done"),
         (p_96788_) ->
         {
             ConfirmName();
