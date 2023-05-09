@@ -25,43 +25,6 @@ public class FairyItemInHandLayer <T extends LivingEntity, M extends EntityModel
         this.itemInHandRenderer = p_234847_;
     }
 
-//    public void render(PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, T pLivingEntity, float pLimbSwing, float pLimbSwingAmount, float pPartialTick, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch)
-//    {
-//        //ItemStack itemstack = p_117207_.getItemBySlot(EquipmentSlot.MAINHAND);
-//        ItemStack itemstack = pLivingEntity.getMainHandItem();
-//
-//        if (!itemstack.isEmpty() /*|| !itemstack1.isEmpty()*/)
-//        {
-//            pPoseStack.pushPose();
-//            if (this.getParentModel().young)
-//            {
-//                float f = 0.5F;
-//                pPoseStack.translate(0.0D, 0.75D, 0.0D);
-//                pPoseStack.scale(0.5F, 0.5F, 0.5F);
-//            }
-//
-//            this.renderArmWithItem(pLivingEntity, itemstack, ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, HumanoidArm.RIGHT, pPoseStack, pBuffer, pPackedLight);
-//            pPoseStack.popPose();
-//        }
-//    }
-//
-//    protected void renderArmWithItem(LivingEntity livingEntity, ItemStack itemStack, ItemTransforms.TransformType transformType, HumanoidArm humanoidArm, PoseStack poseStack, MultiBufferSource multiBufferSource, int p_117191_)
-//    {
-//
-//        if (!itemStack.isEmpty())
-//        {
-//            poseStack.pushPose();
-//            this.getParentModel().translateToHand(humanoidArm, poseStack);
-//            poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
-//            poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-//            boolean flag = humanoidArm == HumanoidArm.LEFT;
-//            poseStack.translate((double)((float)(flag ? -1 : 1) / 200.0F), 0.105D, -0.325D);
-//            //Minecraft.getInstance().getItemInHandRenderer().renderItem(livingEntity, itemStack, transformType, flag, poseStack, multiBufferSource, p_117191_);
-//            this.itemInHandRenderer.renderItem(livingEntity, itemStack, transformType, flag, poseStack, multiBufferSource, p_117191_);
-//            poseStack.popPose();
-//        }
-//    }
-
     public void render(PoseStack arg, MultiBufferSource arg2, int i, T arg3, float f, float g, float h, float j, float k, float l) {
         boolean bl = arg3.getMainArm() == HumanoidArm.RIGHT;
         ItemStack itemStack = bl ? arg3.getOffhandItem() : arg3.getMainHandItem();
@@ -87,7 +50,7 @@ public class FairyItemInHandLayer <T extends LivingEntity, M extends EntityModel
             arg5.mulPose(Axis.XP.rotationDegrees(-90.0F));
             arg5.mulPose(Axis.YP.rotationDegrees(180.0F));
             boolean bl = arg4 == HumanoidArm.LEFT;
-            arg5.translate((float)(bl ? -1 : 1) / 16.0F, 0.125F, -0.625F);
+            arg5.translate((float)(bl ? -1 : 1) / 200.0F, 0.105F, -0.325F);
             this.itemInHandRenderer.renderItem(arg, arg2, arg3, bl, arg5, arg6, i);
             arg5.popPose();
         }
