@@ -1600,7 +1600,7 @@ public class FairyJob
         ClipContext rayCtx = new ClipContext(
                 new Vec3( fairy.position().x, fairy.position().y + fairy.getEyeHeight(), fairy.position().z ),
                 new Vec3( posX, posY, posZ ),
-                ClipContext.Block.VISUAL, ClipContext.Fluid.WATER, null);
+                ClipContext.Block.VISUAL, ClipContext.Fluid.WATER, fairy);
 
         BlockHitResult rayBlockHit = world.clip(rayCtx);
         BlockPos pos = rayBlockHit.getBlockPos();
