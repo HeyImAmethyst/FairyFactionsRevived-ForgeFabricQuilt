@@ -2,6 +2,8 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
+archivesBaseName = "[Fabric] ${rootProject.archives_base_name}"
+
 architectury {
     platformSetupLoomIde()
     fabric()
