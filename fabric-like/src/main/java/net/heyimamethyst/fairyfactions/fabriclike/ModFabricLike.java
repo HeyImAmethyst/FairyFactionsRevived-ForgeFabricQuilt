@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.fabriclike.registry.ModRegistries;
 import net.heyimamethyst.fairyfactions.fabriclike.registry.ModWorldGen;
+import net.heyimamethyst.fairyfactions.items.ModSpawnEggItem;
 import net.heyimamethyst.fairyfactions.registry.ModItems;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -16,6 +17,7 @@ public class ModFabricLike {
         FairyConfig.registerConfigs();
         FairyConfig.passConfigValues();
         FairyFactions.init();
+        ModSpawnEggItem.InitSpawnEggs();
         addItemsToItemGroups();
         ModRegistries.registerModStuffs();
         ModWorldGen.generateModWorldGen();
