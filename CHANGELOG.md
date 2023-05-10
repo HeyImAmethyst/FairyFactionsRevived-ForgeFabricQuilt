@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.2]
+
+* Fixed fairy spawn egg dispenser functionality fabric
+* Changed config generation for easier setting and getting config values
+* Fixed fairy spawn egg color on forge
+
+  Minecraft version: 1.18.2, 1.9.2, 1.19.3, 1.19.4  
+  Modloader:Forge, Fabric
+
 ## [1.3.1] - May 9, 2023
 
 * fix crash on when fairy casts a rod.
