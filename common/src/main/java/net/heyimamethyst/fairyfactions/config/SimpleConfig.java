@@ -1,4 +1,4 @@
-package net.heyimamethyst.fairyfactions.fabriclike.config;
+package net.heyimamethyst.fairyfactions.config;
 
 /*
  * Copyright (c) 2021 magistermaks
@@ -24,6 +24,7 @@ package net.heyimamethyst.fairyfactions.fabriclike.config;
  */
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.heyimamethyst.fairyfactions.ModExpectPlatform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -100,7 +101,7 @@ public class SimpleConfig
      * @return new config request object
      */
     public static ConfigRequest of( String filename ) {
-        Path path = FabricLoader.getInstance().getConfigDir();
+        Path path = ModExpectPlatform.getConfigDirectory();
         return new ConfigRequest( path.resolve( filename + ".properties" ).toFile(), filename );
     }
 

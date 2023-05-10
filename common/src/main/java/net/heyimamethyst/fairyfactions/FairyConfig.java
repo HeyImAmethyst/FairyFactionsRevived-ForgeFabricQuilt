@@ -1,10 +1,8 @@
-package net.heyimamethyst.fairyfactions.fabriclike;
+package net.heyimamethyst.fairyfactions;
 
 import com.mojang.datafixers.util.Pair;
-import net.heyimamethyst.fairyfactions.FairyConfigValues;
-import net.heyimamethyst.fairyfactions.FairyFactions;
-import net.heyimamethyst.fairyfactions.fabriclike.config.ModConfigProvider;
-import net.heyimamethyst.fairyfactions.fabriclike.config.SimpleConfig;
+import net.heyimamethyst.fairyfactions.config.ModConfigProvider;
+import net.heyimamethyst.fairyfactions.config.SimpleConfig;
 
 public class FairyConfig
 {
