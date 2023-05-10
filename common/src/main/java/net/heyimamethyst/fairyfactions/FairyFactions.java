@@ -1,28 +1,17 @@
 package net.heyimamethyst.fairyfactions;
 
-import com.google.common.base.Suppliers;
 import com.mojang.logging.LogUtils;
-import dev.architectury.registry.CreativeTabRegistry;
-import dev.architectury.registry.registries.DeferredRegister;
-import dev.architectury.registry.registries.RegistrySupplier;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
-import net.heyimamethyst.fairyfactions.network.ModNetwork;
 import net.heyimamethyst.fairyfactions.registry.ModEntities;
 import net.heyimamethyst.fairyfactions.registry.ModItems;
 import net.heyimamethyst.fairyfactions.registry.ModSounds;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 
 import java.util.UUID;
-import java.util.function.Supplier;
 
 public class FairyFactions
 {
@@ -33,6 +22,9 @@ public class FairyFactions
     
     public static void init()
     {
+        FairyConfig.registerConfigs();
+        FairyConfig.passConfigValues();
+
         ModEntities.Init();
         ModItems.Init();
         ModSounds.Init();

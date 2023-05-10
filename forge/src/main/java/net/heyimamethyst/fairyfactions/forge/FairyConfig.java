@@ -3,6 +3,7 @@ package net.heyimamethyst.fairyfactions.forge;
 import net.heyimamethyst.fairyfactions.FairyConfigValues;
 import net.minecraftforge.common.ForgeConfigSpec;
 
+@Deprecated
 public class FairyConfig
 {
     public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();

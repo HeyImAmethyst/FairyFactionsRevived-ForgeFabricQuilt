@@ -1,4 +1,4 @@
-package net.heyimamethyst.fairyfactions.fabriclike.config;
+package net.heyimamethyst.fairyfactions.config;
 
 import com.mojang.datafixers.util.Pair;
 
