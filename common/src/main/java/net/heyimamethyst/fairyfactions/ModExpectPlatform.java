@@ -2,8 +2,11 @@ package net.heyimamethyst.fairyfactions;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.platform.Platform;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.SpawnEggItem;
 
 import java.nio.file.Path;
+import java.util.Map;
 
 public class ModExpectPlatform {
     /**
@@ -24,4 +27,11 @@ public class ModExpectPlatform {
         // Just throw an error, the content should get replaced at runtime.
         throw new AssertionError();
     }
+
+    @ExpectPlatform
+    public static Map<EntityType<?>, SpawnEggItem> getSpawnEggMap()
+    {
+        throw new AssertionError();
+    }
+
 }

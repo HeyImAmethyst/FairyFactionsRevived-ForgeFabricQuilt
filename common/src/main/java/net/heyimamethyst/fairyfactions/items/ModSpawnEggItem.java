@@ -2,6 +2,7 @@ package net.heyimamethyst.fairyfactions.items;
 
 import com.google.common.collect.Maps;
 import dev.architectury.registry.registries.RegistrySupplier;
+import net.heyimamethyst.fairyfactions.ModExpectPlatform;
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
@@ -39,10 +40,7 @@ public class ModSpawnEggItem extends SpawnEggItem
 	
 	public static void InitSpawnEggs() 
 	{
-		//final Map<EntityType<?>, SpawnEggItem> EGGS = ObfuscationReflectionHelper.getPrivateValue(SpawnEggItem.class, null, "f_43201_");
-
-		Iterable<SpawnEggItem> eggs = SpawnEggItem.eggs();
-		//final Map<EntityType<?>, SpawnEggItem> EGGS = Maps.newIdentityHashMap();
+		final Map<EntityType<?>, SpawnEggItem> EGGS = ModExpectPlatform.getSpawnEggMap();
 
 		DefaultDispenseItemBehavior dispenseBehaviour = new DefaultDispenseItemBehavior()
 		{
@@ -59,7 +57,8 @@ public class ModSpawnEggItem extends SpawnEggItem
 
 		for (final SpawnEggItem spawnEgg : UNADDED_EGGS)
 		{
-			//EGGS.put(spawnEgg.getType(null), spawnEgg);
+			if(EGGS != null)
+				EGGS.put(spawnEgg.getType(null), spawnEgg);
 			DispenserBlock.registerBehavior(spawnEgg, dispenseBehaviour);
 		}
 
