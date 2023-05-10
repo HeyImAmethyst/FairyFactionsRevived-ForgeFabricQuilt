@@ -8,8 +8,6 @@ import net.heyimamethyst.fairyfactions.items.ModSpawnEggItem;
 public class ModFabricLike {
     public static void init()
     {
-        FairyConfig.registerConfigs();
-        FairyConfig.passConfigValues();
         FairyFactions.init();
         ModSpawnEggItem.InitSpawnEggs();
         ModRegistries.registerModStuffs();
