@@ -33,6 +33,9 @@ public class FairyFactions
     
     public static void init()
     {
+        FairyConfig.registerConfigs();
+        FairyConfig.passConfigValues();
+
         ModEntities.Init();
         ModItems.Init();
         ModSounds.Init();

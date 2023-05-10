@@ -22,12 +22,9 @@ public class ModForge
         EventBuses.registerModEventBus(FairyFactions.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        //MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, ModEvents::gen);
 
         FairyFactions.init();
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, FairyConfig.SPEC, "fairyfactions-common.toml");
 
-        //FairyConfig.passConfigValues();
     }
 
     private void setup(final FMLCommonSetupEvent event)
@@ -37,11 +34,5 @@ public class ModForge
         {
             //ModSpawns.registerSpawns();
         });
-
-        FairyConfig.passConfigValues();
-
-        FairyConfig.BEHAVIOR_PURSUE_RANGE.set(FairyConfig.BEHAVIOR_PATH_RANGE.get().doubleValue() * FairyConfig.pursue_range_mult.get().doubleValue());
-        FairyConfig.BEHAVIOR_DEFEND_RANGE.set(FairyConfig.BEHAVIOR_PATH_RANGE.get().doubleValue() * FairyConfig.defend_range_mult.get().doubleValue());
-
     }
 }

@@ -14,8 +14,6 @@ import net.minecraft.world.item.Items;
 public class ModFabricLike {
     public static void init()
     {
-        FairyConfig.registerConfigs();
-        FairyConfig.passConfigValues();
         FairyFactions.init();
         ModSpawnEggItem.InitSpawnEggs();
         addItemsToItemGroups();
