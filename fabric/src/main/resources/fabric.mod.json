@@ -10,8 +10,8 @@
     "1.7.10 version - Allaryin, pau101"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://legacy.curseforge.com/minecraft/mc-mods/fairy-factions-revived",
+    "sources": "https://github.com/HeyImAmethyst/FairyFactionsRevived-ForgeFabricQuilt"
   },
   "license": "Insert License Here",
   "icon": "assets/fairyfactions/icon.png",
