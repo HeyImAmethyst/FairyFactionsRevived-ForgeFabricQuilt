@@ -18,7 +18,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -30,7 +33,16 @@ public class ModClientEvents
     @SubscribeEvent
 	public static void onRegisterEntities(final RegisterEvent event)
 	{
-		ModSpawnEggItem.InitSpawnEggs();
+		//ForgeSpawnEggItem
+		//ModSpawnEggItem.InitSpawnEggs();
+	}
+
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public static void registerSpawnEggColors(RegisterColorHandlersEvent.Item event)
+	{
+		ModSpawnEggItem.MOD_EGGS.forEach(egg ->
+				event.getItemColors().register((stack, layer) -> egg.getColor(layer), egg)
+		);
 	}
 
 	@SubscribeEvent
