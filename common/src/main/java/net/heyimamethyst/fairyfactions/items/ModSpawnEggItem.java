@@ -14,28 +14,28 @@ import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.DispenserBlock;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ModSpawnEggItem extends SpawnEggItem
 {
 
-	protected static final List<ModSpawnEggItem> UNADDED_EGGS = new ArrayList<>();
+	public static final List<ModSpawnEggItem> MOD_EGGS = new ArrayList<>();
+	public static final Map<EntityType<?>, ModSpawnEggItem> TYPE_MAP = new IdentityHashMap<>();
+
 	private final RegistrySupplier<? extends EntityType<?>> entityTypeSupplier;
 
 	public ModSpawnEggItem(final RegistrySupplier<? extends EntityType<?>> entityTypeSupplier, int p_i48465_2_, int p_i48465_3_, Properties p_i48465_4_)
 	{
 		super(null, p_i48465_2_, p_i48465_3_, p_i48465_4_);
 		this.entityTypeSupplier = entityTypeSupplier;
-		UNADDED_EGGS.add(this);
+		MOD_EGGS.add(this);
 	}
 
 	@Override
 	public EntityType<?> getType(@Nullable CompoundTag pNbt)
 	{
-		return this.entityTypeSupplier.get();
+		EntityType<?> type = super.getType(pNbt);
+		return type != null ? type : entityTypeSupplier.get();
 	}
 	
 	public static void InitSpawnEggs() 
@@ -55,7 +55,7 @@ public class ModSpawnEggItem extends SpawnEggItem
 			}
 		};
 
-		for (final SpawnEggItem spawnEgg : UNADDED_EGGS)
+		for (final SpawnEggItem spawnEgg : MOD_EGGS)
 		{
 			if(EGGS != null)
 				EGGS.put(spawnEgg.getType(null), spawnEgg);
@@ -63,6 +63,6 @@ public class ModSpawnEggItem extends SpawnEggItem
 			DispenserBlock.registerBehavior(spawnEgg, dispenseBehaviour);
 		}
 
-		UNADDED_EGGS.clear();
+		MOD_EGGS.clear();
 	}
 }
