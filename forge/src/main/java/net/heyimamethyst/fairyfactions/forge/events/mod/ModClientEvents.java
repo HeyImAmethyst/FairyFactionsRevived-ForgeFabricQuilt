@@ -18,7 +18,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -27,10 +29,18 @@ import net.minecraftforge.registries.RegisterEvent;
 @Mod.EventBusSubscriber(modid = FairyFactions.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD , value = Dist.CLIENT)
 public class ModClientEvents
 {
-    @SubscribeEvent
-	public static void onRegisterEntities(final RegisterEvent event)
+//    @SubscribeEvent
+//	public static void onRegisterEntities(final RegisterEvent event)
+//	{
+//		ModSpawnEggItem.InitSpawnEggs();
+//	}
+
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public static void registerSpawnEggColors(RegisterColorHandlersEvent.Item event)
 	{
-		ModSpawnEggItem.InitSpawnEggs();
+		ModSpawnEggItem.MOD_EGGS.forEach(egg ->
+				event.getItemColors().register((stack, layer) -> egg.getColor(layer), egg)
+		);
 	}
 
 	@SubscribeEvent

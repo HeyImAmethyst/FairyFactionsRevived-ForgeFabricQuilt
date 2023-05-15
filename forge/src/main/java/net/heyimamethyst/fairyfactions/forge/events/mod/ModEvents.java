@@ -2,6 +2,7 @@ package net.heyimamethyst.fairyfactions.forge.events.mod;
 
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
+import net.heyimamethyst.fairyfactions.items.ModSpawnEggItem;
 import net.heyimamethyst.fairyfactions.registry.ModEntities;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
@@ -14,6 +15,7 @@ import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.RegisterEvent;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = FairyFactions.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModEvents
 {
+
 	@SubscribeEvent
 	public static void RegisterEntityAttributes(EntityAttributeCreationEvent event) 
 	{

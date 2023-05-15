@@ -4,6 +4,7 @@ import dev.architectury.platform.forge.EventBuses;
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.forge.events.mod.ModEvents;
 import net.heyimamethyst.fairyfactions.forge.registry.ModSpawns;
+import net.heyimamethyst.fairyfactions.items.ModSpawnEggItem;
 import net.heyimamethyst.fairyfactions.network.ModNetwork;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -34,5 +35,7 @@ public class ModForge
         {
             //ModSpawns.registerSpawns();
         });
+
+        ModSpawnEggItem.InitSpawnEggs();
     }
 }
