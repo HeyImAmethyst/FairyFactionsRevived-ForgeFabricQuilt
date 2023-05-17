@@ -112,6 +112,7 @@ public class FairyUtils
         if (block instanceof CropBlock) return true;
         if (block instanceof FlowerBlock) return true;
         if (block instanceof BambooSaplingBlock) return true;
+        if (block instanceof BambooStalkBlock) return true;
         if (block instanceof SugarCaneBlock) return true;
         if (block instanceof CactusBlock) return true;
         if (block == Blocks.DEAD_BUSH)      return true;
