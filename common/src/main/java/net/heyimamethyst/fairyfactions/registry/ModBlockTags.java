@@ -2,6 +2,7 @@ package net.heyimamethyst.fairyfactions.registry;
 
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -13,6 +14,6 @@ public class ModBlockTags
 
     private static TagKey<Block> makeTag(String name)
     {
-        return TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(FairyFactions.MOD_ID,  name));
+        return TagKey.create(Registries.BLOCK, new ResourceLocation(FairyFactions.MOD_ID,  name));
     }
 }
