@@ -1,0 +1,12 @@
+{
+	"replace": false,
+	"values": 
+	[
+		"minecraft:glistering_melon_slice",
+		"minecraft:apple",
+		"minecraft:melon_slice",
+		"minecraft:sugar",
+		"minecraft:cake",
+		"minecraft:cookie"
+	]
+}
