@@ -5,12 +5,14 @@ import com.google.common.collect.Maps;
 import net.heyimamethyst.fairyfactions.Loc;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.entities.FairyEntityBase;
+import net.heyimamethyst.fairyfactions.registry.ModItemTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.animal.*;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.BlockGetter;
@@ -146,16 +148,15 @@ public class FairyUtils
     }
 
     // Foods that can be used for taming
-    public static boolean acceptableFoods(FairyEntity fairy, Item i)
+    public static boolean acceptableFoods(FairyEntity fairy, ItemStack i)
     {
-        if (i == Items.GLISTERING_MELON_SLICE)
+        if (i.is(ModItemTags.IS_FAIRY_QUEEN_FOOD))
         {
             return true;
         }
         else if (fairy.tamed() || !fairy.queen())
         {
-            return i == Items.APPLE || i == Items.MELON_SLICE || i == Items.SUGAR
-                    || i == Items.CAKE || i == Items.COOKIE;
+            return i.is(ModItemTags.IS_FAIRY_FOOD);
         }
 
         return false;

@@ -1,0 +1,17 @@
+{
+	"replace": false,
+	"values": 
+	[
+		"minecraft:chicken",
+		"minecraft:beef",
+		"minecraft:mutton",
+		"minecraft:porkchop",
+		"minecraft:cooked_chicken",
+		"minecraft:cooked_beef",
+		"minecraft:cooked_mutton",
+		"minecraft:cooked_porkchop",
+		"minecraft:leather",
+		"minecraft:egg",
+		"minecraft:honeycomb"
+	]
+}
