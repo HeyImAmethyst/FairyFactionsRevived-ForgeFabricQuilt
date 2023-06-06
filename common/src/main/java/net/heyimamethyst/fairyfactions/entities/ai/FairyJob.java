@@ -2,6 +2,7 @@ package net.heyimamethyst.fairyfactions.entities.ai;
 
 import com.google.common.collect.Maps;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
+import net.heyimamethyst.fairyfactions.registry.ModBlockTags;
 import net.heyimamethyst.fairyfactions.registry.ModItemTags;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.minecraft.Util;
@@ -31,11 +32,14 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -329,7 +333,7 @@ public class FairyJob
                             {
                                 final ItemStack stack = chest.getItem( p );
 
-                                if ( stack != null && isFishingItem( stack.getItem() )
+                                if ( stack != null && isFishingItem( stack )
                                         && onFishingUse( stack, x, y, z, world ) )
                                 {
                                     cleanSlot( chest, p );
@@ -357,7 +361,7 @@ public class FairyJob
             }
 
             // Farming
-            if (isHoeItem(stack.getItem()) && onHoeUse(stack, x, y - 1, z, world))
+            if (isHoeItem(stack) && onHoeUse(stack, x, y - 1, z, world))
             {
                 return true;
             }
@@ -373,7 +377,7 @@ public class FairyJob
             }
 
             // Foresting
-            if (isAxeItem(stack.getItem()) && onAxeUse(stack, x, y, z, world))
+            if (isAxeItem(stack) && onAxeUse(stack, x, y, z, world))
             {
                 return true;
             }
@@ -383,7 +387,7 @@ public class FairyJob
                 return true;
             }
 
-            if ( isSweetBerryBlock(stack) && onSweetBerryUse( stack, x, y, z, world ) )
+            if ( isBerryBushItem(stack) && onBerryBushUse( stack, x, y, z, world ) )
             {
                 return true;
             }
@@ -400,19 +404,19 @@ public class FairyJob
             }
 
             // Sheep shearing
-            if (!triedShearing && isShearingItem(stack.getItem()) && (shearSheep(stack, world) || harvestHoneyComb(stack, x, y, z, world)))
+            if (!triedShearing && isShearingItem(stack) && (shearSheep(stack, world) || harvestHoneyComb(stack, x, y, z, world)))
             {
                 return true;
             }
 
             // Fishing
-            if (isFishingItem(stack.getItem()) && onFishingUse(stack, x, y, z, world))
+            if (isFishingItem(stack) && onFishingUse(stack, x, y, z, world))
             {
                 return true;
             }
 
             // Snack
-            if (FairyUtils.acceptableFoods(fairy, stack.getItem()) && snackTime(stack))
+            if (FairyUtils.acceptableFoods(fairy, stack) && snackTime(stack))
             {
                 return true;
             }
@@ -472,7 +476,7 @@ public class FairyJob
             return true;
         }
 
-        if (gatherSweetberry(x, y, z, world))
+        if (gatherFromBerryBush(x, y, z, world))
         {
             return true;
         }
@@ -572,7 +576,7 @@ public class FairyJob
         for ( int a = 0; a < 3; a++ )
         {
             //canPlaceBlockAt
-            if (state != null && !state.is(Blocks.BAMBOO) && !state.is(Blocks.BAMBOO_SAPLING) && !state.is(Blocks.SWEET_BERRY_BUSH) && !state.is(BlockTags.SAPLINGS) && world.getBlockState(new BlockPos(x,y,z)).getMaterial().isReplaceable() && state.canSurvive(world, new BlockPos(x,y,z)))//state.getMaterial().isReplaceable()) // world.getBlockState(new BlockPos(x,y,z).above()).is(Blocks.AIR) && state.canSurvive(world, new BlockPos(x,y,z)))
+            if (state != null && !state.is(Blocks.BAMBOO) && !state.is(Blocks.BAMBOO_SAPLING) && !state.is(ModBlockTags.IS_BERRY_BUSH_BLOCK) && !state.is(BlockTags.SAPLINGS) && world.getBlockState(new BlockPos(x,y,z)).getMaterial().isReplaceable() && state.canSurvive(world, new BlockPos(x,y,z)))//state.getMaterial().isReplaceable()) // world.getBlockState(new BlockPos(x,y,z).above()).is(Blocks.AIR) && state.canSurvive(world, new BlockPos(x,y,z)))
             {
 
                 //FairyFactions.LOGGER.debug(this.fairy.toString()+": planting seed");
@@ -600,7 +604,7 @@ public class FairyJob
         return false;
     }
 
-    private boolean gatherSweetberry(int x, final int y, int z, final Level world )
+    private boolean gatherFromBerryBush(int x, final int y, int z, final Level world )
     {
         final int m = x;
         final int n = z;
@@ -610,7 +614,7 @@ public class FairyJob
             x = m + ((a / 3) % 9) - 1;
             z = n + (a % 3) - 1;
 
-            if( harvestSweetberryBush( world, x, y, z) )
+            if( harvestBerryBush( world, x, y, z) )
             {
                 fairy.armSwing( !fairy.didSwing );
 
@@ -628,25 +632,50 @@ public class FairyJob
         return false;
     }
 
-    private boolean harvestSweetberryBush( final Level world, final int x, final int y, final int z )
+    private boolean harvestBerryBush(final Level world, final int x, final int y, final int z )
     {
         final BlockPos pos = new BlockPos(x,y,z);
         final BlockState state = world.getBlockState(pos);
         final Block block = state.getBlock();
-
-        if (state.is(Blocks.SWEET_BERRY_BUSH) )
+        
+        //this.stateDefinition.any().setValue(AGE, 0)
+        //state.is(ModBlockTags.IS_BERRY_BUSH_BLOCK)
+        //state.is(Blocks.SWEET_BERRY_BUSH)
+        //SweetBerryBushBlock.AGE
+        
+        if (state.is(ModBlockTags.IS_BERRY_BUSH_BLOCK))
         {
-            int i = state.getValue(SweetBerryBushBlock.AGE);
-            boolean flag = i == 3;
+            IntegerProperty ageProperty = null;
 
-            if (i > 1)
+            Collection<Property<?>> stateProperties = state.getProperties();
+
+            for (Property<?> property: stateProperties)
             {
-                int j = 1 + world.random.nextInt(2);
-                block.popResource(world, pos, new ItemStack(Items.SWEET_BERRIES, j + (flag ? 1 : 0)));
-                world.playSound((Player)null, pos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + world.random.nextFloat() * 0.4F);
-                world.setBlock(pos, state.setValue(SweetBerryBushBlock.AGE, Integer.valueOf(1)), 2);
+                if(property.getName() == "age")
+                {
+                    ageProperty = (IntegerProperty) property;
+                }
+            }
 
-                return true;
+            if(ageProperty != null)
+            {
+                int i = state.getValue(ageProperty);
+                boolean flag = i == 3;
+
+                if (i > 1)
+                {
+                    int j = 1 + world.random.nextInt(2);
+                    //block.popResource(world, pos, new ItemStack(Items.SWEET_BERRIES, j + (flag ? 1 : 0)));
+                    block.popResource(world, pos, new ItemStack(block.getCloneItemStack(world, pos, state).getItem(), j + (flag ? 1 : 0)));
+                    world.playSound((Player)null, pos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + world.random.nextFloat() * 0.4F);
+                    world.setBlock(pos, state.setValue(ageProperty, Integer.valueOf(1)), 2);
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {
@@ -956,7 +985,7 @@ public class FairyJob
         return false;
     }
 
-    private boolean onSweetBerryUse(final ItemStack stack, int x, final int y, int z, final Level world )
+    private boolean onBerryBushUse(final ItemStack stack, int x, final int y, int z, final Level world )
     {
         // TODO: experiment more with sapling placing code. Fairies place saplings less frequently than intended
         //return true;
@@ -977,7 +1006,7 @@ public class FairyJob
         for ( int a = 0; a < 3; a++ )
         {
             //canPlaceBlockAt
-            if (state.is(Blocks.SWEET_BERRY_BUSH) && world.getBlockState(new BlockPos(x,y,z)).getMaterial().isReplaceable() && state.canSurvive(world, new BlockPos(x,y,z)))//state.getMaterial().isReplaceable()) // world.getBlockState(new BlockPos(x,y,z).above()).is(Blocks.AIR) && state.canSurvive(world, new BlockPos(x,y,z)))
+            if (state.is(ModBlockTags.IS_BERRY_BUSH_BLOCK) && world.getBlockState(new BlockPos(x,y,z)).getMaterial().isReplaceable() && state.canSurvive(world, new BlockPos(x,y,z)))//state.getMaterial().isReplaceable()) // world.getBlockState(new BlockPos(x,y,z).above()).is(Blocks.AIR) && state.canSurvive(world, new BlockPos(x,y,z)))
             {
 
                 for (int l = -2; l < 3; l++)
@@ -1140,7 +1169,8 @@ public class FairyJob
 
     private int goodPlaceForBerryBush( final int x, final int y, final int z, final Level world )
     {
-        return placePlantWithSpace(x, y, z, world, Blocks.SWEET_BERRY_BUSH);
+        //return placePlantWithSpace(x, y, z, world, Blocks.SWEET_BERRY_BUSH);
+        return placePlantTagWithSpace(x, y, z, world, ModBlockTags.IS_BERRY_BUSH_BLOCK);
     }
 
     private int goodPlaceForBamboo(final int x, final int y, final int z, final Level world )
@@ -1692,7 +1722,7 @@ public class FairyJob
 
         fairy.getNavigation().moveTo(goodies.get(0), fairy.speedModifier);
 
-        for ( int i = 0; i < goodies.size() && count < 3; i++ )
+        for (int i = 0; i < goodies.size() && count < 3; i++)
         {
             final ItemEntity entity = (ItemEntity) goodies.get( i );
             final ItemStack stack = entity.getItem();
@@ -1706,7 +1736,7 @@ public class FairyJob
             }
         }
 
-        if ( count > 0 )
+        if (count > 0)
         {
 
             world.playSound( null, fairy.position().x, fairy.position().y, fairy.position().z, SoundEvents.ITEM_PICKUP, SoundSource.NEUTRAL,  0.4F,
@@ -1768,7 +1798,7 @@ public class FairyJob
             {
                 fairy.heal( 99 );
 
-                if ( stack.getItem() == Items.GLISTERING_MELON_SLICE )
+                if (stack.getItem() == Items.GLISTERING_MELON_SLICE)
                 {
                     fairy.setWithered( false );
                     fairy.witherTime = 0;
@@ -1784,17 +1814,16 @@ public class FairyJob
     }
 
     // Is the item a hoe?
-    private boolean isHoeItem( final Item item )
+    private boolean isHoeItem( final ItemStack i )
     {
-        return item == Items.WOODEN_HOE || item == Items.STONE_HOE || item == Items.IRON_HOE
-                || item == Items.DIAMOND_HOE || item == Items.GOLDEN_HOE || item == Items.NETHERITE_HOE;
+        return i.is(ModItemTags.IS_HOE_ITEM);
     }
 
     // Is the item an axe?
-    private boolean isAxeItem( final Item item )
+    private boolean isAxeItem( final ItemStack i )
     {
-        if ( item == Items.WOODEN_AXE || item == Items.STONE_AXE || item == Items.IRON_AXE || item == Items.DIAMOND_AXE
-                || item == Items.GOLDEN_AXE || item == Items.NETHERITE_AXE) {
+        if (i.is(ModItemTags.IS_AXE_ITEM))
+        {
             doHaveAxe = true;
             return true;
         }
@@ -1853,10 +1882,10 @@ public class FairyJob
         return item.is(ItemTags.SAPLINGS);
     }
 
-    // Is the item a sweetberry?
-    private boolean isSweetBerryBlock(final ItemStack item )
+    // Is the item a sweetberry like item?
+    private boolean isBerryBushItem(final ItemStack i )
     {
-        return item.is(Items.SWEET_BERRIES);
+        return i.is(ModItemTags.IS_BERRY_BUSH_ITEM);
     }
 
     private boolean isBambooBlock(final ItemStack item )
@@ -1870,41 +1899,31 @@ public class FairyJob
         return item.is(ItemTags.LOGS);
     }
 
-    private boolean isShearingItem(Item item )
+    private boolean isShearingItem( ItemStack i )
     {
-        return item == Items.SHEARS;
+        return i.is(ModItemTags.IS_SHEARING_ITEM);
     }
 
-    private boolean isClothBlock( final ItemStack item )
+    private boolean isClothBlock( final ItemStack i )
     {
-        return item.is(ItemTags.WOOL);
+        return i.is(ItemTags.WOOL);
     }
 
     // A fishing rod, used to fish
-    private boolean isFishingItem( final Item item )
+    private boolean isFishingItem( final ItemStack i )
     {
-        return item == Items.FISHING_ROD;
+        return i.is(ModItemTags.IS_FISHING_ITEM);
     }
 
     // Item gotten from fishing, also used to tame Ocelots
-    private boolean isRawFish( final ItemStack item )
+    private boolean isRawFish( final ItemStack i )
     {
-        return item.is(ItemTags.FISHES);
+        return i.is(ItemTags.FISHES);
     }
 
-    private boolean isAnimalProduct(Item i)
+    private boolean isAnimalProduct(ItemStack i)
     {
-        return (i == Items.CHICKEN)
-                || (i == Items.BEEF)
-                || (i == Items.MUTTON)
-                || (i == Items.PORKCHOP)
-                || (i == Items.COOKED_CHICKEN)
-                || (i == Items.COOKED_BEEF)
-                || (i == Items.COOKED_MUTTON)
-                || (i == Items.COOKED_PORKCHOP)
-                || (i == Items.LEATHER)
-                || (i == Items.EGG)
-                || (i == Items.HONEYCOMB);
+        return i.is(ModItemTags.IS_ANIMAL_PRODUCT);
     }
 
     private boolean isFishLoot( final ItemStack item )
@@ -1914,17 +1933,12 @@ public class FairyJob
 
     private boolean isFlower( final Item item )
     {
-        // NB: Let's just hope that iplantables are sufficient for this for now
-        //return item instanceof IPlantable;
         return  Block.byItem(item).defaultBlockState().is(BlockTags.FLOWERS);
     }
 
-    private boolean isBreedingItem(Item i)
+    private boolean isBreedingItem(ItemStack i)
     {
-        return (i == Items.WHEAT)
-                || (i == Items.CARROT)
-                || (i == Items.BEETROOT)
-                || (i == Items.POTATO);
+        return i.is(ModItemTags.IS_BREEDING_ITEM);
     }
 
     private boolean isAdditionalItemPickup( final ItemStack item )
@@ -1935,10 +1949,10 @@ public class FairyJob
     // Items worth picking up
     private boolean goodItem(final ItemStack stack, final int j )
     {
-        return isHoeItem( stack.getItem() ) || isSeedItem( stack.getItem() ) || isBonemealItem( stack.getItem()) || isAxeItem( stack.getItem() )
-                || isSaplingBlock( stack ) || isLogBlock( stack ) || FairyUtils.acceptableFoods(fairy, stack.getItem() )
-                ||  isBreedingItem( stack.getItem() ) ||  isShearingItem( stack.getItem() ) || isClothBlock( stack ) || isFishingItem( stack.getItem() )
-                || isAnimalProduct(stack.getItem()) || isRawFish( stack ) || isFishLoot(stack) || isFlower( stack.getItem())
+        return isHoeItem(stack) || isSeedItem(stack.getItem()) || isBonemealItem(stack.getItem()) || isAxeItem(stack)
+                || isSaplingBlock(stack) || isLogBlock(stack) || FairyUtils.acceptableFoods(fairy, stack)
+                ||  isBreedingItem(stack) ||  isShearingItem(stack) || isClothBlock(stack) || isFishingItem(stack)
+                || isAnimalProduct(stack) || isRawFish(stack) || isFishLoot(stack) || isFlower( stack.getItem())
                 || stack.is(Items.STICK) || stack.is(Blocks.PUMPKIN.asItem())|| isAdditionalItemPickup(stack);
     }
 }

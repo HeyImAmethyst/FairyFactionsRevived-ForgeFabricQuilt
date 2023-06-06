@@ -1672,7 +1672,7 @@ public class FairyEntity extends FairyEntityBase
             if (isRuler(player))
             {
                 if (stack != null && getHealth() < getMaxHealth()
-                        && FairyUtils.acceptableFoods(this, stack.getItem())
+                        && FairyUtils.acceptableFoods(this, stack)
                         && stack.getCount() > 0)
                 {
 
@@ -1819,7 +1819,7 @@ public class FairyEntity extends FairyEntityBase
                         || level.getDifficulty() == Difficulty.PEACEFUL )
                         && !( (queen() || posted() || tamed()) && tamed()) && !crying()
                         && !angry() && stack != null
-                        && FairyUtils.acceptableFoods(this, stack.getItem())
+                        && FairyUtils.acceptableFoods(this, stack)
                         && stack.getCount() > 0)
                 {
                     stack.shrink(1);
