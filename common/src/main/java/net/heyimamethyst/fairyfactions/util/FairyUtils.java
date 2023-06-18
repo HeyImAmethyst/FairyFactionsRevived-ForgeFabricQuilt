@@ -5,10 +5,12 @@ import com.google.common.collect.Maps;
 import net.heyimamethyst.fairyfactions.Loc;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.entities.FairyEntityBase;
+import net.heyimamethyst.fairyfactions.entities.ai.FairyJobManager;
 import net.heyimamethyst.fairyfactions.registry.ModItemTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.animal.*;
 import net.minecraft.world.item.Item;
@@ -254,5 +256,140 @@ public class FairyUtils
         return thing == Pig.class || thing == Cow.class
                 || thing == Chicken.class || thing == Sheep.class
                 || thing == MushroomCow.class;
+    }
+
+    //Fairy Job
+
+    // Is the item a hoe?
+    public static boolean isHoeItem( final ItemStack i )
+    {
+        return i.is(ModItemTags.IS_HOE_ITEM);
+    }
+
+    // Is the item an axe?
+    public static boolean isAxeItem( final ItemStack i )
+    {
+        if (i.is(ModItemTags.IS_AXE_ITEM))
+        {
+            FairyJobManager.INSTANCE.doHaveAxe = true;
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isSeedItem( final Item item )
+    {
+        return FairyUtils.isIPlantable(Block.byItem(item))
+                || item == Items.SUGAR_CANE
+                || Block.byItem(item) instanceof CocoaBlock;
+    }
+
+    public static boolean isBonemealItem( final Item item)
+    {
+        return item == Items.BONE_MEAL;
+    }
+
+    // Is the item a sapling?
+    public static boolean isSaplingBlock( final ItemStack item )
+    {
+        return item.is(ItemTags.SAPLINGS);
+    }
+
+    // Is the item a sweetberry like item?
+    public static boolean isBerryBushItem(final ItemStack i )
+    {
+        return i.is(ModItemTags.IS_BERRY_BUSH_ITEM);
+    }
+
+    public static boolean isBambooBlock(final ItemStack item )
+    {
+        return item.is(Items.BAMBOO);
+    }
+
+    // Is the item a log block?
+    public static boolean isLogBlock( final ItemStack item )
+    {
+        return item.is(ItemTags.LOGS);
+    }
+
+    public static boolean isShearingItem( ItemStack i )
+    {
+        return i.is(ModItemTags.IS_SHEARING_ITEM);
+    }
+
+    public static boolean isClothBlock( final ItemStack i )
+    {
+        return i.is(ItemTags.WOOL);
+    }
+
+    // A fishing rod, used to fish
+    public static boolean isFishingItem( final ItemStack i )
+    {
+        return i.is(ModItemTags.IS_FISHING_ITEM);
+    }
+
+    // Item gotten from fishing, also used to tame Ocelots
+    public static boolean isRawFish( final ItemStack i )
+    {
+        return i.is(ItemTags.FISHES);
+    }
+
+    public static boolean isAnimalProduct(ItemStack i)
+    {
+        return i.is(ModItemTags.IS_ANIMAL_PRODUCT);
+    }
+
+    public static boolean isFishLoot( final ItemStack item )
+    {
+        return item.is(ModItemTags.IS_FISH_LOOT);
+    }
+
+    public static boolean isFlower( final Item item )
+    {
+        return  Block.byItem(item).defaultBlockState().is(BlockTags.FLOWERS);
+    }
+
+    public static boolean isBreedingItem(ItemStack i)
+    {
+        return i.is(ModItemTags.IS_BREEDING_ITEM);
+    }
+
+    public static boolean isAdditionalItemPickup( final ItemStack item )
+    {
+        return item.is(ModItemTags.IS_ADDITIONAL_ITEM_PICKUP);
+    }
+
+    // Is it a plant that should be broken
+    public static boolean breakablePlant(final BlockState state, final Block above, final Block below )
+    {
+        // we're gonna treat this as everything block that should be punched.
+        // cocoa?... hrmmm
+        // mushrooms: tricky, when there are at least 4 other mushrooms of same type in 9x3x9 area.
+        // snow?  maybe?  if there's plants?  if there's no shovel?
+
+        // crops: that should be wheat, carrots and potatoes, when MD level is 7.
+        final Block block = state.getBlock();
+
+        return (
+                block instanceof CropBlock
+                        && (state.hasProperty(((CropBlock)block).getAgeProperty()) && ((CropBlock)block).isMaxAge(state)))
+                // not a crop, a bush apparently...
+                || block == Blocks.NETHER_WART && state.getValue(NetherWartBlock.AGE) == 3
+                // reeds: when above reeds.
+                || block == Blocks.SUGAR_CANE && above == Blocks.SUGAR_CANE && below != Blocks.SUGAR_CANE
+                // cactus: break only when above sand and below cactus, to prevent losing drops.
+                || block == Blocks.CACTUS && above == Blocks.CACTUS && below != Blocks.CACTUS
+                || block == Blocks.BAMBOO && above == Blocks.BAMBOO && below != Blocks.BAMBOO
+                // melons/pumkins... always?
+                || block == Blocks.MELON || block == Blocks.PUMPKIN
+                || block == Blocks.COCOA && state.getValue(CocoaBlock.AGE) == 2
+                // tallgrass, which drops seeds!
+                || block == Blocks.TALL_GRASS
+                || block == Blocks.GRASS
+                // all other doo-dads? ie bushes and tall plants?
+                //|| block == Blocks.DANDELION
+                //|| block == Blocks.POPPY
+                || block == Blocks.SNOW;
     }
 }
