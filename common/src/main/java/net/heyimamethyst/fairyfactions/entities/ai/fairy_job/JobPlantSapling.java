@@ -1,4 +1,4 @@
-package net.heyimamethyst.fairyfactions.entities.ai;
+package net.heyimamethyst.fairyfactions.entities.ai.fairy_job;
 
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
@@ -114,7 +114,7 @@ public class JobPlantSapling extends JobPlantVegitation
     @Override
     public boolean canStart()
     {
-        return FairyUtils.isSaplingBlock(stack);
+        return FairyUtils.isSaplingBlock(itemStack);
     }
 
     @Override

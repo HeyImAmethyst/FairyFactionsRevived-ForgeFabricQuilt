@@ -1,4 +1,4 @@
-package net.heyimamethyst.fairyfactions.entities.ai;
+package net.heyimamethyst.fairyfactions.entities.ai.fairy_job;
 
 import com.google.common.collect.Maps;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
@@ -165,6 +165,6 @@ public class JobShearing extends FairyJob
     @Override
     public boolean canStart()
     {
-        return !FairyJobManager.INSTANCE.triedShearing && FairyUtils.isShearingItem(stack);
+        return !FairyJobManager.INSTANCE.triedShearing && FairyUtils.isShearingItem(itemStack);
     }
 }
