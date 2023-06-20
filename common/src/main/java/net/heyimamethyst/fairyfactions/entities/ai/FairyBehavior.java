@@ -2,6 +2,7 @@ package net.heyimamethyst.fairyfactions.entities.ai;
 
 import net.heyimamethyst.fairyfactions.FairyConfigValues;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
+import net.heyimamethyst.fairyfactions.entities.ai.fairy_job.FairyJobManager;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -91,12 +92,14 @@ public class FairyBehavior
     {
         if (theFairy.getEntityFear() != null)
         {
+            Path currentPath = theFairy.getNavigation().getPath();
+
             if (!theFairy.getEntityFear().isAlive())
             {
                 // Don't fear the dead.
                 theFairy.setEntityFear(null);
             }
-            else if (!theFairy.getNavigation().isInProgress() && theFairy.hasLineOfSight(theFairy.getEntityFear())
+            else if (currentPath == null && theFairy.hasLineOfSight(theFairy.getEntityFear())
                     && theFairy.willCower())
             {
                 float dist = theFairy.distanceTo(theFairy.getEntityFear());
@@ -218,7 +221,9 @@ public class FairyBehavior
 
         // This makes fairies walk towards their ruler.
 
-        if (theFairy.getRuler() != null && !theFairy.getNavigation().isInProgress() && !theFairy.posted())
+        Path currentPath = theFairy.getNavigation().getPath();
+
+        if (theFairy.getRuler() != null /*&& currentPath == null*/ && !theFairy.posted())
         {
             float dist = theFairy.distanceTo(theFairy.getRuler());
 
@@ -228,12 +233,20 @@ public class FairyBehavior
             {
 
 
-				Path path = theFairy.getNavigation().createPath(theFairy.getRuler().blockPosition(), 1, 16);
+				//Path path = theFairy.getNavigation().createPath(theFairy.getRuler().blockPosition(), 1, 16);
+				Path path = theFairy.getNavigation().createPath(theFairy.getRuler().blockPosition(), 0);
 
 				if (path != null)
                 {
+                    theFairy.getLookControl().setLookAt(theFairy.getRuler(), 10.0F, (float)theFairy.getMaxHeadXRot());
                     theFairy.getNavigation().moveTo(path, speedModifier);
-				}
+
+                    //BlockPos pos = path.getTarget();
+                    //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
+
+                }
+
+                //theFairy.tryComputePath(theFairy.getRuler());
 
             }
             else
@@ -247,18 +260,30 @@ public class FairyBehavior
 
 						if (dest != null)
                         {
+                            theFairy.getLookControl().setLookAt(theFairy.getRuler(), 10.0F, (float)theFairy.getMaxHeadXRot());
                             theFairy.getNavigation().moveTo(dest, speedModifier);
+
+                            //BlockPos pos = dest.getTarget();
+                            //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
+
 						}
+
+                        //theFairy.tryComputePath(theFairy.getRuler());
                     }
                     else if (dist > 24F)
                     {
                         Path dest = theFairy.roam(theFairy.getRuler(), theFairy, 0F);
 
-
 						if (dest != null)
                         {
+                            theFairy.getLookControl().setLookAt(theFairy.getRuler(), 10.0F, (float)theFairy.getMaxHeadXRot());
                             theFairy.getNavigation().moveTo(dest, speedModifier);
+
+                            //BlockPos pos = dest.getTarget();
+                            //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
 						}
+
+                        //theFairy.tryComputePath(theFairy.getRuler());
 
                     }
                 }
@@ -275,12 +300,18 @@ public class FairyBehavior
                     else if (dist > ( theFairy.getRuler() instanceof FairyEntity ? 12F
                             : 6F ))
                     {
-                        Path dest = theFairy.roam(theFairy.getRuler(), theFairy, 0F);
+                      Path dest = theFairy.roam(theFairy.getRuler(), theFairy, 0F);
 
 						if (dest != null)
                         {
+                            theFairy.getLookControl().setLookAt(theFairy.getRuler(), 10.0F, (float)theFairy.getMaxHeadXRot());
                             theFairy.getNavigation().moveTo(dest, speedModifier);
+
+                            //BlockPos pos = dest.getTarget();
+                            //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
 						}
+
+                        //theFairy.tryComputePath(theFairy.getRuler());
                     }
                 }
             }
@@ -299,13 +330,17 @@ public class FairyBehavior
             {
                 theFairy.tossSnowball(theFairy.getRuler());
             }
-            else if (!theFairy.getNavigation().isInProgress() && dist < 16F)
+            else if (currentPath == null && dist < 16F)
             {
                 Path dest = theFairy.roam(theFairy.getRuler(), theFairy, 0F);
 
 				if (dest != null)
                 {
+                    theFairy.getLookControl().setLookAt(theFairy.getRuler(), 10.0F, (float)theFairy.getMaxHeadXRot());
                     theFairy.getNavigation().moveTo(dest, speedModifier);
+
+                    //BlockPos pos = dest.getTarget();
+                    //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
 				}
             }
         }
@@ -399,7 +434,7 @@ public class FairyBehavior
     // ruler.
     public void handleSocial()
     {
-        if (theFairy.getRandom().nextInt(2) == 0)
+        if (theFairy.getRandom().nextBoolean())
         {
             return;
         }
@@ -415,6 +450,8 @@ public class FairyBehavior
 
             if (entity != theFairy && theFairy.hasLineOfSight(entity) && entity.isAlive())
             {
+                Path currentPath = theFairy.getNavigation().getPath();
+
                 if (( theFairy.getRuler() != null || theFairy.queen() )
                         && entity instanceof FairyEntity
                         && FairyUtils.sameTeam(theFairy, (FairyEntity) entity))
@@ -504,7 +541,7 @@ public class FairyBehavior
                         break;
                     }
                 }
-                else if (entity instanceof PrimedTnt && !theFairy.getNavigation().isInProgress())
+                else if (entity instanceof PrimedTnt && currentPath == null)
                 {
                     // Running away from lit TNT.
                     float dist = theFairy.distanceTo(entity);
@@ -543,12 +580,14 @@ public class FairyBehavior
 
         if (theFairy.entityHeal != null)
         {
+            Path currentPath = theFairy.getNavigation().getPath();
+
             if (theFairy.entityHeal.getHealth() <= 0 || theFairy.entityHeal.isDeadOrDying())
             {
                 //FairyFactions.LOGGER.debug("removing entityHeal because entityHeal is dead");
                 theFairy.entityHeal = null;
             }
-            else if (!theFairy.getNavigation().isInProgress())
+            else if (currentPath == null)
             {
 
                 Path dest = theFairy.getNavigation().createPath(theFairy.entityHeal.blockPosition(), 1, 16);
@@ -639,7 +678,7 @@ public class FairyBehavior
     // A handler specifically for the rogue class.
     public void handleRogue()
     {
-        if (theFairy.getRandom().nextInt(2) == 0)
+        if (theFairy.getRandom().nextBoolean())
         {
             return;
         }
@@ -651,6 +690,8 @@ public class FairyBehavior
         for (int j = 0; j < list.size(); j++)
         {
             Entity entity = (Entity) list.get(j);
+
+            Path currentPath = theFairy.getNavigation().getPath();
 
             if (entity != theFairy && theFairy.hasLineOfSight(entity) && entity.isAlive())
             {
@@ -743,7 +784,7 @@ public class FairyBehavior
                         break;
                     }
                 }
-                else if (entity instanceof PrimedTnt && !theFairy.getNavigation().isInProgress())
+                else if (entity instanceof PrimedTnt && currentPath == null)
                 {
                     // Running away from lit TNT.
                     float dist = theFairy.distanceTo(entity);
@@ -959,7 +1000,7 @@ public class FairyBehavior
             }
             else if (theFairy.getRandom().nextInt(2) == 0)
             {
-                new FairyJob(theFairy).sittingFishing(level);
+                new FairyJobManager(theFairy).sittingFishing(level);
             }
 
             return;
@@ -989,7 +1030,7 @@ public class FairyBehavior
 
         if (theFairy.posted())
         {
-            new FairyJob(theFairy).discover(level);
+            new FairyJobManager(theFairy).discover(level);
         }
     }
 

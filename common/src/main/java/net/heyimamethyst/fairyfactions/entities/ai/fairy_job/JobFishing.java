@@ -1,4 +1,4 @@
-package net.heyimamethyst.fairyfactions.entities.ai;
+package net.heyimamethyst.fairyfactions.entities.ai.fairy_job;
 
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
@@ -191,6 +191,6 @@ public class JobFishing extends FairyJob
     @Override
     public boolean canStart()
     {
-        return FairyUtils.isFishingItem(stack);
+        return FairyUtils.isFishingItem(itemStack);
     }
 }

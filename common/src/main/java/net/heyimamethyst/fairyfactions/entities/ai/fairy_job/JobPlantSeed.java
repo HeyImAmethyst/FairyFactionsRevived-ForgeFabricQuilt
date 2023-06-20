@@ -1,4 +1,4 @@
-package net.heyimamethyst.fairyfactions.entities.ai;
+package net.heyimamethyst.fairyfactions.entities.ai.fairy_job;
 
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.registry.ModBlockTags;
@@ -88,6 +88,6 @@ public class JobPlantSeed extends FairyJob
     @Override
     public boolean canStart()
     {
-        return FairyUtils.isSeedItem(stack.getItem());
+        return FairyUtils.isSeedItem(itemStack.getItem());
     }
 }
