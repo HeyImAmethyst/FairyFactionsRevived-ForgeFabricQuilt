@@ -41,7 +41,7 @@ public class KeyInputHandler
                 mouseKey = 1;
             }
 
-            onInput(mc, mouseKey, mouseKey);
+            //onInput(mc, mouseKey, mouseKey);
         });
     }
 
@@ -71,12 +71,17 @@ public class KeyInputHandler
             {
                 FairyEntity fairy = (FairyEntity) assumedToBeLookedAt;
 
-                if(fairy.isPassenger() && player.getItemInHand(InteractionHand.MAIN_HAND) == ItemStack.EMPTY)
+                if(fairy.isPassenger() && player.getItemInHand(InteractionHand.MAIN_HAND) == ItemStack.EMPTY /*&& fairy.getMountTime() == 0*/)
                 {
                     if(key == 1 && action == 1 && !player.isShiftKeyDown())
                     {
                         FairyFactions.LOGGER.warn("Unmounting fairy "+fairy);
                         CommonMethods.sendFairyMount(fairy, player);
+
+                        fairy.setFlymode(true);
+                        fairy.setFlyTime(200);
+                        fairy.setCanFlap(true);
+                        //fairy.setMountTime(100);
                     }
                 }
             }
