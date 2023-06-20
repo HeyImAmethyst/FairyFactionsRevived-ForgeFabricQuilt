@@ -1,47 +1,33 @@
-package net.heyimamethyst.fairyfactions.entities.ai;
+package net.heyimamethyst.fairyfactions.entities.ai.fairy_job;
 
-import com.google.common.collect.Maps;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.registry.ModBlockTags;
-import net.heyimamethyst.fairyfactions.registry.ModItemTags;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlastFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.level.pathfinder.Path;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public class FairyJobManager
 {
@@ -85,6 +71,7 @@ public class FairyJobManager
         fairyJobs.add(new JobBreeding(fairy));
         fairyJobs.add(new JobShearing(fairy));
         fairyJobs.add(new JobFishing(fairy));
+        //fairyJobs.add(new JobSmelt(fairy));
     }
 
     public void discover( final Level world )
@@ -140,7 +127,7 @@ public class FairyJobManager
         getNearbyChest3( x, y, z, world );
     }
 
-    private static final int radius = 5;
+    public static final int radius = 5;
 
     private void getNearbyChest2( final int x, final int y, final int z, final Level world )
     {
@@ -176,7 +163,7 @@ public class FairyJobManager
                             {
                                 if ( checkChestItem(chest, p, x, y, z, world ) )
                                 {
-                                    cleanSlot(chest, p );
+                                    cleanSlotInChest(chest, p );
                                     fairy.postedCount = 2;
                                     return;
                                 }
@@ -229,7 +216,7 @@ public class FairyJobManager
                                 if ( stack != null && FairyUtils.isFishingItem( stack )
                                         &&  fishingJob.canRun( stack, x, y, z, world ) )
                                 {
-                                    cleanSlot( chest, p );
+                                    cleanSlotInChest( chest, p );
                                     fairy.postedCount = 2;
                                     return;
                                 }
@@ -239,6 +226,40 @@ public class FairyJobManager
                 }
             }
         }
+    }
+
+    public BlastFurnaceBlockEntity getNearbyBlastFurnace( final int x, final int y, final int z, final Level world )
+    {
+        int i, j, k;
+
+        for ( int a = -radius; a <= radius; a++ )
+        {
+            for ( int b = -2; b <= 2; b++ )
+            {
+                for ( int c = -radius; c <= radius; c++ )
+                {
+                    i = x + a;
+                    j = y + b;
+                    k = z + c;
+
+                    final BlockPos pos = new BlockPos(i, j, k);
+
+                    if ( world.getBlockState(pos).getBlock() instanceof BlastFurnaceBlock )
+                    {
+                        final BlockEntity blockEntity = world.getBlockEntity(pos);
+
+                        if ( blockEntity != null && blockEntity instanceof BlastFurnaceBlockEntity)
+                        {
+                            BlastFurnaceBlockEntity blastFurnaceBlockEntity = (BlastFurnaceBlockEntity) blockEntity;
+
+                            return  blastFurnaceBlockEntity;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     // Actions related to specific items.
@@ -255,7 +276,7 @@ public class FairyJobManager
 
             for (FairyJob fairyJob: fairyJobs )
             {
-                fairyJob.setStack(stack);
+                fairyJob.setItemStack(stack);
 
                 if(fairyJob.canRun(stack, x, y, z, world))
                 {
@@ -338,11 +359,19 @@ public class FairyJobManager
     }
 
     // Remove an itemstack that's been used up.
-    private void cleanSlot( final ChestBlockEntity chest, final int p )
+    private void cleanSlotInChest(final ChestBlockEntity chest, final int p )
     {
         if ( chest.getItem(p) != null && chest.getItem( p ).getItem() == null )
         {
             chest.setItem( p, (ItemStack) null );
+        }
+    }
+
+    public void cleanSlotInBlastFurnace(final BlastFurnaceBlockEntity blastFurnace, final int p )
+    {
+        if ( blastFurnace.getItem(p) != null && blastFurnace.getItem( p ).getItem() == null )
+        {
+            blastFurnace.setItem( p, (ItemStack) null );
         }
     }
 
