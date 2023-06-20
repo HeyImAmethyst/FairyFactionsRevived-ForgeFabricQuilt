@@ -1,4 +1,4 @@
-package net.heyimamethyst.fairyfactions.entities.ai;
+package net.heyimamethyst.fairyfactions.entities.ai.fairy_job;
 
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.registry.ModBlockTags;
@@ -120,6 +120,6 @@ public class JobPlantBerryBush extends JobPlantVegitation
     @Override
     public boolean canStart()
     {
-        return FairyUtils.isBerryBushItem(stack);
+        return FairyUtils.isBerryBushItem(itemStack);
     }
 }
