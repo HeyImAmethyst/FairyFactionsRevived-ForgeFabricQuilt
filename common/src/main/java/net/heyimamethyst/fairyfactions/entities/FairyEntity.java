@@ -11,8 +11,6 @@ import net.heyimamethyst.fairyfactions.registry.ModSounds;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.heyimamethyst.fairyfactions.world.FairyGroupGenerator;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -30,7 +28,6 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffectUtil;
@@ -60,7 +57,6 @@ import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.PlayerTeam;
@@ -124,7 +120,7 @@ public class FairyEntity extends FairyEntityBase
 
     public FairyAttackGoal fairyAttackGoal;
 
-    public FairyTasks fairyTasks;
+    public FairyBehavior fairyBehavior;
 
     private boolean isLandNavigator;
 
@@ -149,7 +145,7 @@ public class FairyEntity extends FairyEntityBase
         this.cower = this.getRandom().nextBoolean();
         this.postX = this.postY = this.postZ = -1;
 
-        fairyTasks = new FairyTasks(this, speedModifier);
+        fairyBehavior = new FairyBehavior(this, speedModifier);
         switchNavigator(flymode());
     }
 
@@ -799,7 +795,7 @@ public class FairyEntity extends FairyEntityBase
 
         if (isSitting())
         {
-            fairyTasks.handlePosted(this.level, false);
+            fairyBehavior.handlePosted(this.level, false);
             return;
         }
 
@@ -1803,12 +1799,11 @@ public class FairyEntity extends FairyEntityBase
                         // otherwise, right-clicking wears a fairy hat
 
                         CommonMethods.sendFairyMount(this, player);
-
                         setFlymode(true);
                         flyTime = 200;
                         setCanFlap(true);
 
-                        return InteractionResult.SUCCESS;
+                        return  InteractionResult.SUCCESS;
                     }
                 }
             }

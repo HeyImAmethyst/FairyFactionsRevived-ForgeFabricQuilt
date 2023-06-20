@@ -82,7 +82,6 @@ public class CommonMethods
             {
                 rider.stopRiding();
             }
-
         }
     }
 
