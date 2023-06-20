@@ -20,15 +20,14 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.pathfinder.Path;
 
-import java.util.Collections;
 import java.util.List;
 
-public class FairyTasks
+public class FairyBehavior
 {
     private FairyEntity theFairy;
     protected double speedModifier;
 
-    public FairyTasks (FairyEntity theFairy, double speedModifier)
+    public FairyBehavior(FairyEntity theFairy, double speedModifier)
     {
         this.theFairy = theFairy;
         this.speedModifier = speedModifier;

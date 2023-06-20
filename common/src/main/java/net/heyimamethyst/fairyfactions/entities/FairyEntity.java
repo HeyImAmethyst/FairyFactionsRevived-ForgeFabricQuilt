@@ -58,7 +58,6 @@ import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.PlayerTeam;
@@ -122,7 +121,7 @@ public class FairyEntity extends FairyEntityBase
 
     public FairyAttackGoal fairyAttackGoal;
 
-    public FairyTasks fairyTasks;
+    public FairyBehavior fairyBehavior;
 
     private boolean isLandNavigator;
 
@@ -147,7 +146,7 @@ public class FairyEntity extends FairyEntityBase
         this.cower = this.getRandom().nextBoolean();
         this.postX = this.postY = this.postZ = -1;
 
-        fairyTasks = new FairyTasks(this, speedModifier);
+        fairyBehavior = new FairyBehavior(this, speedModifier);
         switchNavigator(flymode());
     }
 
@@ -797,7 +796,7 @@ public class FairyEntity extends FairyEntityBase
 
         if (isSitting())
         {
-            fairyTasks.handlePosted(this.level, false);
+            fairyBehavior.handlePosted(this.level, false);
             return;
         }
 
