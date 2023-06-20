@@ -1,10 +1,14 @@
-package net.heyimamethyst.fairyfactions.entities.ai;
+package net.heyimamethyst.fairyfactions.entities.ai.goals;
 
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
+import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.util.AirAndWaterRandomPos;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
+import net.minecraft.world.entity.ai.util.HoverRandomPos;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,21 +28,8 @@ public class FairyAIStroll extends WaterAvoidingRandomStrollGoal
     @Override
     public void start()
     {
-        super.start();
-    }
-
-    @Override
-    public boolean canUse()
-    {
-        if(((FairyEntity) mob).isSitting())
-        {
-            return false;
-        }
-        else
-        {
-            return super.canUse();
-            //return mob.getNavigation().isDone() && mob.getRandom().nextInt(10) == 0;
-        }
+        if(!((FairyEntity) mob).isSitting())
+            super.start();
     }
 
     @Nullable
@@ -54,6 +45,17 @@ public class FairyAIStroll extends WaterAvoidingRandomStrollGoal
 //            int i = 8;
 //            Vec3 vec32 = HoverRandomPos.getPos(fairy, 8, 7, vec3.x, vec3.z, ((float)Math.PI / 2F), 3, 1);
 //            return vec32 != null ? vec32 : AirAndWaterRandomPos.getPos(fairy, 8, 4, -2, vec3.x, vec3.z, (double)((float)Math.PI / 2F));
+
+//            Vec3 vec3 = this.mob.getViewVector(0.0f);
+//            int i = 8;
+//
+//            Vec3 vec32 = HoverRandomPos.getPos(this.mob, 8, 7, vec3.x, vec3.z, 1.5707964f, 3, 1);
+//            if (vec32 != null)
+//            {
+//                return vec32;
+//            }
+//
+//            return AirAndWaterRandomPos.getPos(this.mob, 8, 4, -2, vec3.x, vec3.z, 1.5707963705062866);
 
             Vec3 landRandomPos = LandRandomPos.getPos(this.mob, 10, 7);
             Vec3 defaultRandomPos = DefaultRandomPos.getPos(this.mob, 10, 7);
@@ -82,19 +84,8 @@ public class FairyAIStroll extends WaterAvoidingRandomStrollGoal
             }
             else
             {
-
                 return this.mob.getRandom().nextFloat() >= this.probability ? LandRandomPos.getPos(this.mob, 10, 7) : DefaultRandomPos.getPos(this.mob, 10, 7);
             }
         }
-
-//        if (fairy.isInWaterOrBubble())
-//        {
-//            Vec3 vec3 = LandRandomPos.getPos(fairy, 15, 7);
-//            return vec3 == null ? super.getPosition() : vec3;
-//        }
-//        else
-//        {
-//            return fairy.getRandom().nextFloat() >= this.probability ? LandRandomPos.getPos(fairy, 10, 7) : super.getPosition();
-//        }
     }
 }

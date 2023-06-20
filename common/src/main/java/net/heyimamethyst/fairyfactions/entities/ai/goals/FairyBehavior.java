@@ -1,4 +1,4 @@
-package net.heyimamethyst.fairyfactions.entities.ai;
+package net.heyimamethyst.fairyfactions.entities.ai.goals;
 
 import net.heyimamethyst.fairyfactions.FairyConfigValues;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;

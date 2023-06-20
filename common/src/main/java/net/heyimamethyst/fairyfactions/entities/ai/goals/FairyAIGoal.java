@@ -1,13 +1,22 @@
-package net.heyimamethyst.fairyfactions.entities.ai;
+package net.heyimamethyst.fairyfactions.entities.ai.goals;
 
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
+import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
+import net.minecraft.world.entity.ai.util.LandRandomPos;
+import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
-public class FairyAI extends Goal
+import java.util.EnumSet;
+
+public class FairyAIGoal extends Goal
 {
     private FairyEntity theFairy;
 
-    public FairyAI(FairyEntity fairy)
+    public FairyAIGoal(FairyEntity fairy)
     {
         this.theFairy = fairy;
     }
@@ -52,30 +61,30 @@ public class FairyAI extends Goal
 
             if (theFairy.angry())
             {
-                theFairy.fairyTasks.handleAnger();
+                theFairy.fairyBehavior.handleAnger();
             }
             else if (theFairy.crying())
             {
-                theFairy.fairyTasks.handleFear();
+                theFairy.fairyBehavior.handleFear();
             }
             else
             {
-                theFairy.fairyTasks.handleRuler();
+                //theFairy.fairyBehavior.handleRuler();
 
                 if (theFairy.medic())
                 {
-                    theFairy.fairyTasks.handleHealing();
+                    theFairy.fairyBehavior.handleHealing();
                 }
                 else if (theFairy.rogue())
                 {
-                    theFairy.fairyTasks.handleRogue();
+                    theFairy.fairyBehavior.handleRogue();
                 }
                 else
                 {
-                    theFairy.fairyTasks.handleSocial();
+                    theFairy.fairyBehavior.handleSocial();
                 }
 
-                theFairy.fairyTasks.handlePosted(theFairy.level,true);
+                theFairy.fairyBehavior.handlePosted(theFairy.level,true);
             }
 
         }
