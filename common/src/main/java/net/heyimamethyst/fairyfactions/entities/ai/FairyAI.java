@@ -52,30 +52,30 @@ public class FairyAI extends Goal
 
             if (theFairy.angry())
             {
-                theFairy.fairyTasks.handleAnger();
+                theFairy.fairyBehavior.handleAnger();
             }
             else if (theFairy.crying())
             {
-                theFairy.fairyTasks.handleFear();
+                theFairy.fairyBehavior.handleFear();
             }
             else
             {
-                theFairy.fairyTasks.handleRuler();
+                theFairy.fairyBehavior.handleRuler();
 
                 if (theFairy.medic())
                 {
-                    theFairy.fairyTasks.handleHealing();
+                    theFairy.fairyBehavior.handleHealing();
                 }
                 else if (theFairy.rogue())
                 {
-                    theFairy.fairyTasks.handleRogue();
+                    theFairy.fairyBehavior.handleRogue();
                 }
                 else
                 {
-                    theFairy.fairyTasks.handleSocial();
+                    theFairy.fairyBehavior.handleSocial();
                 }
 
-                theFairy.fairyTasks.handlePosted(theFairy.level,true);
+                theFairy.fairyBehavior.handlePosted(theFairy.level,true);
             }
 
         }

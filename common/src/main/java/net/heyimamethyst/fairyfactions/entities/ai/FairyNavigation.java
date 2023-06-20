@@ -15,10 +15,10 @@ public class FairyNavigation extends GroundPathNavigation
         this.fairy = fairy;
     }
 
-    public void tick()
-    {
-        ++this.tick;
-    }
+//    public void tick()
+//    {
+//        ++this.tick;
+//    }
 
 //    protected PathFinder createPathFinder(int pMaxVisitedNodes)
 //    {
