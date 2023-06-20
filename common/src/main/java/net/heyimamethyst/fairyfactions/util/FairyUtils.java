@@ -1,11 +1,10 @@
 package net.heyimamethyst.fairyfactions.util;
 
 
-import com.google.common.collect.Maps;
 import net.heyimamethyst.fairyfactions.Loc;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.entities.FairyEntityBase;
-import net.heyimamethyst.fairyfactions.entities.ai.FairyJobManager;
+import net.heyimamethyst.fairyfactions.entities.ai.fairy_job.FairyJobManager;
 import net.heyimamethyst.fairyfactions.registry.ModItemTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -16,15 +15,11 @@ import net.minecraft.world.entity.animal.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.Map;
 
 public class FairyUtils
 {

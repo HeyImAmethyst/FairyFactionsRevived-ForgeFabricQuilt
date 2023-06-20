@@ -180,7 +180,7 @@ public class FairyBehavior
                             break;
                         }
                         else if (theFairy.getFaction() == 0 && fairy.getFaction() > 0
-                                && theFairy.getSensing().hasLineOfSight(fairy))
+                                && theFairy.hasLineOfSight(fairy))
                         {
                             // A factionless fairy may find a new ruler on its
                             // own.
@@ -207,7 +207,7 @@ public class FairyBehavior
                     Player player = (Player) list.get(j);
 
                     if (player.getHealth() > 0 && theFairy.isRuler(player)
-                            && theFairy.getSensing().hasLineOfSight(player))
+                            && theFairy.hasLineOfSight(player))
                     {
                         //FairyFactions.LOGGER.debug(theFairy.toString()+": found a player ruler to follow");
 
@@ -224,18 +224,18 @@ public class FairyBehavior
 
         Path currentPath = theFairy.getNavigation().getPath();
 
-        if (theFairy.getRuler() != null /*&& currentPath == null*/ && !theFairy.posted())
+        if (theFairy.getRuler() != null && currentPath == null && !theFairy.posted())
         {
             float dist = theFairy.distanceTo(theFairy.getRuler());
 
             // Guards and Queens walk closer to the player (Medic healing?)
-            if (( theFairy.guard() || theFairy.queen() ) && theFairy.getSensing().hasLineOfSight(theFairy.getRuler()) && dist > 5F
+            if (( theFairy.guard() || theFairy.queen() ) && theFairy.hasLineOfSight(theFairy.getRuler()) && dist > 5F
                     && dist < 16F)
             {
 
 
 				//Path path = theFairy.getNavigation().createPath(theFairy.getRuler().blockPosition(), 1, 16);
-				Path path = theFairy.getNavigation().createPath(theFairy.getRuler().blockPosition(), 0);
+				Path path = theFairy.getNavigation().createPath(theFairy.getRuler(), 0);
 
 				if (path != null)
                 {
@@ -246,8 +246,6 @@ public class FairyBehavior
                     //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
 
                 }
-
-                //theFairy.tryComputePath(theFairy.getRuler());
 
             }
             else
@@ -268,8 +266,6 @@ public class FairyBehavior
                             //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
 
 						}
-
-                        //theFairy.tryComputePath(theFairy.getRuler());
                     }
                     else if (dist > 24F)
                     {
@@ -284,8 +280,6 @@ public class FairyBehavior
                             //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
 						}
 
-                        //theFairy.tryComputePath(theFairy.getRuler());
-
                     }
                 }
                 else
@@ -298,8 +292,7 @@ public class FairyBehavior
                         // eye or an ender pearl.
                         theFairy.teleportToRuler(theFairy.getRuler());
                     }
-                    else if (dist > ( theFairy.getRuler() instanceof FairyEntity ? 12F
-                            : 6F ))
+                    else if (dist > ( theFairy.getRuler() instanceof FairyEntity ? 12F : 6F ))
                     {
                       Path dest = theFairy.roam(theFairy.getRuler(), theFairy, 0F);
 
@@ -311,8 +304,6 @@ public class FairyBehavior
                             //BlockPos pos = dest.getTarget();
                             //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
 						}
-
-                        //theFairy.tryComputePath(theFairy.getRuler());
                     }
                 }
             }
@@ -327,7 +318,7 @@ public class FairyBehavior
 
             float dist = theFairy.distanceTo(theFairy.getRuler());
 
-            if (dist < 10F && theFairy.getSensing().hasLineOfSight(theFairy.getRuler()))
+            if (dist < 10F && theFairy.hasLineOfSight(theFairy.getRuler()))
             {
                 theFairy.tossSnowball(theFairy.getRuler());
             }

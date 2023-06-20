@@ -37,7 +37,7 @@ public class ForgeClientEvents
 		if(mc.level == null)
 			return;
 
-		onInput(mc, event.getButton(), event.getAction());
+		//onInput(mc, event.getButton(), event.getAction());
 	}
 
 	private static void onInput(Minecraft mc, int key, int action)
