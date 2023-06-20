@@ -1,4 +1,4 @@
-package net.heyimamethyst.fairyfactions.entities.ai;
+package net.heyimamethyst.fairyfactions.entities.ai.fairy_job;
 
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
@@ -115,6 +115,6 @@ public class JobPlantBamboo extends JobPlantVegitation
     @Override
     public boolean canStart()
     {
-        return FairyUtils.isBambooBlock(stack);
+        return FairyUtils.isBambooBlock(itemStack);
     }
 }
