@@ -39,40 +39,52 @@ public class FairyFlyingMoveControl extends MoveControl
                 return;
             }
 
-            if(mob instanceof FairyEntity)
+            FairyEntity fairy = (FairyEntity)mob;
+
+            Vec3 vec3 = new Vec3(d0, d2, d1);
+            vec3 = vec3.normalize();
+
+            if(vec3 != Vec3.ZERO)
             {
-                FairyEntity fairy = (FairyEntity)mob;
+                float f9 = (float)(Mth.atan2(d1, d0) * (double)(180F / (float)Math.PI)) - 90.0F;
+                this.mob.setYRot(this.rotlerp(this.mob.getYRot(), f9, 90.0F));
+            }
 
-                Vec3 vec3 = new Vec3(d0, d2, d1);
-                vec3 = vec3.normalize();
+            //float f9 = (float)(Mth.atan2(d1, d0) * (double)(180F / (float)Math.PI)) - 90.0F;
+            //this.mob.setYRot(this.rotlerp(this.mob.getYRot(), f9, 90.0F));
 
-                if(vec3 != Vec3.ZERO)
+            float f1 = (float)(this.speedModifier * this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED));
+            this.mob.setSpeed(f1);
+
+            BlockPos blockpos = this.mob.blockPosition();
+            BlockState blockstate = this.mob.level.getBlockState(blockpos);
+            VoxelShape voxelshape = blockstate.getCollisionShape(this.mob.level, blockpos);
+
+            if (d2 > (double)this.mob.maxUpStep && d0 * d0 + d1 * d1 < (double)Math.max(1.0F, this.mob.getBbWidth()) || !voxelshape.isEmpty() && this.mob.getY() < voxelshape.max(Direction.Axis.Y) + (double)blockpos.getY() && !blockstate.is(BlockTags.DOORS) && !blockstate.is(BlockTags.FENCES))
+            {
+                this.mob.getJumpControl().jump();
+                this.operation = Operation.JUMPING;
+            }
+
+            if(fairy.flymode())
+            {
+                double d4 = Math.sqrt(d0 * d0 + d1 * d1);
+
+                if (Math.abs(d2) > (double)1.0E-5F || Math.abs(d4) > (double)1.0E-5F)
                 {
-                    float f9 = (float)(Mth.atan2(d1, d0) * (double)(180F / (float)Math.PI)) - 90.0F;
-                    this.mob.setYRot(this.rotlerp(this.mob.getYRot(), f9, 90.0F));
+                    float f2 = (float)(-(Mth.atan2(d2, d4) * (double)(180F / (float)Math.PI)));
+                    this.mob.setXRot(this.rotlerp(this.mob.getXRot(), f2, 10F));
+                    this.mob.setYya(d2 > 0.0D ? f1 : -f1);
                 }
+            }
+        }
+        else if (this.operation == Operation.JUMPING)
+        {
+            this.mob.setSpeed((float)(this.speedModifier * this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED)));
 
-                float f1 = (float)(this.speedModifier * this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED));
-                this.mob.setSpeed(f1);
-
-                BlockPos blockpos = this.mob.blockPosition();
-                BlockState blockstate = this.mob.level.getBlockState(blockpos);
-                VoxelShape voxelshape = blockstate.getCollisionShape(this.mob.level, blockpos);
-
-                if (d2 > (double)this.mob.maxUpStep && d0 * d0 + d1 * d1 < (double)Math.max(1.0F, this.mob.getBbWidth()) || !voxelshape.isEmpty() && this.mob.getY() < voxelshape.max(Direction.Axis.Y) + (double)blockpos.getY() && !blockstate.is(BlockTags.DOORS) && !blockstate.is(BlockTags.FENCES))
-                {
-                    this.mob.getJumpControl().jump();
-                    this.operation = Operation.JUMPING;
-                }
-
-//                    double d4 = Math.sqrt(d0 * d0 + d1 * d1);
-//
-//                    if (Math.abs(d2) > (double)1.0E-5F || Math.abs(d4) > (double)1.0E-5F)
-//                    {
-//                        float f2 = (float)(-(Mth.atan2(d2, d4) * (double)(180F / (float)Math.PI)));
-//                        //this.mob.setXRot(this.rotlerp(this.mob.getXRot(), f2, (float)this.maxTurn));
-//                        this.mob.setYya(d2 > 0.0D ? f1 : -f1);
-//                    }
+            if (this.mob.isOnGround())
+            {
+                this.operation = Operation.WAIT;
             }
         }
         else if (this.operation == Operation.STRAFE)

@@ -4,6 +4,7 @@ import net.heyimamethyst.fairyfactions.FairyConfigValues;
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.Loc;
 import net.heyimamethyst.fairyfactions.entities.ai.*;
+import net.heyimamethyst.fairyfactions.entities.ai.goals.*;
 import net.heyimamethyst.fairyfactions.proxy.ClientMethods;
 import net.heyimamethyst.fairyfactions.proxy.CommonMethods;
 import net.heyimamethyst.fairyfactions.registry.ModSounds;
@@ -119,7 +120,6 @@ public class FairyEntity extends FairyEntityBase
     }
 
     public FairyAttackGoal fairyAttackGoal;
-
     public FairyBehavior fairyBehavior;
 
     private boolean isLandNavigator;
@@ -147,6 +147,7 @@ public class FairyEntity extends FairyEntityBase
 
         fairyBehavior = new FairyBehavior(this, speedModifier);
         switchNavigator(flymode());
+
     }
 
     @Override
@@ -158,7 +159,7 @@ public class FairyEntity extends FairyEntityBase
 
         this.goalSelector.addGoal(1, fairyAttackGoal);
 
-        this.goalSelector.addGoal(4, new FairyAI((this)));
+        this.goalSelector.addGoal(4, new FairyAIGoal((this)));
 
         //this.goalSelector.addGoal(10, new FairyAIStroll(this, speedModifier, 1.0000001E-5F));
         this.goalSelector.addGoal(4, new FairyAIStroll(this, 0.3D));
@@ -173,7 +174,6 @@ public class FairyEntity extends FairyEntityBase
     }
 
     //method came from https://github.com/AlexModGuy/AlexsMobs/blob/45e9351d567a26310b62ead7f10536c09782abd4/src/main/java/com/github/alexthe666/alexsmobs/entity/EntityBlueJay.java#L162
-    //helped fixed flying spining bug
     private void switchNavigator(boolean flymode)
     {
         if (flymode)
@@ -391,7 +391,8 @@ public class FairyEntity extends FairyEntityBase
         //return super.getMyRidingOffset(p_20228_);
         //return 0.14D;
         //return 0.24D;
-        return 0.45D;
+        //return 0.45D;
+        return 0.27D;
     }
 
     @Override
@@ -495,7 +496,9 @@ public class FairyEntity extends FairyEntityBase
         {
             updateWithering();
             setHealth(getHealth());
-            setFairyClimbing(flymode() && canFlap() && this.getNavigation().isInProgress() && horizontalCollision);
+
+            Path currentPath = this.getNavigation().getPath();
+            setFairyClimbing(flymode() && canFlap() && currentPath != null && horizontalCollision);
 
             if (isSitting() && (getVehicle() != null || !onGround ))
             {
@@ -920,6 +923,48 @@ public class FairyEntity extends FairyEntityBase
             {
                 this.cryTime = 600;
             }
+        }
+
+        ++listActions;
+
+        if (listActions >= 8)
+        {
+            listActions = this.getRandom().nextInt(3);
+
+            fairyBehavior.handleRuler();
+
+//            if(isSitting())
+//            {
+//                return;
+//            }
+//
+//            if (angry())
+//            {
+//                fairyBehavior.handleAnger();
+//            }
+//            else if (crying())
+//            {
+//                fairyBehavior.handleFear();
+//            }
+//            else
+//            {
+//                fairyBehavior.handleRuler();
+//
+//                if (medic())
+//                {
+//                    fairyBehavior.handleHealing();
+//                }
+//                else if (rogue())
+//                {
+//                    fairyBehavior.handleRogue();
+//                }
+//                else
+//                {
+//                    fairyBehavior.handleSocial();
+//                }
+//
+//                fairyBehavior.handlePosted(this.level,true);
+//            }
         }
 
         // fairies run away from players in peaceful
@@ -1791,8 +1836,7 @@ public class FairyEntity extends FairyEntityBase
 
                         return InteractionResult.SUCCESS;
                     }
-                    else if (stack == null
-                            || !FairyUtils.snowballItem(stack.getItem()))
+                    else if ((stack == null || !FairyUtils.snowballItem(stack.getItem())) && !player.isShiftKeyDown())
                     {
                         // otherwise, right-clicking wears a fairy hat
 
