@@ -4,6 +4,7 @@ import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.registry.ModItemTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.tags.BlockTags;
@@ -152,7 +153,7 @@ public class JobSmelt extends FairyJob
 //                        Recipe recipe = world.getRecipeManager().getRecipeFor(blastFurnace.recipeType, blastFurnace, world).orElse(null);
 //                        int maxStackSize = blastFurnace.getMaxStackSize();
 //
-//                        if(canBurn(recipe, blastFurnace, maxStackSize))
+//                        if(canBurn(world.registryAccess(), recipe, blastFurnace, maxStackSize))
 //                        {
 //                            blastFurnace.setItem(0, stack);
 //                            return true;
@@ -169,7 +170,7 @@ public class JobSmelt extends FairyJob
         return false;
     }
 
-    private boolean canBurn(@Nullable Recipe<?> recipe, AbstractFurnaceBlockEntity entity, int i)
+    private boolean canBurn(RegistryAccess registryAccess, @Nullable Recipe<?> recipe, AbstractFurnaceBlockEntity entity, int i)
     {
 
         if (entity.getItem(0).isEmpty() || recipe == null)
@@ -177,7 +178,7 @@ public class JobSmelt extends FairyJob
             return false;
         }
 
-        ItemStack itemStack = recipe.getResultItem();
+        ItemStack itemStack = recipe.getResultItem(registryAccess);
 
         if (itemStack.isEmpty())
         {
