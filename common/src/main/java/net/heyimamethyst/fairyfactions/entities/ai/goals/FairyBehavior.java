@@ -107,11 +107,22 @@ public class FairyBehavior
                 // Run from entityFear if you can see it and it is close.
                 if (dist < FairyConfigValues.BEHAVIOR_FEAR_RANGE)
                 {
-                    Path dest = theFairy.roam(theFairy.getEntityFear(), theFairy, theFairy.PATH_AWAY);
+//                    Path dest = theFairy.roam(theFairy.getEntityFear(), theFairy, theFairy.PATH_AWAY);
+//
+//                    if (dest != null)
+//                    {
+//                        theFairy.getNavigation().moveTo(dest, speedModifier);
+//                        theFairy.setCryTime(theFairy.getCryTime() + 120);
+//                    }
 
-                    if (dest != null)
+                    BlockPos pos = theFairy.roamBlockPos(
+                            theFairy.getEntityFear().blockPosition().getX(),
+                            theFairy.flymode() ? theFairy.blockPosition().getY() : theFairy.getEntityFear().blockPosition().getY(),
+                            theFairy.getEntityFear().blockPosition().getZ(), theFairy, theFairy.PATH_AWAY);
+
+                    if (pos != null)
                     {
-                        theFairy.getNavigation().moveTo(dest, speedModifier);
+                        theFairy.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
                         theFairy.setCryTime(theFairy.getCryTime() + 120);
                     }
                 }
@@ -232,19 +243,32 @@ public class FairyBehavior
                     && dist < 16F)
             {
 
+                BlockPos targetBlockPos;
+
+                if(theFairy.flymode())
+                {
+                    targetBlockPos = new BlockPos(theFairy.getRuler().blockPosition().getX(), theFairy.blockPosition().getY(), theFairy.getRuler().blockPosition().getZ());
+                }
+                else
+                {
+                    targetBlockPos = theFairy.getRuler().blockPosition();
+                }
 
 				//Path path = theFairy.getNavigation().createPath(theFairy.getRuler().blockPosition(), 1, 16);
-				Path path = theFairy.getNavigation().createPath(theFairy.getRuler(), 0);
+				//Path path = theFairy.getNavigation().createPath(theFairy.getRuler(), 0);
+				//Path path = theFairy.getNavigation().createPath(targetBlockPos, 1, 16);
 
-				if (path != null)
-                {
-                    theFairy.getLookControl().setLookAt(theFairy.getRuler(), 10.0F, (float)theFairy.getMaxHeadXRot());
-                    theFairy.getNavigation().moveTo(path, speedModifier);
+//				if (path != null)
+//                {
+//                    //theFairy.getLookControl().setLookAt(theFairy.getRuler(), 10.0F, (float)theFairy.getMaxHeadXRot());
+//                    theFairy.getNavigation().moveTo(targetBlockPos.getX(), targetBlockPos.getY(), targetBlockPos.getZ(), speedModifier);
+//
+//                    //BlockPos pos = path.getTarget();
+//                    //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
+//
+//                }
 
-                    //BlockPos pos = path.getTarget();
-                    //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
-
-                }
+                theFairy.getNavigation().moveTo(targetBlockPos.getX(), targetBlockPos.getY(), targetBlockPos.getZ(), speedModifier);
 
             }
             else
@@ -254,30 +278,46 @@ public class FairyBehavior
                     // Scouts stay way out there on the perimeter.
                     if (dist < 12F)
                     {
-                        Path dest = theFairy.roam(theFairy.getRuler(), theFairy, (float) Math.PI);
+//                        Path dest = theFairy.roam(theFairy.getRuler(), theFairy, (float) Math.PI);
+//
+//						if (dest != null)
+//                        {
+//                            //theFairy.getLookControl().setLookAt(theFairy.getRuler(), 10.0F, (float)theFairy.getMaxHeadXRot());
+//                            theFairy.getNavigation().moveTo(dest, speedModifier);
+//
+//                            //BlockPos pos = dest.getTarget();
+//                            //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
+//
+//						}
 
-						if (dest != null)
-                        {
-                            theFairy.getLookControl().setLookAt(theFairy.getRuler(), 10.0F, (float)theFairy.getMaxHeadXRot());
-                            theFairy.getNavigation().moveTo(dest, speedModifier);
+                        BlockPos pos = theFairy.roamBlockPos(
+                                theFairy.getRuler().blockPosition().getX(),
+                                theFairy.flymode() ? theFairy.blockPosition().getY() : theFairy.getRuler().blockPosition().getY(),
+                                theFairy.getRuler().blockPosition().getZ(), theFairy, (float) Math.PI);
 
-                            //BlockPos pos = dest.getTarget();
-                            //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
-
-						}
+                        if (pos != null)
+                            theFairy.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
                     }
                     else if (dist > 24F)
                     {
-                        Path dest = theFairy.roam(theFairy.getRuler(), theFairy, 0F);
+//                        Path dest = theFairy.roam(theFairy.getRuler(), theFairy, 0F);
+//
+//						if (dest != null)
+//                        {
+//                            //theFairy.getLookControl().setLookAt(theFairy.getRuler(), 10.0F, (float)theFairy.getMaxHeadXRot());
+//                            theFairy.getNavigation().moveTo(dest, speedModifier);
+//
+//                            //BlockPos pos = dest.getTarget();
+//                            //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
+//						}
 
-						if (dest != null)
-                        {
-                            theFairy.getLookControl().setLookAt(theFairy.getRuler(), 10.0F, (float)theFairy.getMaxHeadXRot());
-                            theFairy.getNavigation().moveTo(dest, speedModifier);
+                        BlockPos pos = theFairy.roamBlockPos(
+                                theFairy.getRuler().blockPosition().getX(),
+                                theFairy.flymode() ? theFairy.blockPosition().getY() : theFairy.getRuler().blockPosition().getY(),
+                                theFairy.getRuler().blockPosition().getZ(), theFairy, 0);
 
-                            //BlockPos pos = dest.getTarget();
-                            //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
-						}
+                        if (pos != null)
+                            theFairy.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
 
                     }
                 }
@@ -293,16 +333,24 @@ public class FairyBehavior
                     }
                     else if (dist > ( theFairy.getRuler() instanceof FairyEntity ? 12F : 6F ))
                     {
-                      Path dest = theFairy.roam(theFairy.getRuler(), theFairy, 0F);
+//                      Path dest = theFairy.roam(theFairy.getRuler(), theFairy, 0F);
+//
+//						if (dest != null)
+//                        {
+//                            //theFairy.getLookControl().setLookAt(theFairy.getRuler(), 10.0F, (float)theFairy.getMaxHeadXRot());
+//                            theFairy.getNavigation().moveTo(dest, speedModifier);
+//
+//                            //BlockPos pos = dest.getTarget();
+//                            //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
+//						}
 
-						if (dest != null)
-                        {
-                            theFairy.getLookControl().setLookAt(theFairy.getRuler(), 10.0F, (float)theFairy.getMaxHeadXRot());
-                            theFairy.getNavigation().moveTo(dest, speedModifier);
+                        BlockPos pos = theFairy.roamBlockPos(
+                                theFairy.getRuler().blockPosition().getX(),
+                                theFairy.flymode() ? theFairy.blockPosition().getY() : theFairy.getRuler().blockPosition().getY(),
+                                theFairy.getRuler().blockPosition().getZ(), theFairy, 0);
 
-                            //BlockPos pos = dest.getTarget();
-                            //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
-						}
+                        if (pos != null)
+                            theFairy.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
                     }
                 }
             }
@@ -323,16 +371,24 @@ public class FairyBehavior
             }
             else if (currentPath == null && dist < 16F)
             {
-                Path dest = theFairy.roam(theFairy.getRuler(), theFairy, 0F);
+//                Path dest = theFairy.roam(theFairy.getRuler(), theFairy, 0F);
+//
+//				if (dest != null)
+//                {
+//                    theFairy.getLookControl().setLookAt(theFairy.getRuler(), 10.0F, (float)theFairy.getMaxHeadXRot());
+//                    theFairy.getNavigation().moveTo(dest, speedModifier);
+//
+//                    //BlockPos pos = dest.getTarget();
+//                    //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
+//				}
 
-				if (dest != null)
-                {
-                    theFairy.getLookControl().setLookAt(theFairy.getRuler(), 10.0F, (float)theFairy.getMaxHeadXRot());
-                    theFairy.getNavigation().moveTo(dest, speedModifier);
+                BlockPos pos = theFairy.roamBlockPos(
+                        theFairy.getRuler().blockPosition().getX(),
+                        theFairy.flymode() ? theFairy.blockPosition().getY() : theFairy.getRuler().blockPosition().getY(),
+                        theFairy.getRuler().blockPosition().getZ(), theFairy, 0);
 
-                    //BlockPos pos = dest.getTarget();
-                    //theFairy.getMoveControl().setWantedPosition(pos.getX(), pos.getY() + theFairy.getRuler().getEyeHeight(), pos.getZ(), 0.7D);
-				}
+                if (pos != null)
+                    theFairy.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
             }
         }
 
@@ -481,13 +537,22 @@ public class FairyBehavior
                                 {
                                     theFairy.setCryTime(120);
                                     theFairy.setEntityFear(scary);
-                                    Path dest = theFairy.roam(entity, theFairy,
-                                            (float) Math.PI);
 
-                                    if (dest != null)
-                                    {
-                                        theFairy.getNavigation().moveTo(dest, speedModifier);
-                                    }
+//                                    Path dest = theFairy.roam(entity, theFairy,
+//                                            (float) Math.PI);
+//
+//                                    if (dest != null)
+//                                    {
+//                                        theFairy.getNavigation().moveTo(dest, speedModifier);
+//                                    }
+
+                                    BlockPos pos = theFairy.roamBlockPos(
+                                            entity.blockPosition().getX(),
+                                            theFairy.flymode() ? theFairy.blockPosition().getY() : entity.blockPosition().getY(),
+                                            entity.blockPosition().getZ(), theFairy, (float) Math.PI);
+
+                                    if (pos != null)
+                                        theFairy.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
 
                                     break;
                                 }
@@ -495,12 +560,21 @@ public class FairyBehavior
                                 {
                                     theFairy.setCryTime(Math.max(fairy.getCryTime() - 60, 0));
                                     theFairy.setEntityFear(scary);
-                                    Path dest = theFairy.roam(entity, theFairy, (float) Math.PI);
 
-                                    if (dest != null)
-                                    {
-                                        theFairy.getNavigation().moveTo(dest, speedModifier);
-                                    }
+//                                    Path dest = theFairy.roam(entity, theFairy, (float) Math.PI);
+//
+//                                    if (dest != null)
+//                                    {
+//                                        theFairy.getNavigation().moveTo(dest, speedModifier);
+//                                    }
+
+                                    BlockPos pos = theFairy.roamBlockPos(
+                                            entity.blockPosition().getX(),
+                                            theFairy.flymode() ? theFairy.blockPosition().getY() : entity.blockPosition().getY(),
+                                            entity.blockPosition().getZ(), theFairy, (float) Math.PI);
+
+                                    if (pos != null)
+                                        theFairy.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
 
                                     break;
                                 }
@@ -539,11 +613,30 @@ public class FairyBehavior
 
                     if (dist < 8F)
                     {
-                        Path dest = theFairy.roam(entity, theFairy, (float) Math.PI);
+//                        Path dest = theFairy.roam(entity, theFairy, (float) Math.PI);
+//
+//                        if (dest != null)
+//                        {
+//                            theFairy.getNavigation().moveTo(dest, speedModifier);
+//
+//                            if (!theFairy.flymode())
+//                            {
+//                                theFairy.setFlymode(true);
+//                                theFairy.setJumping(true);
+//                                theFairy.setFlyTime(100);
+//                            }
+//
+//                            break;
+//                        }
 
-                        if (dest != null)
+                        BlockPos pos = theFairy.roamBlockPos(
+                                entity.blockPosition().getX(),
+                                theFairy.flymode() ? theFairy.blockPosition().getY() : entity.blockPosition().getY(),
+                                entity.blockPosition().getZ(), theFairy, (float) Math.PI);
+
+                        if (pos != null)
                         {
-                            theFairy.getNavigation().moveTo(dest, speedModifier);
+                            theFairy.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
 
                             if (!theFairy.flymode())
                             {
@@ -724,13 +817,22 @@ public class FairyBehavior
                                 {
                                     theFairy.setCryTime(120);
                                     theFairy.setEntityFear(scary);
-                                    Path dest = theFairy.roam(entity, theFairy,
-                                            (float) Math.PI);
 
-                                    if (dest != null)
-                                    {
-                                        theFairy.getNavigation().moveTo(dest, speedModifier);
-                                    }
+//                                    Path dest = theFairy.roam(entity, theFairy,
+//                                            (float) Math.PI);
+//
+//                                    if (dest != null)
+//                                    {
+//                                        theFairy.getNavigation().moveTo(dest, speedModifier);
+//                                    }
+
+                                    BlockPos pos = theFairy.roamBlockPos(
+                                            entity.blockPosition().getX(),
+                                            theFairy.flymode() ? theFairy.blockPosition().getY() : entity.blockPosition().getY(),
+                                            entity.blockPosition().getZ(), theFairy, (float) Math.PI);
+
+                                    if (pos != null)
+                                        theFairy.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
 
                                     break;
                                 }
@@ -739,13 +841,22 @@ public class FairyBehavior
                                     theFairy.setCryTime(Math.max(fairy.getCryTime() - 60,
                                             0));
                                     theFairy.setEntityFear(scary);
-                                    Path dest = theFairy.roam(entity, theFairy,
-                                            (float) Math.PI);
 
-                                    if (dest != null)
-                                    {
-                                        theFairy.getNavigation().moveTo(dest, speedModifier);
-                                    }
+//                                    Path dest = theFairy.roam(entity, theFairy,
+//                                            (float) Math.PI);
+//
+//                                    if (dest != null)
+//                                    {
+//                                        theFairy.getNavigation().moveTo(dest, speedModifier);
+//                                    }
+
+                                    BlockPos pos = theFairy.roamBlockPos(
+                                            entity.blockPosition().getX(),
+                                            theFairy.flymode() ? theFairy.blockPosition().getY() : entity.blockPosition().getY(),
+                                            entity.blockPosition().getZ(), theFairy, (float) Math.PI);
+
+                                    if (pos != null)
+                                        theFairy.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
 
                                     break;
                                 }
@@ -782,11 +893,30 @@ public class FairyBehavior
 
                     if (dist < 8F)
                     {
-                        Path dest = theFairy.roam(entity, theFairy, (float) Math.PI);
+//                        Path dest = theFairy.roam(entity, theFairy, (float) Math.PI);
+//
+//                        if (dest != null)
+//                        {
+//                            theFairy.getNavigation().moveTo(dest, speedModifier);
+//
+//                            if (!theFairy.flymode())
+//                            {
+//                                theFairy.setFlymode(true);
+//                                theFairy.setJumping(true);
+//                                theFairy.setFlyTime(100);
+//                            }
+//
+//                            break;
+//                        }
 
-                        if (dest != null)
+                        BlockPos pos = theFairy.roamBlockPos(
+                                entity.blockPosition().getX(),
+                                theFairy.flymode() ? theFairy.blockPosition().getY() : entity.blockPosition().getY(),
+                                entity.blockPosition().getZ(), theFairy, (float) Math.PI);
+
+                        if (pos != null)
                         {
-                            theFairy.getNavigation().moveTo(dest, speedModifier);
+                            theFairy.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
 
                             if (!theFairy.flymode())
                             {
@@ -1010,12 +1140,17 @@ public class FairyBehavior
             if (gg >= ( farFlag ? 12D : 6D ))
             {
 
-                Path dest = theFairy.roamBlocks(aa, bb, cc, theFairy, 0F);
+//                Path dest = theFairy.roamBlocks(aa, bb, cc, theFairy, 0F);
+//
+//                if (dest != null)
+//                {
+//                    theFairy.getNavigation().moveTo(dest, speedModifier);
+//                }
 
-                if (dest != null)
-                {
-                    theFairy.getNavigation().moveTo(dest, speedModifier);
-                }
+                BlockPos pos = theFairy.roamBlockPos(aa, bb, cc, theFairy, 0F);
+
+                if (pos != null)
+                    theFairy.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
             }
         }
 

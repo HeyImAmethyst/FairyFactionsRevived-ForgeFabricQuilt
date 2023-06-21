@@ -208,6 +208,7 @@ public class FairyEntityBase extends Animal
      * @param griniscule
      * @return
      */
+    @Deprecated
     public Path roam(Entity target, Entity actor, float griniscule)
     {
         double a = target.position().x - actor.position().x;
@@ -235,6 +236,7 @@ public class FairyEntityBase extends Animal
             {
 
                 Path dogs = getNavigation().createPath(new BlockPos(i ,j , k), 1, FairyConfigValues.BEHAVIOR_PATH_RANGE);
+                //Path dogs = getNavigation().createPath(new BlockPos(i ,j , k), 0);
 
                 if (dogs != null)
                 {
@@ -247,8 +249,53 @@ public class FairyEntityBase extends Animal
     }
 
     // TODO: combine this with roam()
+    @Deprecated
     public Path roamBlocks(double t, double u, double v, Entity actor,
                            float griniscule)
+    {
+        // t is an X coordinate, u is a Y coordinate, v is a Z coordinate.
+        // Griniscule of 0.0 means towards, 3.14 means away.
+
+        double a = t - actor.position().x;
+        double b = v - actor.position().z;
+
+        double crazy = Math.atan2(a, b);
+
+        crazy += ( getRandom().nextFloat() - getRandom().nextFloat() ) * 0.25D;
+        crazy += griniscule;
+
+        double c = actor.position().x + ( Math.sin(crazy) * 8F );
+        double d = actor.position().z + ( Math.cos(crazy) * 8F );
+
+        int x = (int)Math.floor(c);
+        int y = (int)Math.floor(actor.getBoundingBox().minY + ( getRandom().nextFloat() * ( u - actor.getBoundingBox().minY ) ));
+        int z = (int)Math.floor(d);
+
+        for (int q = 0; q < MAX_PATHING_TRIES; q++)
+        {
+            int i = x + getRandom().nextInt(5) - getRandom().nextInt(5);
+            int j = y + getRandom().nextInt(5) - getRandom().nextInt(5);
+            int k = z + getRandom().nextInt(5) - getRandom().nextInt(5);
+
+            if (j > 4 && j < level.getHeight() - 1 && FairyUtils.isAirySpace(this, i, j, k)
+                    && !FairyUtils.isAirySpace(this, i, j - 1, k))
+            {
+
+				Path path = getNavigation().createPath(new BlockPos(i, y, k), 1 , FairyConfigValues.BEHAVIOR_PATH_RANGE);
+				//Path path = getNavigation().createPath(new BlockPos(i, y, k), 0);
+
+                if (path != null)
+                {
+					return path;
+				}
+            }
+        }
+
+        return (Path) null;
+    }
+
+    public BlockPos roamBlockPos(double t, double u, double v, Entity actor,
+                                 float griniscule)
     {
         // t is an X coordinate, u is a Y coordinate, v is a Z coordinate.
         // Griniscule of 0.0 means towards, 3.14 means away.
@@ -275,16 +322,11 @@ public class FairyEntityBase extends Animal
                     && !FairyUtils.isAirySpace(this, i, j - 1, k))
             {
 
-				Path path = getNavigation().createPath(new BlockPos(i, y, k), 1 , FairyConfigValues.BEHAVIOR_PATH_RANGE);
-
-                if (path != null)
-                {
-					return path;
-				}
+                return new BlockPos(i, y, k);
             }
         }
 
-        return (Path) null;
+        return (BlockPos) null;
     }
 
     // Can teleport to the ruler if they have an enderman drop in his inventory.

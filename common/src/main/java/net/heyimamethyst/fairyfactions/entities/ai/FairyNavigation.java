@@ -35,34 +35,27 @@ public class FairyNavigation extends GroundPathNavigation
         return true;
     }
 
-    /*
-        Not having the tick metheod and overriding the methods below it causes the fairy spinning bug.
-        Having the tick method below and not having the overriding methods below it causes
-        faires to not follow thier ruler when flying. How do I make it so that the fairies follow
-        their ruler while flying without having the spinning bug?
-    */
+    @Override
+    public void tick()
+    {
+        ++this.tick;
+    }
 
 //    @Override
-//    public void tick()
+//    protected Vec3 getTempMobPos()
 //    {
-//        ++this.tick;
+//        return this.mob.position();
 //    }
-
-    @Override
-    protected Vec3 getTempMobPos()
-    {
-        return this.mob.position();
-    }
-
-    @Override
-    protected boolean canUpdatePath()
-    {
-        return fairy.flymode() || this.isInLiquid() || !this.mob.isPassenger();
-    }
-
-    @Override
-    public boolean isStableDestination(BlockPos blockPos)
-    {
-        return !this.level.getBlockState(blockPos.below()).isAir() || this.level.getBlockState(blockPos.below()).isAir();
-    }
+//
+//    @Override
+//    protected boolean canUpdatePath()
+//    {
+//        return fairy.flymode() || this.isInLiquid() || !this.mob.isPassenger();
+//    }
+//
+//    @Override
+//    public boolean isStableDestination(BlockPos blockPos)
+//    {
+//        return !this.level.getBlockState(blockPos.below()).isAir() || this.level.getBlockState(blockPos.below()).isAir();
+//    }
 }

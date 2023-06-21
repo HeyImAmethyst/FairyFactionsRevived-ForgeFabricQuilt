@@ -42,7 +42,6 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.player.Player;
@@ -146,7 +145,13 @@ public class FairyEntity extends FairyEntityBase
         this.postX = this.postY = this.postZ = -1;
 
         fairyBehavior = new FairyBehavior(this, speedModifier);
-        switchNavigator(flymode());
+        switchNavigator(false);
+
+//        this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, -1.0f);
+//        this.setPathfindingMalus(BlockPathTypes.WATER, -1.0f);
+//        this.setPathfindingMalus(BlockPathTypes.WATER_BORDER, 16.0f);
+//        this.setPathfindingMalus(BlockPathTypes.COCOA, -1.0f);
+//        this.setPathfindingMalus(BlockPathTypes.FENCE, -1.0f);
 
     }
 
@@ -173,11 +178,11 @@ public class FairyEntity extends FairyEntityBase
         this.goalSelector.addGoal(11, new LookAtPlayerGoal(this, Player.class, 10.0F));
     }
 
-    @Override
-    protected PathNavigation createNavigation(Level pLevel)
-    {
-        return new FairyNavigation(this, pLevel);
-    }
+//    @Override
+//    protected PathNavigation createNavigation(Level pLevel)
+//    {
+//        return new FairyNavigation(this, pLevel);
+//    }
 
     //method came from https://github.com/AlexModGuy/AlexsMobs/blob/45e9351d567a26310b62ead7f10536c09782abd4/src/main/java/com/github/alexthe666/alexsmobs/entity/EntityBlueJay.java#L162
     private void switchNavigator(boolean flymode)
@@ -1918,10 +1923,18 @@ public class FairyEntity extends FairyEntityBase
         if (ruler != null)
         {
 
-            Path dest = roam(ruler, this, (float) Math.PI);
+//            Path dest = roam(ruler, this, (float) Math.PI);
+//
+//            if (dest != null)
+//                this.getNavigation().moveTo(dest, speedModifier);
 
-            if (dest != null)
-                this.getNavigation().moveTo(dest, speedModifier);
+            BlockPos pos = roamBlockPos(
+                    ruler.blockPosition().getX(),
+                    flymode() ? blockPosition().getY() : ruler.blockPosition().getY(),
+                    ruler.blockPosition().getZ(), this, (float) Math.PI);
+
+            if (pos != null)
+                this.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
 
             if (ruler instanceof Player)
             {
@@ -2332,12 +2345,21 @@ public class FairyEntity extends FairyEntityBase
                         // offensive.
                         cryTime += 120;
                         entityFear = entity;
-                        Path dest = roam(entity, this, (float) Math.PI);
 
-                        if (dest != null)
-                        {
-                            this.getNavigation().moveTo(dest, speedModifier);
-                        }
+//                        Path dest = roam(entity, this, (float) Math.PI);
+//
+//                        if (dest != null)
+//                        {
+//                            this.getNavigation().moveTo(dest, speedModifier);
+//                        }
+
+                        BlockPos pos = roamBlockPos(
+                                entity.blockPosition().getX(),
+                                flymode() ? blockPosition().getY() : entity.blockPosition().getY(),
+                                entity.blockPosition().getZ(), this, (float) Math.PI);
+
+                        if (pos != null)
+                            this.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
 
                     }
                     else
@@ -2352,12 +2374,20 @@ public class FairyEntity extends FairyEntityBase
                 {
                     // This just makes fairies run from inanimate objects that
                     // hurt them.
-                    Path dest = roam(entity, this, (float) Math.PI);
+//                    Path dest = roam(entity, this, (float) Math.PI);
+//
+//                    if (dest != null)
+//                    {
+//                        this.getNavigation().moveTo(dest, speedModifier);
+//                    }
 
-                    if (dest != null)
-                    {
-                        this.getNavigation().moveTo(dest, speedModifier);
-                    }
+                    BlockPos pos = roamBlockPos(
+                            entity.blockPosition().getX(),
+                            flymode() ? blockPosition().getY() : entity.blockPosition().getY(),
+                            entity.blockPosition().getZ(), this, (float) Math.PI);
+
+                    if (pos != null)
+                        this.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
                 }
             }
 
