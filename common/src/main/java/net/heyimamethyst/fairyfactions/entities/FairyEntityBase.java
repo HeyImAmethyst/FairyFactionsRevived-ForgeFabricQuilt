@@ -382,8 +382,8 @@ public class FairyEntityBase extends Animal
     public boolean canTeleportToRuler(Player player)
     {
         return player.getInventory() != null
-                && ( player.getInventory().contains(new ItemStack(Items.ENDER_PEARL))
-                || player.getInventory().contains(new ItemStack(Items.ENDER_EYE)));
+                && (( player.getInventory().contains(new ItemStack(Items.ENDER_PEARL))
+                || player.getInventory().contains(new ItemStack(Items.ENDER_EYE)) || FairyConfigValues.ALWAYS_FAIRY_TELEPORT));
     }
 
     // region ---------- B_TYPE ----------

@@ -12,6 +12,8 @@ public class FairyConfig
     public static int SPAWN_FACTION_MIN_SIZE;
     public static int SPAWN_FACTION_MAX_SIZE;
 
+    public static boolean ALWAYS_FAIRY_TELETPORT;
+
     public static double GENERAL_HEALTH_BASE;
     public static double GENERAL_SPEED_BASE;
     public static double GENERAL_SPEED_SCOUT;
@@ -65,6 +67,7 @@ public class FairyConfig
     {
         configs.addKeyValuePair(new Pair<>("minimum.fairy.spawn.group.size", 10), 0, 30, "maximum fairy spawn group size");
         configs.addKeyValuePair(new Pair<>("maximum.fairy.spawn.group.size", 8), 0, 30, "maximum fairy spawn group size");
+        configs.addKeyValuePair(new Pair<>("always.fairy.teleport", true), "whether or not a fairy will always teleport to a player who is its ruler, regardless if the player has an ender pearl");
 
         /**
          * General fairy stats
@@ -105,6 +108,8 @@ public class FairyConfig
 //        SOME_INT = CONFIG.getOrDefault("key.test.value2", 42);
 //        SOME_DOUBLE = CONFIG.getOrDefault("key.test.value3", 42.0d);
 //        MAX_DAMAGE_DOWSING_ROD = CONFIG.getOrDefault("dowsing.rod.max.damage", 32);
+
+        ALWAYS_FAIRY_TELETPORT = CONFIG.getOrDefault("always.fairy.teleport", true);
 
         /**
          * Spawning behaviors
@@ -149,6 +154,8 @@ public class FairyConfig
     {
         FairyConfigValues.SPAWN_FACTION_MIN_SIZE = SPAWN_FACTION_MIN_SIZE;
         FairyConfigValues.SPAWN_FACTION_MAX_SIZE = SPAWN_FACTION_MAX_SIZE;
+
+        FairyConfigValues.ALWAYS_FAIRY_TELEPORT = ALWAYS_FAIRY_TELETPORT;
 
         FairyConfigValues.GENERAL_HEALTH_BASE = GENERAL_HEALTH_BASE;
         FairyConfigValues.GENERAL_SPEED_BASE = GENERAL_SPEED_BASE;
