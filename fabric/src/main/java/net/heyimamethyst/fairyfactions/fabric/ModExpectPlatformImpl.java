@@ -8,7 +8,8 @@ import net.minecraft.world.item.SpawnEggItem;
 import java.nio.file.Path;
 import java.util.Map;
 
-public class ModExpectPlatformImpl {
+public class ModExpectPlatformImpl
+{
     /**
      * This is our actual method to {@link ModExpectPlatform#getConfigDirectory()}.
      */
