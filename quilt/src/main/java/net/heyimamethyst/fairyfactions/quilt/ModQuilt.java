@@ -7,9 +7,11 @@ import net.heyimamethyst.fairyfactions.registry.ModEntities;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
-public class ModQuilt implements ModInitializer {
+public class ModQuilt implements ModInitializer
+{
     @Override
-    public void onInitialize(ModContainer mod) {
+    public void onInitialize(ModContainer mod)
+    {
         ModFabricLike.init();
     }
 }

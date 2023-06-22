@@ -12,7 +12,8 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
-public class ModFabricLike {
+public class ModFabricLike
+{
     public static void init()
     {
         FairyFactions.init();
