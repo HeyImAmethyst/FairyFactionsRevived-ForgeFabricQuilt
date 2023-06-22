@@ -191,9 +191,9 @@ public class FairyUtils
     }
 
     // Can the item give a haircut.
-    public static boolean haircutItem(Item i)
+    public static boolean haircutItem(ItemStack i)
     {
-        return i == Items.SHEARS;
+        return isShearingItem(i) || i.is(ModItemTags.IS_HAIRCUT_ITEM);
     }
 
     public static boolean checkGroundBelow(FairyEntity fairy)
