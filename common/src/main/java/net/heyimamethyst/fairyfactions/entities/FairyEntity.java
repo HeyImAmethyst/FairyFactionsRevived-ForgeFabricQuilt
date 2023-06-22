@@ -1748,7 +1748,7 @@ public class FairyEntity extends FairyEntityBase
 
                     return InteractionResult.SUCCESS;
                 }
-                else if (stack != null && FairyUtils.haircutItem(item)
+                else if (stack != null && FairyUtils.haircutItem(stack)
                         && stack.getCount() > 0 && !rogue())
                 {
                     // right-clicking with shears will toggle haircut on non-rogues
