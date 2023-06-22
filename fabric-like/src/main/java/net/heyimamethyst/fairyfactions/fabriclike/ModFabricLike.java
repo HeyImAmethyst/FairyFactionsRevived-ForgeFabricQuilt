@@ -5,7 +5,8 @@ import net.heyimamethyst.fairyfactions.fabriclike.registry.ModRegistries;
 import net.heyimamethyst.fairyfactions.fabriclike.registry.ModWorldGen;
 import net.heyimamethyst.fairyfactions.items.ModSpawnEggItem;
 
-public class ModFabricLike {
+public class ModFabricLike
+{
     public static void init()
     {
         FairyFactions.init();

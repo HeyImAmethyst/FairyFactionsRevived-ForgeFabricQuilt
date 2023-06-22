@@ -9,7 +9,8 @@ import org.spongepowered.tools.obfuscation.ObfuscationDataProvider;
 import java.nio.file.Path;
 import java.util.Map;
 
-public class ModExpectPlatformImpl {
+public class ModExpectPlatformImpl
+{
     /**
      * This is our actual method to {@link ModExpectPlatform#getConfigDirectory()}.
      */
