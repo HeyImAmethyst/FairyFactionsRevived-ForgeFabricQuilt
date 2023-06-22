@@ -1169,7 +1169,7 @@ public class FairyEntity extends FairyEntityBase
     {
 
         // makes the subsequence
-        final CharSequence mySeq = str.subSequence(0, str.length() - 1);
+        final CharSequence mySeq = str.subSequence(0, str.length());
 
         // loops through for all sign lines
         for (int i = 0; i < 4; i++)
@@ -1695,7 +1695,7 @@ public class FairyEntity extends FairyEntityBase
     public void setTarget(@Nullable LivingEntity entity)
     {
 
-        if (entity == null || this.getTarget() == null || entity != this.getTarget())
+        if (entity == null || this.getTarget() == null || entity != this.getTarget() || (entity instanceof FairyEntity && FairyUtils.sameTeam(this, (FairyEntity)entity)))
         {
             loseInterest = 0;
         }
