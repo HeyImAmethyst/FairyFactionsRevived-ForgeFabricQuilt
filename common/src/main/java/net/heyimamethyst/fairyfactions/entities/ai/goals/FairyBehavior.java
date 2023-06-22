@@ -958,49 +958,6 @@ public class FairyBehavior
                 return; // When a the player takes a tamed fairy away, it
                 // automatically cancels the post.
             }
-//
-//            // Check to see if the chunk is loaded.
-//            LevelChunk chunk = theFairy.level.getChunk(theFairy.postX, theFairy.postZ);
-//            //FairyFactions.LOGGER.debug(this.theFairy.toString()+": checking if chunk is loaded");
-//            //theFairy.level.getChunkAt()
-//
-//            if (chunk != null && !( chunk instanceof EmptyLevelChunk))
-//            {
-//                Block block = level.getBlockState(new BlockPos(theFairy.postX, theFairy.postY, theFairy.postZ)).getBlock();
-//
-//                if (block == null || !( block instanceof SignBlock))
-//                {
-//                    //FairyFactions.LOGGER.debug(this.theFairy.toString()+": abandoning post (block not instance of sign block)");
-//                    // If the saved position is not a sign block.
-//                    theFairy.abandonPost();
-//                }
-//                else
-//                {
-//                    BlockEntity tileentity = level.getBlockEntity(new BlockPos(theFairy.postX, theFairy.postY, theFairy.postZ));
-//
-//                    if (tileentity == null
-//                            || !( tileentity instanceof SignBlockEntity))
-//                    {
-//                        //FairyFactions.LOGGER.debug(this.theFairy.toString()+": abandoning post (tile eneity not instance of SignBlockEntity)");
-//                        // Make sure the tile entity is right
-//                        theFairy.abandonPost();
-//                    }
-//                    else
-//                    {
-//                        SignBlockEntity sign = (SignBlockEntity) tileentity;
-//                        if (!theFairy.mySign(sign))
-//                        {
-//                            //FairyFactions.LOGGER.debug(this.theFairy.toString()+": abandoning post (sign text does not match name)");
-//                            // Make sure the name still matches
-//                            theFairy.abandonPost();
-//                        }
-//                        else if (theFairy.canRoamFar(sign))
-//                        {
-//                            farFlag = true;
-//                        }
-//                    }
-//                }
-//            }
 
             Block block = level.getBlockState(new BlockPos(theFairy.postX, theFairy.postY, theFairy.postZ)).getBlock();
 
@@ -1071,7 +1028,8 @@ public class FairyBehavior
                     if (y >= 0 && y < level.getHeight())
                     {
                         final Block block = level.getBlockState(new BlockPos(x, y, z)).getBlock();
-                        if (isStandingSign(block) || isWallSign(block) || isHangingSign(block))
+
+                        if (isSign(block))
                         {
                             BlockEntity tileentity = level.getBlockEntity(new BlockPos(x, y, z));
 
@@ -1157,17 +1115,8 @@ public class FairyBehavior
         }
     }
 
-    private boolean isStandingSign(Block block)
+    private boolean isSign(Block block)
     {
-        return block instanceof StandingSignBlock;
-    }
-
-    private boolean isWallSign(Block block)
-    {
-        return block instanceof WallSignBlock;
-    }
-    private boolean isHangingSign(Block block)
-    {
-        return block instanceof CeilingHangingSignBlock;
+        return block instanceof SignBlock;
     }
 }
