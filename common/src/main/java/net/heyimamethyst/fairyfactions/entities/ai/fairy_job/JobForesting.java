@@ -112,7 +112,7 @@ public class JobForesting extends FairyJob
         final BlockState state = world.getBlockState(pos);
         final Block block = state.getBlock();
 
-        if ( state.is(BlockTags.LOGS) )
+        if ( state.is(BlockTags.LOGS) || state.is(Blocks.MANGROVE_ROOTS))
         {
 
             //FairyFactions.LOGGER.debug(this.fairy.toString()+": chopping wood");
