@@ -40,22 +40,4 @@ public class FairyNavigation extends GroundPathNavigation
     {
         ++this.tick;
     }
-
-//    @Override
-//    protected Vec3 getTempMobPos()
-//    {
-//        return this.mob.position();
-//    }
-//
-//    @Override
-//    protected boolean canUpdatePath()
-//    {
-//        return fairy.flymode() || this.isInLiquid() || !this.mob.isPassenger();
-//    }
-//
-//    @Override
-//    public boolean isStableDestination(BlockPos blockPos)
-//    {
-//        return !this.level().getBlockState(blockPos.below()).isAir() || this.level().getBlockState(blockPos.below()).isAir();
-//    }
 }

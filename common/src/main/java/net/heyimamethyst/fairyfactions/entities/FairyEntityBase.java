@@ -208,94 +208,13 @@ public class FairyEntityBase extends Animal
      * @param griniscule
      * @return
      */
-    @Deprecated
-    public Path roam(Entity target, Entity actor, float griniscule)
+
+    public BlockPos roamBlockPos(Entity target, Entity actor, float griniscule)
     {
-        double a = target.position().x - actor.position().x;
-        double b = target.position().z - actor.position().z;
-
-        double crazy = Math.atan2(a, b);
-        crazy += ( getRandom().nextFloat() - getRandom().nextFloat() ) * 0.25D;
-        crazy += griniscule;
-
-        double c = actor.position().x + ( Math.sin(crazy) * 8F );
-        double d = actor.position().z + ( Math.cos(crazy) * 8F );
-
-        int x = (int)Math.floor(c);
-        int y = (int)Math.floor(actor.getBoundingBox().minY);
-        int z = (int)Math.floor(d);
-
-        for (int q = 0; q < MAX_PATHING_TRIES; q++)
-        {
-            int i = x + getRandom().nextInt(5) - getRandom().nextInt(5);
-            int j = y + getRandom().nextInt(5) - getRandom().nextInt(5);
-            int k = z + getRandom().nextInt(5) - getRandom().nextInt(5);
-
-            if (j > 4 && j < level().getHeight() - 1 && FairyUtils.isAirySpace(this, i, j, k)
-                    && !FairyUtils.isAirySpace(this, i, j - 1, k))
-            {
-
-                Path dogs = getNavigation().createPath(new BlockPos(i ,j , k), 1, FairyConfigValues.BEHAVIOR_PATH_RANGE);
-                //Path dogs = getNavigation().createPath(new BlockPos(i ,j , k), 0);
-
-                if (dogs != null)
-                {
-                    return dogs;
-                }
-            }
-        }
-
-        return null;
+        return roamBlockPos(target.getBlockX(), target.getBlockY(), target.getBlockZ(), actor, griniscule);
     }
 
-    // TODO: combine this with roam()
-    @Deprecated
-    public Path roamBlocks(double t, double u, double v, Entity actor,
-                           float griniscule)
-    {
-        // t is an X coordinate, u is a Y coordinate, v is a Z coordinate.
-        // Griniscule of 0.0 means towards, 3.14 means away.
-
-        double a = t - actor.position().x;
-        double b = v - actor.position().z;
-
-        double crazy = Math.atan2(a, b);
-
-        crazy += ( getRandom().nextFloat() - getRandom().nextFloat() ) * 0.25D;
-        crazy += griniscule;
-
-        double c = actor.position().x + ( Math.sin(crazy) * 8F );
-        double d = actor.position().z + ( Math.cos(crazy) * 8F );
-
-        int x = (int)Math.floor(c);
-        int y = (int)Math.floor(actor.getBoundingBox().minY + ( getRandom().nextFloat() * ( u - actor.getBoundingBox().minY ) ));
-        int z = (int)Math.floor(d);
-
-        for (int q = 0; q < MAX_PATHING_TRIES; q++)
-        {
-            int i = x + getRandom().nextInt(5) - getRandom().nextInt(5);
-            int j = y + getRandom().nextInt(5) - getRandom().nextInt(5);
-            int k = z + getRandom().nextInt(5) - getRandom().nextInt(5);
-
-            if (j > 4 && j < level().getHeight() - 1 && FairyUtils.isAirySpace(this, i, j, k)
-                    && !FairyUtils.isAirySpace(this, i, j - 1, k))
-            {
-
-				Path path = getNavigation().createPath(new BlockPos(i, y, k), 1 , FairyConfigValues.BEHAVIOR_PATH_RANGE);
-				//Path path = getNavigation().createPath(new BlockPos(i, y, k), 0);
-
-                if (path != null)
-                {
-					return path;
-				}
-            }
-        }
-
-        return (Path) null;
-    }
-
-    public BlockPos roamBlockPos(double t, double u, double v, Entity actor,
-                                 float griniscule)
+    public BlockPos roamBlockPos(double t, double u, double v, Entity actor, float griniscule)
     {
         // t is an X coordinate, u is a Y coordinate, v is a Z coordinate.
         // Griniscule of 0.0 means towards, 3.14 means away.
@@ -340,32 +259,6 @@ public class FairyEntityBase extends Animal
         {
             for (int i1 = 0; i1 <= 4; i1++)
             {
-//                  BlockPathTypes blockpathtypes = WalkNodeEvaluator.getBlockPathTypeStatic(mob.level, p_25308_.mutable());
-
-//                if (( l < 1 || i1 < 1 || l > 3 || i1 > 3 )
-//                        && mob.level.getBlockState(new BlockPos(i + l, k - 1, j + i1)).getBlock().()
-//                        && !mob.level.getBlockState(new BlockPos(i + l, k, j + i1)).getBlock().isNormalCube()
-//                        && !mob.level.getBlockState(new BlockPos(i + l, k + 1, j + i1)).getBlock().isNormalCube()
-//                        && mob.isAirySpace(i + l, k, j + i1))
-//                {
-//                    mob.moveTo((float) ( i + l ) + 0.5F, k,
-//                            (float) ( j + i1 ) + 0.5F, mob.getYRot(),
-//                            mob.getXRot());
-//                    return;
-//                }
-
-//                if (( l < 1 || i1 < 1 || l > 3 || i1 > 3 )
-//                        && (WalkNodeEvaluator.getBlockPathTypeStatic(level, new BlockPos(i + l, k - 1, j + i1).mutable()) == BlockPathTypes.WALKABLE)
-//                        && !(WalkNodeEvaluator.getBlockPathTypeStatic(level, new BlockPos(i + l, k, j + i1).mutable()) == BlockPathTypes.WALKABLE)
-//                        && !(WalkNodeEvaluator.getBlockPathTypeStatic(level, new BlockPos(i + l, k + 1, j + i1).mutable()) == BlockPathTypes.WALKABLE)
-//                        && isAirySpace(i + l, k, j + i1))
-//                {
-//                    moveTo((float) ( i + l ) + 0.5F, k,
-//                            (float) ( j + i1 ) + 0.5F, getYRot(),
-//                            getXRot());
-//                    return;
-//                }
-
                 if (( l < 1 || i1 < 1 || l > 3 || i1 > 3 )
                         && level().getBlockState(new BlockPos(i + l, k - 1, j + i1)).isSolidRender(level(), new BlockPos(i + l, k - 1, j + i1))
                         && !level().getBlockState(new BlockPos(i + l, k, j + i1)).isSolidRender(level(), new BlockPos(i + l, k, j + i1))
