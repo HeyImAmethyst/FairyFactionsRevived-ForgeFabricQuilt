@@ -8,6 +8,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class JobForesting extends FairyJob
@@ -111,7 +112,7 @@ public class JobForesting extends FairyJob
         final BlockState state = world.getBlockState(pos);
         final Block block = state.getBlock();
 
-        if ( state.is(BlockTags.LOGS) )
+        if ( state.is(BlockTags.LOGS) || state.is(Blocks.MANGROVE_ROOTS))
         {
 
             //FairyFactions.LOGGER.debug(this.fairy.toString()+": chopping wood");
