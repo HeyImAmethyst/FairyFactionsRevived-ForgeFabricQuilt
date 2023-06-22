@@ -173,17 +173,10 @@ public class FairyEntity extends FairyEntityBase
 
         this.goalSelector.addGoal(4, new FairyAIGoal((this)));
 
-        //this.goalSelector.addGoal(10, new FairyAIStroll(this, speedModifier, 1.0000001E-5F));
         this.goalSelector.addGoal(4, new FairyAIStroll(this, 0.3D));
         this.goalSelector.addGoal(12, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(11, new LookAtPlayerGoal(this, Player.class, 10.0F));
     }
-
-//    @Override
-//    protected PathNavigation createNavigation(Level pLevel)
-//    {
-//        return new FairyNavigation(this, pLevel);
-//    }
 
     //method came from https://github.com/AlexModGuy/AlexsMobs/blob/45e9351d567a26310b62ead7f10536c09782abd4/src/main/java/com/github/alexthe666/alexsmobs/entity/EntityBlueJay.java#L162
     private void switchNavigator(boolean flymode)
@@ -571,13 +564,6 @@ public class FairyEntity extends FairyEntityBase
                         vehicleMotionY = FairyConfigValues.DEF_FLAP_RATE;
                     }
 
-//                    if (((getVehicle() instanceof Player && isJumping)
-//                            && vehicleMotionY < FairyConfig.DEF_FLAP_RATE.get() && canFlap())
-//                    || !(getVehicle() instanceof Player) && vehicleMotionY < FairyConfig.DEF_FLAP_RATE.get() && canFlap())
-//                    {
-//                        vehicleMotionY = FairyConfig.DEF_FLAP_RATE.get();
-//                    }
-
                     if( (((LivingEntity)getVehicle() instanceof Player && isJumping) || !((LivingEntity) getVehicle() instanceof Player))
                         && vehicleMotionY < FairyConfigValues.DEF_FLAP_RATE && canFlap())
                     {
@@ -780,9 +766,6 @@ public class FairyEntity extends FairyEntityBase
     {
         super.aiStep();
         setHeldItem(MAIN_FAIRY_HAND);
-
-//        if(getTarget() != null)
-//            FairyFactions.LOGGER.debug(getItemInHand(InteractionHand.MAIN_HAND).getItem().toString());
     }
 
     @Override
@@ -944,39 +927,6 @@ public class FairyEntity extends FairyEntityBase
             listActions = this.getRandom().nextInt(3);
 
             fairyBehavior.handleRuler();
-
-//            if(isSitting())
-//            {
-//                return;
-//            }
-//
-//            if (angry())
-//            {
-//                fairyBehavior.handleAnger();
-//            }
-//            else if (crying())
-//            {
-//                fairyBehavior.handleFear();
-//            }
-//            else
-//            {
-//                fairyBehavior.handleRuler();
-//
-//                if (medic())
-//                {
-//                    fairyBehavior.handleHealing();
-//                }
-//                else if (rogue())
-//                {
-//                    fairyBehavior.handleRogue();
-//                }
-//                else
-//                {
-//                    fairyBehavior.handleSocial();
-//                }
-//
-//                fairyBehavior.handlePosted(this.level,true);
-//            }
         }
 
         // fairies run away from players in peaceful
@@ -992,7 +942,7 @@ public class FairyEntity extends FairyEntityBase
 
         setCrying(this.cryTime > 0);
 
-        setAngry(this.getTarget() != null);
+        setAngry(canGetAngryAt());
 
         if(this.getTarget() != null && !this.getTarget().isAlive())
         {
@@ -1002,6 +952,32 @@ public class FairyEntity extends FairyEntityBase
         setCanHeal(this.healTime <= 0);
 
         //_dump_();
+    }
+
+    public boolean canGetAngryAt()
+    {
+        if(this.getTarget() != null)
+        {
+            if(this.getTarget() instanceof FairyEntity)
+            {
+                FairyEntity fairy = (FairyEntity) this.getTarget();
+
+                if(FairyUtils.sameTeam(this, fairy))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return false;
+        }
+
+        return false;
     }
 
     // Checks if a damage source is a snowball.
@@ -1037,7 +1013,6 @@ public class FairyEntity extends FairyEntityBase
         float f = (float)Math.sqrt(d * d + d2 * d2) * 0.2F;
         entitysnowball.shoot(d, d1 + (double) f, d2, 1.6F, 12F);
 
-        //level.playLocalSound(position().x, position().y, position().z, SoundEvents.SNOW_GOLEM_SHOOT, SoundSource.NEUTRAL, 1.0F, 1.0F / ( getRandom().nextFloat() * 0.4F + 0.8F ), false);
         level.playSound( null, position().x, position().y, position().z, SoundEvents.SNOW_GOLEM_SHOOT, SoundSource.NEUTRAL,  1.0F, 1.0F / ( getRandom().nextFloat() * 0.4F + 0.8F ));
 
         level.addFreshEntity(entitysnowball);
@@ -1227,7 +1202,6 @@ public class FairyEntity extends FairyEntityBase
     public String getActualName(int prefix, int suffix)
     {
 
-        //final String custom = getCustomName() != null ? getCustomName().getString() : null;
 
         Component customComponent = getCustomName();
         String custom = getFairyCustomName();
@@ -1245,10 +1219,6 @@ public class FairyEntity extends FairyEntityBase
                 return null;
             }
         }
-//        else if(custom != null && !custom.isEmpty())
-//        {
-//            return custom;
-//        }
 
         if (prefix < 0 || prefix > MAX_NAMEIDX || suffix < 0
                 || suffix > MAX_NAMEIDX)
@@ -1427,33 +1397,6 @@ public class FairyEntity extends FairyEntityBase
 
     // region swing
 
-//    @Override
-//    public void swing(InteractionHand pHand, boolean pUpdateSelf)
-//    {
-//        ItemStack stack = this.getItemInHand(pHand);
-//        if (!stack.isEmpty() && stack.onEntitySwing(this)) return;
-//
-//        if (!isSwinging || this.swingTime >= this.getCurrentSwingDuration() / 2 || this.swingTime < 0)
-//        {
-//            this.swingTime = -1;
-//            isSwinging = true;
-//            this.swingingArm = pHand;
-//            if (this.level instanceof ServerLevel)
-//            {
-//                ClientboundAnimatePacket clientboundanimatepacket = new ClientboundAnimatePacket(this, 0);
-//                ServerChunkCache serverchunkcache = ((ServerLevel)this.level).getChunkSource();
-//                if (pUpdateSelf)
-//                {
-//                    serverchunkcache.broadcastAndSend(this, clientboundanimatepacket);
-//                }
-//                else
-//                {
-//                    serverchunkcache.broadcast(this, clientboundanimatepacket);
-//                }
-//            }
-//        }
-//    }
-
     private void processSwinging()
     {
         int i = this.getCurrentSwingDuration();
@@ -1469,22 +1412,6 @@ public class FairyEntity extends FairyEntityBase
             InteractionHand pHand = InteractionHand.MAIN_HAND;
 
             this.swingingArm = pHand;
-
-//            boolean pUpdateSelf = true;
-
-//            if (this.level instanceof ServerLevel)
-//            {
-//                ClientboundAnimatePacket clientboundanimatepacket = new ClientboundAnimatePacket(this, 0);
-//                ServerChunkCache serverchunkcache = ((ServerLevel)this.level).getChunkSource();
-//                if (pUpdateSelf)
-//                {
-//                    serverchunkcache.broadcastAndSend(this, clientboundanimatepacket);
-//                }
-//                else
-//                {
-//                    serverchunkcache.broadcast(this, clientboundanimatepacket);
-//                }
-//            }
         }
 
         if (isSwinging)
@@ -1604,9 +1531,6 @@ public class FairyEntity extends FairyEntityBase
     @Override
     public void heal(float pHealAmount)
     {
-        //pHealAmount = net.minecraftforge.event.ForgeEventFactory.onLivingHeal(this, pHealAmount);
-
-        //if (pHealAmount <= 0) return;
 
         float f = this.getHealth();
 
@@ -1701,7 +1625,6 @@ public class FairyEntity extends FairyEntityBase
             loseInterest = 0;
         }
 
-        //this.target = entity;
         super.setTarget(entity);
     }
 
@@ -1749,7 +1672,7 @@ public class FairyEntity extends FairyEntityBase
 
                     return InteractionResult.SUCCESS;
                 }
-                else if (stack != null && FairyUtils.haircutItem(item)
+                else if (stack != null && FairyUtils.haircutItem(stack)
                         && stack.getCount() > 0 && !rogue())
                 {
                     // right-clicking with shears will toggle haircut on non-rogues
@@ -1840,7 +1763,7 @@ public class FairyEntity extends FairyEntityBase
                             // shift-right-clicking otherwise makes fairy sit down
                             setSitting(true);
                             jumping = false;
-                            //this.navigation.stop();
+
                             this.getNavigation().moveTo((Path) null, speedModifier);
                             setTarget(null);
                             entityFear = null;
@@ -1929,11 +1852,6 @@ public class FairyEntity extends FairyEntityBase
         if (ruler != null)
         {
 
-//            Path dest = roam(ruler, this, (float) Math.PI);
-//
-//            if (dest != null)
-//                this.getNavigation().moveTo(dest, speedModifier);
-
             BlockPos pos = roamBlockPos(
                     ruler.blockPosition().getX(),
                     flymode() ? blockPosition().getY() : ruler.blockPosition().getY(),
@@ -2001,7 +1919,6 @@ public class FairyEntity extends FairyEntityBase
         }
 
         setFairyCustomName("");
-        //setCustomName(null);
         FairyUtils.nameFairyEntity(this, "");
 
         ruler = null;
@@ -2352,13 +2269,6 @@ public class FairyEntity extends FairyEntityBase
                         cryTime += 120;
                         entityFear = entity;
 
-//                        Path dest = roam(entity, this, (float) Math.PI);
-//
-//                        if (dest != null)
-//                        {
-//                            this.getNavigation().moveTo(dest, speedModifier);
-//                        }
-
                         BlockPos pos = roamBlockPos(
                                 entity.blockPosition().getX(),
                                 flymode() ? blockPosition().getY() : entity.blockPosition().getY(),
@@ -2380,12 +2290,6 @@ public class FairyEntity extends FairyEntityBase
                 {
                     // This just makes fairies run from inanimate objects that
                     // hurt them.
-//                    Path dest = roam(entity, this, (float) Math.PI);
-//
-//                    if (dest != null)
-//                    {
-//                        this.getNavigation().moveTo(dest, speedModifier);
-//                    }
 
                     BlockPos pos = roamBlockPos(
                             entity.blockPosition().getX(),
@@ -2708,61 +2612,8 @@ public class FairyEntity extends FairyEntityBase
             }
         }
 
-//        else if(ruler == null && !isRuler(Minecraft.getInstance().player) && getFaction() != 0)
-//        {
-//            List list = this.level.getEntitiesOfClass(FairyEntity.class,
-//                    this.getBoundingBox().inflate(32D, 32D, 32D));
-//
-//            for (int j = 0; j < list.size(); j++)
-//            {
-//                FairyEntity fairy = (FairyEntity) list.get(j);
-//
-//                if (fairy != this && FairyUtils.sameTeam(fairy, this)
-//                        && fairy.getHealth() > 0)
-//                {
-//                    flag = false;
-//                    break;
-//                }
-//            }
-//        }
-
         return super.finalizeSpawn(pLevel, pDifficulty, mobSpawnType, pSpawnData, pDataTag);
     }
-
-//    /**
-//     * Static predicate for determining whether or not fairy can spawn at the provided location.
-//     * @param pAnimal The animal entity to be spawned
-//     */
-//    public static boolean checkFairySpawnRules(EntityType<? extends FairyEntity> pAnimal, LevelAccessor pLevel, MobSpawnType pSpawnType, BlockPos pPos, Random pRandom)
-//    {
-//        //return pLevel.getBlockState(pPos.below()).is(BlockTags.ANIMALS_SPAWNABLE_ON) && isBrightEnoughToSpawn(pLevel, pPos);
-//
-//        if(Animal.checkAnimalSpawnRules(pAnimal, pLevel, pSpawnType, pPos, pRandom))
-//        {
-//            if(this.ruler == null && !isRuler(Minecraft.getInstance().player) && getFaction() == 0)
-//            {
-//                List list = this.level.getEntitiesOfClass(FairyEntity.class,
-//                        this.getBoundingBox().inflate(32D, 32D, 32D));
-//
-//                if ((list == null || list.size() < 1) && !this.level.isClientSide)
-//                {
-//                    setJob(0);
-//                    setSpecialJob(true);
-//                    heal(30);
-//                    setHealth(30);
-//                    int i = random.nextInt(15) + 1;
-//                    setFaction(i);
-//                    setSkin(random.nextInt(4));
-//                    setCower(false);
-//                    createGroup = true;
-//                }
-//
-//                return true;
-//            }
-//        }
-//
-//        return false;
-//    }
 
     //endregion
 }
