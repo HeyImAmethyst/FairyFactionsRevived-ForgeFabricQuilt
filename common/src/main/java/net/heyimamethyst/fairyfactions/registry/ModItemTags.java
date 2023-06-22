@@ -25,6 +25,8 @@ public class ModItemTags
 	//For adding modded shears
 	public static final TagKey<Item> IS_SHEARING_ITEM = makeTag("is_shearing_item");
 
+	public static final TagKey<Item> IS_HAIRCUT_ITEM = makeTag("is_haircut_item");
+
 	//For adding modded axes
 	public static final TagKey<Item> IS_AXE_ITEM = makeTag("is_axe_item");
 
