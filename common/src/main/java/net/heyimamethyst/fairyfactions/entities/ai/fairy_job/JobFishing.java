@@ -45,7 +45,7 @@ public class JobFishing extends FairyJob
             fairy.setFlyTime( 0 );
             return false;
         }
-        else if ( !fairy.isOnGround() || fairy.isInWater() )
+        else if ( !fairy.onGround() || fairy.isInWater() )
         {
             return false;
         }
@@ -146,7 +146,7 @@ public class JobFishing extends FairyJob
             if ( y > 1 && y < world.getHeight() - 1 )
             {
                 if ( FairyUtils.isAirySpace( fairy, i, j, k ) && !FairyUtils.isAirySpace(fairy, i, j - 1, k )
-                        && world.getBlockState( new BlockPos(i, j - 1, k) ).isSolidRender(fairy.level, new BlockPos(i, j - 1, k)))
+                        && world.getBlockState( new BlockPos(i, j - 1, k) ).isSolidRender(fairy.level(), new BlockPos(i, j - 1, k)))
                 {
                     final Path path = fairy.getNavigation().createPath(new BlockPos(i, j, k), 1);
 

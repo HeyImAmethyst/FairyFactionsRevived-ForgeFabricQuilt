@@ -49,7 +49,7 @@ public class ForgeClientEvents
 		Vec3 look = player.getViewVector(0).scale(100);
 		Vec3 pos = player.getPosition(0);
 
-		List<LivingEntity> targets = EntityHelper.rayTraceEntities(player.level, pos.add(0, player.getEyeHeight(), 0), look, Optional.of(e -> e != player), LivingEntity.class);
+		List<LivingEntity> targets = EntityHelper.rayTraceEntities(player.level(), pos.add(0, player.getEyeHeight(), 0), look, Optional.of(e -> e != player), LivingEntity.class);
 
 		LivingEntity assumedToBeLookedAt = EntityHelper.getClosest(targets, player);
 

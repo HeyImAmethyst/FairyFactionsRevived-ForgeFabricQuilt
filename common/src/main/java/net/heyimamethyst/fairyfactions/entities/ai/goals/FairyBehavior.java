@@ -13,10 +13,7 @@ import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SignBlock;
-import net.minecraft.world.level.block.StandingSignBlock;
-import net.minecraft.world.level.block.WallSignBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.pathfinder.Path;
@@ -170,7 +167,7 @@ public class FairyBehavior
                     d = 16D;
                 }
 
-                List<?> list = theFairy.level.getEntitiesOfClass(FairyEntity.class, theFairy.getBoundingBox().inflate(d, d, d));
+                List<?> list = theFairy.level().getEntitiesOfClass(FairyEntity.class, theFairy.getBoundingBox().inflate(d, d, d));
 
                 for (int j = 0; j < list.size(); j++)
                 {
@@ -210,7 +207,7 @@ public class FairyBehavior
                 //FairyFactions.LOGGER.debug(theFairy.toString()+": is looking for a player to follow");
 
                 // Looking for a player to follow.
-                List<?> list = theFairy.level.getEntitiesOfClass(Player.class, theFairy.getBoundingBox().inflate(16D, 16D, 16D));
+                List<?> list = theFairy.level().getEntitiesOfClass(Player.class, theFairy.getBoundingBox().inflate(16D, 16D, 16D));
 
                 for (int j = 0; j < list.size(); j++)
                 {
@@ -410,7 +407,7 @@ public class FairyBehavior
                 // If a leader has lost her followers
 
                 //flag = true;
-                List<?> list = theFairy.level.getEntitiesOfClass(FairyEntity.class,
+                List<?> list = theFairy.level().getEntitiesOfClass(FairyEntity.class,
                         theFairy.getBoundingBox().expandTowards(40D, 40D, 40D));
 
 //                if(list.size() == 1)
@@ -486,7 +483,7 @@ public class FairyBehavior
             return;
         }
 
-        List list = theFairy.level.getEntities(theFairy,
+        List list = theFairy.level().getEntities(theFairy,
                 theFairy.getBoundingBox().inflate(16D, 16D, 16D));
 
         FairyUtils.shuffle(list, theFairy.getRandom());
@@ -701,7 +698,7 @@ public class FairyBehavior
 
         if (theFairy.entityHeal == null && theFairy.getHealTime() <= 0)
         {
-            List list = theFairy.level.getEntities(theFairy,
+            List list = theFairy.level().getEntities(theFairy,
                     theFairy.getBoundingBox().inflate(16D, 16D, 16D));
 
             for (int j = 0; j < list.size(); j++)
@@ -767,7 +764,7 @@ public class FairyBehavior
             return;
         }
 
-        List list = theFairy.level.getEntities(theFairy,
+        List list = theFairy.level().getEntities(theFairy,
                 theFairy.getBoundingBox().inflate(16D, 16D, 16D));
         FairyUtils.shuffle(list, theFairy.getRandom());
 
@@ -1074,7 +1071,7 @@ public class FairyBehavior
                     if (y >= 0 && y < level.getHeight())
                     {
                         final Block block = level.getBlockState(new BlockPos(x, y, z)).getBlock();
-                        if (isStandingSign(block) || isWallSign(block))
+                        if (isStandingSign(block) || isWallSign(block) || isHangingSign(block))
                         {
                             BlockEntity tileentity = level.getBlockEntity(new BlockPos(x, y, z));
 
@@ -1168,5 +1165,9 @@ public class FairyBehavior
     private boolean isWallSign(Block block)
     {
         return block instanceof WallSignBlock;
+    }
+    private boolean isHangingSign(Block block)
+    {
+        return block instanceof CeilingHangingSignBlock;
     }
 }

@@ -192,7 +192,7 @@ public class JobSmelt extends FairyJob
             return true;
         }
 
-        if (!itemStack2.sameItem(itemStack))
+        if (!ItemStack.isSameItem(itemStack2, itemStack))
         {
             return false;
         }

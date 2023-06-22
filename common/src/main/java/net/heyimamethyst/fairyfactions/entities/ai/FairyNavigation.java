@@ -56,6 +56,6 @@ public class FairyNavigation extends GroundPathNavigation
 //    @Override
 //    public boolean isStableDestination(BlockPos blockPos)
 //    {
-//        return !this.level.getBlockState(blockPos.below()).isAir() || this.level.getBlockState(blockPos.below()).isAir();
+//        return !this.level().getBlockState(blockPos.below()).isAir() || this.level().getBlockState(blockPos.below()).isAir();
 //    }
 }

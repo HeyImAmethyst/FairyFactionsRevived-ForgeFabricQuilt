@@ -44,6 +44,8 @@ public class FairyConfig
 
     public static int DEF_MAX_PARTICLES;
 
+    public static boolean EXTEND_HANGING_SIGN_TEXT_LIMIT;
+
 //    public String minSpawnGroupString = "minimum.fairy.spawn.group.size";
 //    public String maxSpawnGroupString = "maximum.fairy.spawn.group.size";
 //    public String baseMaximumHealthString = "base.maximum.health";
@@ -68,6 +70,7 @@ public class FairyConfig
         configs.addKeyValuePair(new Pair<>("minimum.fairy.spawn.group.size", 10), 0, 30, "maximum fairy spawn group size");
         configs.addKeyValuePair(new Pair<>("maximum.fairy.spawn.group.size", 8), 0, 30, "maximum fairy spawn group size");
         configs.addKeyValuePair(new Pair<>("always.fairy.teleport", true), "whether or not a fairy will always teleport to a player who is its ruler, regardless if the player has an ender pearl");
+        configs.addKeyValuePair(new Pair<>("extend_hanging_sign_text_limit", true), "whether to extend the text limit for hanging signs to be able to put fairies with longer names on them");
 
         /**
          * General fairy stats
@@ -110,6 +113,7 @@ public class FairyConfig
 //        MAX_DAMAGE_DOWSING_ROD = CONFIG.getOrDefault("dowsing.rod.max.damage", 32);
 
         ALWAYS_FAIRY_TELETPORT = CONFIG.getOrDefault("always.fairy.teleport", true);
+        EXTEND_HANGING_SIGN_TEXT_LIMIT = CONFIG.getOrDefault("extend_hanging_sign_text_limit", true);
 
         /**
          * Spawning behaviors
@@ -156,6 +160,7 @@ public class FairyConfig
         FairyConfigValues.SPAWN_FACTION_MAX_SIZE = SPAWN_FACTION_MAX_SIZE;
 
         FairyConfigValues.ALWAYS_FAIRY_TELEPORT = ALWAYS_FAIRY_TELETPORT;
+        FairyConfigValues.EXTEND_HANGING_SIGN_TEXT_LIMIT = EXTEND_HANGING_SIGN_TEXT_LIMIT;
 
         FairyConfigValues.GENERAL_HEALTH_BASE = GENERAL_HEALTH_BASE;
         FairyConfigValues.GENERAL_SPEED_BASE = GENERAL_SPEED_BASE;

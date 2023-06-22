@@ -231,7 +231,7 @@ public class FairyEntityBase extends Animal
             int j = y + getRandom().nextInt(5) - getRandom().nextInt(5);
             int k = z + getRandom().nextInt(5) - getRandom().nextInt(5);
 
-            if (j > 4 && j < level.getHeight() - 1 && FairyUtils.isAirySpace(this, i, j, k)
+            if (j > 4 && j < level().getHeight() - 1 && FairyUtils.isAirySpace(this, i, j, k)
                     && !FairyUtils.isAirySpace(this, i, j - 1, k))
             {
 
@@ -277,7 +277,7 @@ public class FairyEntityBase extends Animal
             int j = y + getRandom().nextInt(5) - getRandom().nextInt(5);
             int k = z + getRandom().nextInt(5) - getRandom().nextInt(5);
 
-            if (j > 4 && j < level.getHeight() - 1 && FairyUtils.isAirySpace(this, i, j, k)
+            if (j > 4 && j < level().getHeight() - 1 && FairyUtils.isAirySpace(this, i, j, k)
                     && !FairyUtils.isAirySpace(this, i, j - 1, k))
             {
 
@@ -318,7 +318,7 @@ public class FairyEntityBase extends Animal
             int j = y + getRandom().nextInt(5) - getRandom().nextInt(5);
             int k = z + getRandom().nextInt(5) - getRandom().nextInt(5);
 
-            if (j > 4 && j < level.getHeight() - 1 && FairyUtils.isAirySpace(this, i, j, k)
+            if (j > 4 && j < level().getHeight() - 1 && FairyUtils.isAirySpace(this, i, j, k)
                     && !FairyUtils.isAirySpace(this, i, j - 1, k))
             {
 
@@ -367,9 +367,9 @@ public class FairyEntityBase extends Animal
 //                }
 
                 if (( l < 1 || i1 < 1 || l > 3 || i1 > 3 )
-                        && level.getBlockState(new BlockPos(i + l, k - 1, j + i1)).isSolidRender(level, new BlockPos(i + l, k - 1, j + i1))
-                        && !level.getBlockState(new BlockPos(i + l, k, j + i1)).isSolidRender(level, new BlockPos(i + l, k, j + i1))
-                        && !level.getBlockState(new BlockPos(i + l, k + 1, j + i1)).isSolidRender(level, new BlockPos(i + l, k + 1, j + i1))
+                        && level().getBlockState(new BlockPos(i + l, k - 1, j + i1)).isSolidRender(level(), new BlockPos(i + l, k - 1, j + i1))
+                        && !level().getBlockState(new BlockPos(i + l, k, j + i1)).isSolidRender(level(), new BlockPos(i + l, k, j + i1))
+                        && !level().getBlockState(new BlockPos(i + l, k + 1, j + i1)).isSolidRender(level(), new BlockPos(i + l, k + 1, j + i1))
                         && FairyUtils.isAirySpace(this, i + l, k, j + i1))
                 {
                     moveTo((float) ( i + l ) + 0.5F, k, (float) ( j + i1 ) + 0.5F, getYRot(), getXRot());

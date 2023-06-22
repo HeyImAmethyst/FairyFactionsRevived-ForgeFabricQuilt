@@ -26,11 +26,11 @@
     ]
   },
   "mixins": [
-
+    "fairyfactions-common.mixins.json"
   ],
   "depends": {
     "fabric": "*",
-    "minecraft": ">=1.18.2",
+    "minecraft": ">=1.20",
     "architectury": ">=4.9.83"
   }
 }

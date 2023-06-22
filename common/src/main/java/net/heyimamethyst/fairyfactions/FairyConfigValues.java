@@ -6,6 +6,7 @@ public class FairyConfigValues
     public static int SPAWN_FACTION_MAX_SIZE= 0;
 
     public static boolean ALWAYS_FAIRY_TELEPORT = true;
+    public static boolean EXTEND_HANGING_SIGN_TEXT_LIMIT = true;
 
     public static double GENERAL_HEALTH_BASE= 0;
     public static double GENERAL_SPEED_BASE= 0;

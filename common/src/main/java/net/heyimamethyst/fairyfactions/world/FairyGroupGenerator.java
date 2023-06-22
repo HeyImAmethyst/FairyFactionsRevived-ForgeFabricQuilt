@@ -8,7 +8,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,12 +136,38 @@ public class FairyGroupGenerator
 
     public boolean isAirySpace(final Level world, final int a, final int b, final int c)
     {
+//        if (b < 0 || b > 127)
+//        {
+//            return false;
+//        }
+//
+//        final Block s = world.getBlockState(new BlockPos(a, b, c)).getBlock();
+//
+//        if (s == Blocks.AIR)
+//        {
+//            return true;
+//        }
+//        else
+//        {
+//            final Material matt = s.defaultBlockState().getMaterial();
+//
+//            if (matt == null || matt == Material.AIR || matt == Material.PLANT || matt == Material.REPLACEABLE_PLANT ||
+//                    matt == Material.FIRE || matt == Material.DECORATION || matt == Material.SNOW)
+//            {
+//                return true;
+//            } //Material.field_35574_k is vines
+//        }
+//
+//        return false;
+
         if (b < 0 || b > 127)
         {
             return false;
         }
 
-        final Block s = world.getBlockState(new BlockPos(a, b, c)).getBlock();
+        BlockPos pos = new BlockPos(a, b, c);
+
+        final Block s = world.getBlockState(pos).getBlock();
 
         if (s == Blocks.AIR)
         {
@@ -147,13 +175,16 @@ public class FairyGroupGenerator
         }
         else
         {
-            final Material matt = s.defaultBlockState().getMaterial();
 
-            if (matt == null || matt == Material.AIR || matt == Material.PLANT || matt == Material.REPLACEABLE_PLANT ||
-                    matt == Material.FIRE || matt == Material.DECORATION || matt == Material.SNOW)
+            BlockState state = s.defaultBlockState();
+
+            if ((state.isAir() && state.canBeReplaced()) || (state.getMapColor(world, pos) == MapColor.PLANT && state.getPistonPushReaction() == PushReaction.DESTROY)
+                    || (state.getMapColor(world, pos) == MapColor.PLANT && state.canBeReplaced() && state.ignitedByLava() && state.getPistonPushReaction() == PushReaction.DESTROY)
+                    || (state.getMapColor(world, pos) == MapColor.FIRE && state.canBeReplaced() && state.getPistonPushReaction() == PushReaction.DESTROY)
+                    || state.getPistonPushReaction() == PushReaction.DESTROY || state.getMapColor(world, pos) == MapColor.SNOW)
             {
                 return true;
-            } //Material.field_35574_k is vines
+            }
         }
 
         return false;

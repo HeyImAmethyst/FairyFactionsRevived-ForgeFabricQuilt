@@ -7,6 +7,7 @@ import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.proxy.CommonMethods;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.minecraft.SharedConstants;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.PlainTextButton;
 import net.minecraft.client.gui.screens.Screen;
@@ -63,9 +64,9 @@ public class GuiName extends Screen
 
         if (fairy != null)
         {
-            FairyFactions.LOGGER.info("GuiName.onGuiClosed: isRemote = "+fairy.level.isClientSide);
+            FairyFactions.LOGGER.info("GuiName.onGuiClosed: isRemote = "+fairy.level().isClientSide);
 
-            if (fairy.level.isClientSide)
+            if (fairy.level().isClientSide)
             {
                 CommonMethods.sendFairyRename(fairy, nameText);
             }
@@ -122,13 +123,13 @@ public class GuiName extends Screen
     }
 
     @Override
-    public void render(PoseStack pPoseStack, int mouseX, int mouseY, float delta)
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta)
     {
-        renderBackground(pPoseStack);
+        renderBackground(guiGraphics);
 
-        drawCenteredString(pPoseStack, this.font, screenTitle, width / 2, 40, 0xffffff);
-        drawCenteredString(pPoseStack, this.font, nameText, width / 2, 100, 0xffffff);
+        guiGraphics.drawCenteredString(this.font, screenTitle, width / 2, 40, 0xffffff);
+        guiGraphics.drawCenteredString(this.font, nameText, width / 2, 100, 0xffffff);
 
-        super.render(pPoseStack, mouseX, mouseY, delta);
+        super.render(guiGraphics, mouseX, mouseY, delta);
     }
 }

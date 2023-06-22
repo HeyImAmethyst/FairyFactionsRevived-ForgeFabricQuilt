@@ -84,7 +84,7 @@ public class FairyAIGoal extends Goal
                     theFairy.fairyBehavior.handleSocial();
                 }
 
-                theFairy.fairyBehavior.handlePosted(theFairy.level,true);
+                theFairy.fairyBehavior.handlePosted(theFairy.level(),true);
             }
 
         }

@@ -19,7 +19,7 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -44,9 +44,9 @@ public class ModClientEvents
 	}
 
 	@SubscribeEvent
-	public static void addCreative(CreativeModeTabEvent.BuildContents event)
+	public static void addCreative(BuildCreativeModeTabContentsEvent event)
 	{
-		if(event.getTab() == CreativeModeTabs.SPAWN_EGGS)
+		if(event.getTabKey() == CreativeModeTabs.SPAWN_EGGS)
 		{
 			event.accept(ModItems.FAIRY_SPAWN_EGG);
 		}

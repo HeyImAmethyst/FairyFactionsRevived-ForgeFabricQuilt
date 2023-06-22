@@ -21,7 +21,8 @@ import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -213,21 +214,33 @@ public class FairyUtils
 
     public static boolean isAirySpace(FairyEntityBase fairy, int a, int b, int c)
     {
-        if (b < 0 || b >= fairy.level.getHeight())
+        if (b < 0 || b >= fairy.level().getHeight())
         {
             return false;
         }
 
-        Block block = fairy.level.getBlockState(new BlockPos(a, b, c)).getBlock();
+        BlockPos pos = new BlockPos(a, b, c);
+
+        Block block = fairy.level().getBlockState(pos).getBlock();
 
         if (block == null || block == Blocks.AIR)
             return true;
 
-        Material matt = block.defaultBlockState().getMaterial();
+//        Material matt = block.defaultBlockState().getMaterial();
+//
+//        if (matt == null || matt == Material.AIR || matt == Material.PLANT
+//                || matt == Material.REPLACEABLE_PLANT || matt == Material.FIRE
+//                || matt == Material.DECORATION || matt == Material.SNOW)
+//        {
+//            return true;
+//        }
 
-        if (matt == null || matt == Material.AIR || matt == Material.PLANT
-                || matt == Material.REPLACEABLE_PLANT || matt == Material.FIRE
-                || matt == Material.DECORATION || matt == Material.SNOW)
+        BlockState state = block.defaultBlockState();
+
+        if((state.isAir() && state.canBeReplaced()) || (state.getMapColor(fairy.level(), pos) == MapColor.PLANT && state.getPistonPushReaction() == PushReaction.DESTROY)
+            || (state.getMapColor(fairy.level(), pos) == MapColor.PLANT && state.canBeReplaced() && state.ignitedByLava() && state.getPistonPushReaction() == PushReaction.DESTROY)
+            || (state.getMapColor(fairy.level(), pos) == MapColor.FIRE && state.canBeReplaced() && state.getPistonPushReaction() == PushReaction.DESTROY)
+            || state.getPistonPushReaction() == PushReaction.DESTROY || state.getMapColor(fairy.level(), pos) == MapColor.SNOW)
         {
             return true;
         }

@@ -44,7 +44,7 @@ public class JobPlantSapling extends JobPlantVegitation
         for ( int a = 0; a < 3; a++ )
         {
             //canPlaceBlockAt
-            if (state.is(BlockTags.SAPLINGS) && world.getBlockState(new BlockPos(x,y,z)).getMaterial().isReplaceable() && state.canSurvive(world, new BlockPos(x,y,z)))//state.getMaterial().isReplaceable()) // world.getBlockState(new BlockPos(x,y,z).above()).is(Blocks.AIR) && state.canSurvive(world, new BlockPos(x,y,z)))
+            if (state.is(BlockTags.SAPLINGS) && world.getBlockState(new BlockPos(x,y,z)).canBeReplaced() && state.canSurvive(world, new BlockPos(x,y,z)))//state.getMaterial().isReplaceable()) // world.getBlockState(new BlockPos(x,y,z).above()).is(Blocks.AIR) && state.canSurvive(world, new BlockPos(x,y,z)))
             {
 
                 for (int l = -2; l < 3; l++)

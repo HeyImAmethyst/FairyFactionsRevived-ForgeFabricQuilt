@@ -97,8 +97,8 @@ public class FairyFlyingMoveControl extends MoveControl
             this.mob.setSpeed((float)(this.speedModifier * this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED)));
 
             BlockPos blockPos = this.mob.blockPosition();
-            BlockState blockState = this.mob.level.getBlockState(blockPos);
-            VoxelShape voxelShape = blockState.getCollisionShape(this.mob.level, blockPos);
+            BlockState blockState = this.mob.level().getBlockState(blockPos);
+            VoxelShape voxelShape = blockState.getCollisionShape(this.mob.level(), blockPos);
 
             if (o > (double)this.mob.maxUpStep() && d * d + e * e < (double)Math.max(1.0f, this.mob.getBbWidth()) || !voxelShape.isEmpty() && this.mob.getY() < voxelShape.max(Direction.Axis.Y) + (double)blockPos.getY() && !blockState.is(BlockTags.DOORS) && !blockState.is(BlockTags.FENCES))
             {
@@ -110,7 +110,7 @@ public class FairyFlyingMoveControl extends MoveControl
         {
             this.mob.setSpeed((float)(this.speedModifier * this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED)));
 
-            if (this.mob.isOnGround())
+            if (this.mob.onGround())
             {
                 this.operation = Operation.WAIT;
             }

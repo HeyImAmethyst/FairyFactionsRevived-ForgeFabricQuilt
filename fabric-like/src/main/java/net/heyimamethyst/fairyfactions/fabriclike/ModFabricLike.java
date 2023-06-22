@@ -6,6 +6,7 @@ import net.heyimamethyst.fairyfactions.fabriclike.registry.ModRegistries;
 import net.heyimamethyst.fairyfactions.fabriclike.registry.ModWorldGen;
 import net.heyimamethyst.fairyfactions.items.ModSpawnEggItem;
 import net.heyimamethyst.fairyfactions.registry.ModItems;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
@@ -26,7 +27,7 @@ public class ModFabricLike {
         addToItemGroup(CreativeModeTabs.SPAWN_EGGS, ModItems.FAIRY_SPAWN_EGG.get());
     }
 
-    public static void addToItemGroup(CreativeModeTab group, Item item)
+    public static void addToItemGroup(ResourceKey<CreativeModeTab> group, Item item)
     {
         ItemGroupEvents.modifyEntriesEvent(group).register(entries -> entries.addBefore(Items.FOX_SPAWN_EGG, item));
     }

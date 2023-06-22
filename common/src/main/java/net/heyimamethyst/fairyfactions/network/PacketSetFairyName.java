@@ -104,7 +104,7 @@ public class PacketSetFairyName extends BaseC2SMessage
                 if(player instanceof ServerPlayer)
                 {
                     ServerPlayer serverPlayer = (ServerPlayer) player;
-                    final ServerLevel level = (ServerLevel) player.getLevel();
+                    final ServerLevel level = (ServerLevel) player.level();
 
                     final FairyEntity fairy = FairyFactions.getFairyFromID(serverPlayer, this.fairyID);
                     //final FairyEntity fairy = FairyFactions.getFairyFromUUID(player, this.fairyUUID);
