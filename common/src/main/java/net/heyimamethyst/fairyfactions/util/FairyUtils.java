@@ -305,7 +305,7 @@ public class FairyUtils
     // Is the item a log block?
     public static boolean isLogBlock( final ItemStack item )
     {
-        return item.is(ItemTags.LOGS);
+        return item.is(ItemTags.LOGS) || item.is(Items.MANGROVE_ROOTS);
     }
 
     public static boolean isShearingItem( ItemStack i )
