@@ -35,32 +35,27 @@ public class JobSmelt extends FairyJob
     }
 
     @Override
-    public boolean canRun(ItemStack stack, int x, int y, int z, Level world)
-    {
+    public boolean canRun(ItemStack stack, int x, int y, int z, Level world) {
         return smelt(stack, x, y, z, world);
     }
 
-    private boolean smelt(final ItemStack stack, int x, final int y, int z, final Level world )
-    {
+    private boolean smelt(final ItemStack stack, int x, final int y, int z, final Level world) {
         final int m = x;
         final int n = z;
 
-        for ( int a = 0; a < 9; a++ )
-        {
+        for (int a = 0; a < 9; a++) {
             x = m + ((a / 3) % 9) - 1;
             z = n + (a % 3) - 1;
 
-            if( assesBlastFurnace( stack, world, x, y, z) )
-            {
+            if (assesBlastFurnace(stack, world, x, y, z)) {
                 stack.shrink(1);
-                fairy.armSwing( !fairy.didSwing );
+                fairy.armSwing(!fairy.didSwing);
                 fairy.setTempItem(stack.getItem());
 
                 fairy.attackAnim = 30;
 
-                if ( !fairy.flymode() && fairy.getFlyTime() > 0 )
-                {
-                    fairy.setFlyTime( 0 );
+                if (!fairy.flymode() && fairy.getFlyTime() > 0) {
+                    fairy.setFlyTime(0);
                 }
 
                 return true;
@@ -70,40 +65,32 @@ public class JobSmelt extends FairyJob
         return false;
     }
 
-    private boolean assesBlastFurnace(final ItemStack stack, final Level world, final int x, final int y, final int z )
-    {
-        final BlockPos pos = new BlockPos(x,y,z);
+    private boolean assesBlastFurnace(final ItemStack stack, final Level world, final int x, final int y, final int z) {
+        final BlockPos pos = new BlockPos(x, y, z);
         final BlockState state = world.getBlockState(pos);
         final Block block = state.getBlock();
 
-        if (state.getBlock() instanceof BlastFurnaceBlock )
-        {
+        if (state.getBlock() instanceof BlastFurnaceBlock) {
             //FairyFactions.LOGGER.debug(this.fairy.toString()+": chopping wood");
             //world.destroyBlock(new BlockPos(x, y, z), true, fairy);
             BlastFurnaceBlock beehiveBlock = (BlastFurnaceBlock) block;
 
             final BlockEntity blockEntity = world.getBlockEntity(pos);
 
-            if ( blockEntity != null && blockEntity instanceof BlastFurnaceBlockEntity)
-            {
+            if (blockEntity != null && blockEntity instanceof BlastFurnaceBlockEntity) {
                 BlastFurnaceBlockEntity blastFurnace = (BlastFurnaceBlockEntity) blockEntity;
 
                 Map<Item, Integer> fuels = BlastFurnaceBlockEntity.getFuel();
 
-                if(fuels.containsKey(stack.getItem()))
-                {
-                    if (stack != null && stack.getCount() > 0)
-                    {
+                if (fuels.containsKey(stack.getItem())) {
+                    if (stack != null && stack.getCount() > 0) {
                         ItemStack furnaceStack = blastFurnace.getItem(1);
 
-                        if (furnaceStack == null)
-                        {
+                        if (furnaceStack == null) {
                             blastFurnace.setItem(1, stack);
 
                             return true;
-                        }
-                        else
-                        {
+                        } else {
                             assert stack.getItem() == furnaceStack.getItem(); // avoid duplication glitch?
                             assert stack.getCount() + furnaceStack.getCount() < furnaceStack.getMaxStackSize();
 
@@ -111,9 +98,8 @@ public class JobSmelt extends FairyJob
 
                             return true;
                         }
-                    }
 
-                }
+                    }
 
 //                    if(!(fuels.containsKey(stack.getItem())))
 //                    {
@@ -159,49 +145,14 @@ public class JobSmelt extends FairyJob
 //                        }
 //                    }
 
+                } else {
+                    return false;
+                }
             }
-            else
-            {
-                return false;
-            }
-        }
 
+            return false;
+        }
         return false;
-    }
-
-    private boolean canBurn(@Nullable Recipe<?> recipe, AbstractFurnaceBlockEntity entity, int i)
-    {
-
-        if (entity.getItem(0).isEmpty() || recipe == null)
-        {
-            return false;
-        }
-
-        ItemStack itemStack = recipe.getResultItem();
-
-        if (itemStack.isEmpty())
-        {
-            return false;
-        }
-
-        ItemStack itemStack2 = entity.getItem(2);
-
-        if (itemStack2.isEmpty())
-        {
-            return true;
-        }
-
-        if (!itemStack2.sameItem(itemStack))
-        {
-            return false;
-        }
-
-        if (itemStack2.getCount() < i && itemStack2.getCount() < itemStack2.getMaxStackSize())
-        {
-            return true;
-        }
-
-        return itemStack2.getCount() < itemStack.getMaxStackSize();
     }
 
     @Override
