@@ -28,7 +28,7 @@ public class FairyAIStroll extends WaterAvoidingRandomStrollGoal
     @Override
     public void start()
     {
-        if(!((FairyEntity) mob).isSitting())
+        if(!((FairyEntity) mob).isSitting() || (!((FairyEntity) mob).isSitting() && !((FairyEntity) mob).isEmotional()))
             super.start();
     }
 

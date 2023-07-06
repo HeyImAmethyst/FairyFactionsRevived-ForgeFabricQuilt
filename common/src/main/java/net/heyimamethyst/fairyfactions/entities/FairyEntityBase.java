@@ -19,7 +19,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.Nullable;
 
 public class FairyEntityBase extends Animal
@@ -35,6 +34,10 @@ public class FairyEntityBase extends Animal
     protected static final EntityDataAccessor<Integer> I_TOOL = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.INT);         // temporary tool
 
     public static final EntityDataAccessor<Boolean> SITTING = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.BOOLEAN);
+
+    public static final EntityDataAccessor<Boolean> EMOTIONAL = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.BOOLEAN);
+
+    public static final EntityDataAccessor<Integer> WANTED_FOOD = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.INT);
 
     public static final int	MAX_SKIN	= 3;
     public static final int	MAX_JOB		= 3;
@@ -70,7 +73,6 @@ public class FairyEntityBase extends Animal
 
     // non-persistent fields
     public float                sinage;
-    protected boolean				flag;
     public boolean				createGroup;
     public int					listActions;
     public int					witherTime;
@@ -506,6 +508,16 @@ public class FairyEntityBase extends Animal
         setFairyFlag(B_FLAGS, FLAG_TAMED, flag);
     }
 
+    public void setEmotional(boolean flag)
+    {
+        this.entityData.set(EMOTIONAL, flag);
+    }
+
+    public boolean isEmotional()
+    {
+        return this.entityData.get(EMOTIONAL);
+    }
+
     public boolean angry()
     {
         return getFairyFlag(B_FLAGS, FLAG_ANGRY);
@@ -652,5 +664,15 @@ public class FairyEntityBase extends Animal
     public void setTempItem(Item item)
     {
         this.entityData.set(I_TOOL, Item.getId(item));
+    }
+
+    public Item getWantedFoodItem()
+    {
+        return Item.byId(this.entityData.get(WANTED_FOOD));
+    }
+
+    public void setWantedFoodItem(Item item)
+    {
+        this.entityData.set(WANTED_FOOD, Item.getId(item));
     }
 }
