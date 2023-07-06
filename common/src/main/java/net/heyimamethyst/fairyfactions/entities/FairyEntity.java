@@ -3,10 +3,12 @@ package net.heyimamethyst.fairyfactions.entities;
 import net.heyimamethyst.fairyfactions.FairyConfigValues;
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.Loc;
+import net.heyimamethyst.fairyfactions.ModExpectPlatform;
 import net.heyimamethyst.fairyfactions.entities.ai.*;
 import net.heyimamethyst.fairyfactions.entities.ai.goals.*;
 import net.heyimamethyst.fairyfactions.proxy.ClientMethods;
 import net.heyimamethyst.fairyfactions.proxy.CommonMethods;
+import net.heyimamethyst.fairyfactions.registry.ModItemTags;
 import net.heyimamethyst.fairyfactions.registry.ModSounds;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.heyimamethyst.fairyfactions.world.FairyGroupGenerator;
@@ -63,6 +65,8 @@ import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class FairyEntity extends FairyEntityBase
@@ -139,6 +143,9 @@ public class FairyEntity extends FairyEntityBase
         setJob(getRandom().nextInt(4));
 
         setFlymode(false);
+
+        //setWantedFoodItem(Items.AIR);
+
         this.sinage = getRandom().nextFloat();
         this.flyTime = 400 + this.getRandom().nextInt(200);
         this.cower = this.getRandom().nextBoolean();
@@ -212,6 +219,7 @@ public class FairyEntity extends FairyEntityBase
         super.defineSynchedData();
 
         this.entityData.define(SITTING, false);
+        this.entityData.define(EMOTIONAL, false);
 
         this.entityData.define(B_FLAGS, (byte) 0);
         this.entityData.define(B_FLAGS2, (byte) 0);
@@ -221,6 +229,8 @@ public class FairyEntity extends FairyEntityBase
         this.entityData.define(S_OWNER, "");
         this.entityData.define(S_NAME_REAL, "");
         this.entityData.define(I_TOOL, 0);
+        this.entityData.define(WANTED_FOOD, 0);
+        //this.entityData.define(WANTED_FOOD_STACK, ItemStack.EMPTY);
     }
 
     @Override
@@ -253,6 +263,9 @@ public class FairyEntity extends FairyEntityBase
         tag.putShort("snowballin", (short) snowballin);
 
         tag.putBoolean("sitting", this.isSitting());
+        tag.putBoolean("emotional", this.isEmotional());
+
+        tag.putInt("wanted_food", this.entityData.get(WANTED_FOOD));
 
     }
 
@@ -291,6 +304,9 @@ public class FairyEntity extends FairyEntityBase
         snowballin = tag.getShort("snowballin");
 
         setSitting(tag.getBoolean("sitting"));
+        setEmotional(tag.getBoolean("emotional"));
+
+        setWantedFoodItem(Item.byId(tag.getInt("wanted_food")));
 
         if (!this.level.isClientSide)
         {
@@ -504,6 +520,28 @@ public class FairyEntity extends FairyEntityBase
             }
 
             setPosted(postY > -1);
+
+            if(posted() && getRandom().nextInt(200) == 0 && !isEmotional())
+            {
+                if(level.getBlockState(this.blockPosition().below()).isSolidRender(level, this.blockPosition()))
+                {
+                    setEmotional(true);
+
+                    setFlymode(false);
+                    flyTime = 0;
+                    //setCanFlap(false);
+
+                    setSitting(true);
+
+                    this.getNavigation().moveTo((Path) null, 0.0D);
+                    //setWantedFoodItem(rollWantedItem());
+                }
+            }
+
+            if(posted() && isEmotional() && !isSitting())
+            {
+                setSitting(true);
+            }
         }
 
         if (getHealth() > 0.0F)
@@ -612,7 +650,7 @@ public class FairyEntity extends FairyEntityBase
                 this.particleCount = getRandom().nextInt(FairyConfigValues.DEF_MAX_PARTICLES >> 1);
                 //this.particleCount = this.getRandom().nextInt(2);
 
-                if (angry() || (crying() && queen()))
+                if (angry() || (crying() && queen()) || isEmotional())
                 {
                     // anger smoke, queens don't cry :P
                     this.level.addParticle(ParticleTypes.SMOKE, position().x, getBoundingBox().maxY, position().z, 0D, 0D, 0D);
@@ -837,7 +875,7 @@ public class FairyEntity extends FairyEntityBase
                 }
             }
 
-            if (this.flyTime <= 0 || (this.flyBlocked
+            if (this.flyTime <= 0 || isEmotional() || (this.flyBlocked
                     && (this.getVehicle() == null || (this.getTarget() != null
                     && this.getVehicle() == this.getTarget()))))
             {
@@ -946,6 +984,33 @@ public class FairyEntity extends FairyEntityBase
 
         //_dump_();
     }
+
+//    public Item rollWantedItem()
+//    {
+//        Iterator<Item> items = ModExpectPlatform.getItemsOfTag(ModItemTags.IS_FAIRY_FOOD);
+//        List<Item> itemsList = new ArrayList<>();
+//
+//        if(items != null)
+//        {
+//            while(items.hasNext())
+//            {
+//                Item item = items.next().asItem();
+//                itemsList.add(item);
+//            }
+//
+//            //System.out.println(itemsList);
+//
+//            return itemsList.get(random.nextInt(itemsList.size()));
+//            //setWantedFoodItem(itemsList.get(random.nextInt(itemsList.size())));
+//            //wantedFood = new ItemStack(itemsList.get(random.nextInt(itemsList.size())));
+//        }
+//        else
+//        {
+//            //System.out.println(itemsList);
+//
+//            return null;
+//        }
+//    }
 
     public boolean canGetAngryAt()
     {
@@ -1665,6 +1730,34 @@ public class FairyEntity extends FairyEntityBase
 
                     return InteractionResult.SUCCESS;
                 }
+                else if(stack != null && stack.is(getWantedFoodItem()) && stack.getCount() > 0)
+                {
+                    stack.shrink(1);
+
+                    setHearts(!hearts());
+                    setEmotional(false);
+                    setSitting(false);
+
+                    if(getHealth() < getMaxHealth())
+                    {
+                        if (stack.getItem() == Items.SUGAR)
+                        {
+                            heal(5);
+                        }
+                        else
+                        {
+                            heal(99);
+
+                            if (stack.getItem() == Items.GLISTERING_MELON_SLICE)
+                            {
+                                setWithered(false);
+                                witherTime = 0;
+                            }
+                        }
+                    }
+
+                    return InteractionResult.SUCCESS;
+                }
                 else if (stack != null && FairyUtils.haircutItem(stack)
                         && stack.getCount() > 0 && !rogue())
                 {
@@ -1726,7 +1819,7 @@ public class FairyEntity extends FairyEntityBase
                 }
                 else
                 {
-                    if (isSitting())
+                    if (isSitting() && !isEmotional())
                     {
                         if (stack != null
                                 && FairyUtils.realFreshOysterBars(stack.getItem())
@@ -1743,7 +1836,7 @@ public class FairyEntity extends FairyEntityBase
 
                         return InteractionResult.SUCCESS;
                     }
-                    else if (player.isShiftKeyDown())
+                    else if (player.isShiftKeyDown() && !isEmotional())
                     {
 
                         if (flymode() || !onGround)
@@ -1764,17 +1857,26 @@ public class FairyEntity extends FairyEntityBase
 
                         return InteractionResult.SUCCESS;
                     }
-                    else if ((stack == null || !FairyUtils.snowballItem(stack.getItem())) && !player.isShiftKeyDown())
+                    else if (stack.isEmpty()
+                            /*(stack == null || !FairyUtils.snowballItem(stack.getItem()))*/
+                            && !player.isShiftKeyDown())
                     {
                         // otherwise, right-clicking wears a fairy hat
 
-                        CommonMethods.sendFairyMount(this, player);
+                        if(isEmotional())
+                        {
+                            return InteractionResult.PASS;
+                        }
+                        else
+                        {
+                            CommonMethods.sendFairyMount(this, player);
 
-                        setFlymode(true);
-                        flyTime = 200;
-                        setCanFlap(true);
+                            setFlymode(true);
+                            flyTime = 200;
+                            setCanFlap(true);
 
-                        return InteractionResult.SUCCESS;
+                            return InteractionResult.SUCCESS;
+                        }
                     }
                 }
             }
