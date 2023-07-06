@@ -2,10 +2,13 @@ package net.heyimamethyst.fairyfactions;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.platform.Platform;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 
 import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.Map;
 
 public class ModExpectPlatform {
@@ -30,6 +33,12 @@ public class ModExpectPlatform {
 
     @ExpectPlatform
     public static Map<EntityType<?>, SpawnEggItem> getSpawnEggMap()
+    {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static Iterator<Item> getItemsOfTag(TagKey<Item> tag)
     {
         throw new AssertionError();
     }

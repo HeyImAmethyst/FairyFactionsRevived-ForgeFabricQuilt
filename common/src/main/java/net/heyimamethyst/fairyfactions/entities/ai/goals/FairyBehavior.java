@@ -12,6 +12,8 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SignBlock;
@@ -964,13 +966,18 @@ public class FairyBehavior
 
                 BlockPos pos = theFairy.roamBlockPos(aa, bb, cc, theFairy, 0F);
 
-                if (pos != null)
+                if (pos != null && !theFairy.isEmotional())
                     theFairy.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
             }
         }
 
         if (theFairy.posted())
         {
+//            if(!theFairy.isEmotional())
+//            {
+//                new FairyJobManager(theFairy).discover(level);
+//            }
+
             new FairyJobManager(theFairy).discover(level);
         }
     }
