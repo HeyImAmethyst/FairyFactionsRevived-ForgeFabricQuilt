@@ -13,17 +13,14 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlastFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
+import java.util.List;
 
 //TODO: Not yet finished implementing, still WIP!!
 
@@ -71,88 +68,77 @@ public class JobSmelt extends FairyJob
         final BlockState state = world.getBlockState(pos);
         final Block block = state.getBlock();
 
-        if (state.getBlock() instanceof BlastFurnaceBlock) {
-            //FairyFactions.LOGGER.debug(this.fairy.toString()+": chopping wood");
-            //world.destroyBlock(new BlockPos(x, y, z), true, fairy);
-            BlastFurnaceBlock beehiveBlock = (BlastFurnaceBlock) block;
+        if (state.getBlock() instanceof BlastFurnaceBlock )
+        {
+            BlastFurnaceBlock blastFurnaceBlock = (BlastFurnaceBlock) block;
 
             final BlockEntity blockEntity = world.getBlockEntity(pos);
 
             if (blockEntity != null && blockEntity instanceof BlastFurnaceBlockEntity) {
                 BlastFurnaceBlockEntity blastFurnace = (BlastFurnaceBlockEntity) blockEntity;
 
-                Map<Item, Integer> fuels = BlastFurnaceBlockEntity.getFuel();
+                fairy.getNavigation().moveTo(x, y, z, 0.3D);
+                if (populateFuel(blastFurnace, stack))
+                {
+                    return true;
+                }
 
-                if (fuels.containsKey(stack.getItem())) {
-                    if (stack != null && stack.getCount() > 0) {
-                        ItemStack furnaceStack = blastFurnace.getItem(1);
-
-                        if (furnaceStack == null) {
-                            blastFurnace.setItem(1, stack);
-
-                            return true;
-                        } else {
-                            assert stack.getItem() == furnaceStack.getItem(); // avoid duplication glitch?
-                            assert stack.getCount() + furnaceStack.getCount() < furnaceStack.getMaxStackSize();
-
-                            furnaceStack.setCount(furnaceStack.getCount() + stack.getCount());
-
-                            return true;
-                        }
-
-                    }
-
-//                    if(!(fuels.containsKey(stack.getItem())))
-//                    {
-//                        if (stack != null && stack.getCount() > 0)
-//                        {
-//                            ItemStack furnaceStack = blastFurnace.getItem(0);
-//
-//                            if (furnaceStack == null)
-//                            {
-//                                blastFurnace.setItem(0, stack);
-//                            }
-//                            else
-//                            {
-//                                assert stack.getItem() == furnaceStack.getItem(); // avoid duplication glitch?
-//                                assert stack.getCount() + furnaceStack.getCount() < furnaceStack.getMaxStackSize();
-//
-//                                furnaceStack.setCount(furnaceStack.getCount() + stack.getCount());
-//                            }
-//                        }
-//
-//                        return true;
-//                    }
-
-//                    if(!blastFurnace.getItem(2).isEmpty())
-//                    {
-//                        BlastFurnaceBlock.popResource(world, blastFurnace.getBlockPos(), blastFurnace.getItem(2));
-//
-//                        //FairyJobManager.INSTANCE.cleanSlotInBlastFurnace(blastFurnace, 2);
-//                        blastFurnace.setItem( 2, (ItemStack) null );
-//
-//                        return true;
-//                    }
-
-//                    if(!world.isClientSide)
-//                    {
-//                        Recipe recipe = world.getRecipeManager().getRecipeFor(blastFurnace.recipeType, blastFurnace, world).orElse(null);
-//                        int maxStackSize = blastFurnace.getMaxStackSize();
-//
-//                        if(canBurn(world.registryAccess(), recipe, blastFurnace, maxStackSize))
-//                        {
-//                            blastFurnace.setItem(0, stack);
-//                            return true;
-//                        }
-//                    }
-
-                } else {
-                    return false;
+                if (populateInput(world, blastFurnace, stack))
+                {
+                    return true;
                 }
             }
-
-            return false;
         }
+
+        return false;
+    }
+
+    private boolean populateFuel(BlastFurnaceBlockEntity blastFurnace, ItemStack stack)
+    {
+        if(BlastFurnaceBlockEntity.isFuel(stack))
+        {
+            if (stack.getCount() > 0)
+            {
+
+                ItemStack furnaceStack = blastFurnace.getItem(1);
+                ItemStack itemStackForFurnace = new ItemStack(stack.getItem());
+
+                if(furnaceStack.getCount() == furnaceStack.getMaxStackSize())
+                {
+                    return false;
+                }
+
+                itemStackForFurnace.setCount(furnaceStack.getCount() + stack.getCount());
+
+                blastFurnace.setItem(1, itemStackForFurnace);
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean populateInput(Level world, BlastFurnaceBlockEntity blastFurnace, ItemStack stack)
+    {
+
+        if(stack.is(ModItemTags.ITEM_TO_SMELT))
+        {
+            ItemStack furnaceStack = blastFurnace.getItem(0);
+            ItemStack itemStackForFurnace = new ItemStack(stack.getItem());
+
+            if(furnaceStack.getCount() == furnaceStack.getMaxStackSize())
+            {
+                return false;
+            }
+
+            itemStackForFurnace.setCount(furnaceStack.getCount() + stack.getCount());
+
+            blastFurnace.setItem(0, itemStackForFurnace);
+
+            return true;
+        }
+
         return false;
     }
 
