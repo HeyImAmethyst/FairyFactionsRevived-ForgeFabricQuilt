@@ -1,7 +1,10 @@
 package net.heyimamethyst.fairyfactions.entities.ai.fairy_job;
 
+import com.google.common.collect.ImmutableSet;
+import net.heyimamethyst.fairyfactions.ModExpectPlatform;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.registry.ModBlockTags;
+import net.heyimamethyst.fairyfactions.registry.ModItemTags;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -14,6 +17,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -27,6 +31,7 @@ import net.minecraft.world.level.block.state.properties.Property;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 public class FairyJobManager
@@ -71,7 +76,7 @@ public class FairyJobManager
         fairyJobs.add(new JobBreeding(fairy));
         fairyJobs.add(new JobShearing(fairy));
         fairyJobs.add(new JobFishing(fairy));
-        //fairyJobs.add(new JobSmelt(fairy));
+        fairyJobs.add(new JobSmelt(fairy));
     }
 
     public void discover( final Level world )
@@ -159,6 +164,21 @@ public class FairyJobManager
                                 return;
                             }
 
+                            if(fairy.isEmotional())
+                            {
+                                List<Item> foodItems = getItemsFromFairyFoodTag();
+
+                                if (foodItems != null)
+                                {
+                                    final Item itemFromList = foodItems.get(fairy.getRandom().nextInt(foodItems.size()));
+
+                                    if(!doesChestHaveWantedItem(chest, itemFromList))
+                                    {
+                                        fairy.setWantedFoodItem(itemFromList);
+                                    }
+                                }
+                            }
+
                             for ( int p = 0; p < chest.getContainerSize(); p++ )
                             {
                                 if ( checkChestItem(chest, p, x, y, z, world ) )
@@ -226,6 +246,17 @@ public class FairyJobManager
                 }
             }
         }
+    }
+
+    private boolean doesChestHaveWantedItem(ChestBlockEntity chest, Item itemFromList)
+    {
+
+        if(itemFromList != null)
+        {
+            return chest.hasAnyOf(ImmutableSet.of(itemFromList));
+        }
+
+        return false;
     }
 
     public BlastFurnaceBlockEntity getNearbyBlastFurnace( final int x, final int y, final int z, final Level world )
@@ -356,6 +387,31 @@ public class FairyJobManager
         }
 
         return false;
+    }
+
+    public List<Item> getItemsFromFairyFoodTag()
+    {
+        Iterator<Item> items = ModExpectPlatform.getItemsOfTag(ModItemTags.IS_FAIRY_FOOD);
+        List<Item> itemsList = new ArrayList<>();
+
+        if(items != null)
+        {
+            while(items.hasNext())
+            {
+                Item item = items.next().asItem();
+                itemsList.add(item);
+            }
+
+            //System.out.println(itemsList);
+
+            return itemsList;
+        }
+        else
+        {
+            //System.out.println(itemsList);
+
+            return null;
+        }
     }
 
     // Remove an itemstack that's been used up.

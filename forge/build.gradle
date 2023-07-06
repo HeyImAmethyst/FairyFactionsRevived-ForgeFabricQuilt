@@ -16,7 +16,7 @@ loom {
         convertAccessWideners = true
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
-        //mixinConfig "fairyfactions-common.mixins.json"
+        mixinConfig "fairyfactions-common.mixins.json"
         //mixinConfig "fairyfactions.mixins.json"
     }
 }
