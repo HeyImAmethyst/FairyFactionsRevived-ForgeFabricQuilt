@@ -273,6 +273,13 @@ public class FairyUtils
         return false;
     }
 
+
+    // Is the item a sword?
+    public static boolean isSwordItem( final ItemStack i )
+    {
+        return i.is(ModItemTags.IS_SWORD_ITEM);
+    }
+
     public static boolean isSeedItem( final Item item )
     {
         return FairyUtils.isIPlantable(Block.byItem(item))

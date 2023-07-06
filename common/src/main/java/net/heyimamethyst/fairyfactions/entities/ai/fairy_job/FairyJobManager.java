@@ -12,9 +12,9 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.animal.*;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 public class FairyJobManager
 {
@@ -77,6 +78,7 @@ public class FairyJobManager
         fairyJobs.add(new JobShearing(fairy));
         fairyJobs.add(new JobFishing(fairy));
         fairyJobs.add(new JobSmelt(fairy));
+        fairyJobs.add(new JobButcher(fairy));
     }
 
     public void discover( final Level world )
@@ -360,6 +362,8 @@ public class FairyJobManager
                             ListTag listTag = fairy.getItemInHand(InteractionHand.MAIN_HAND).getEnchantmentTags();
                             listTag.clear();
                             listTag.add(stackEnchantmentTags);
+
+                            //Objects.requireNonNull(fairy.getItemInHand(InteractionHand.MAIN_HAND).getTag()).put("Enchantments", listTag);
                         }
                     }
                 }
@@ -377,6 +381,11 @@ public class FairyJobManager
         }
 
         if (gatherFromBerryBush(x, y, z, world))
+        {
+            return true;
+        }
+
+        if(gatherProductFromFurnace(x, y, z, world))
         {
             return true;
         }
@@ -504,6 +513,108 @@ public class FairyJobManager
         }
     }
 
+    public ArrayList<Pig> getPigs(final Level world )
+    {
+        final List<?> list = world.getEntitiesOfClass(Pig.class, fairy.getBoundingBox().inflate( 5D, 5D, 5D ) );
+
+        if ( list.size() < 1 )
+        {
+            return null;
+        }
+
+        final ArrayList<Pig> list2 = new ArrayList<Pig>();
+
+        for ( int i = 0; i < list.size(); i++ )
+        {
+            final Pig entity1 = (Pig) list.get( i );
+
+            // TODO: track combat correctly
+
+            if ( fairy.hasLineOfSight( entity1 ) && entity1.getHealth() > 0 && entity1.getTarget() == null
+                    && entity1.getAge() >= 0)
+            {
+                list2.add( entity1 );
+            }
+        }
+
+        if ( list2.size() <= 0 )
+        {
+            return null;
+        }
+        else
+        {
+            return list2;
+        }
+    }
+
+    public ArrayList<Cow> getCows(final Level world )
+    {
+        final List<?> list = world.getEntitiesOfClass(Cow.class, fairy.getBoundingBox().inflate( 5D, 5D, 5D ) );
+
+        if ( list.size() < 1 )
+        {
+            return null;
+        }
+
+        final ArrayList<Cow> list2 = new ArrayList<Cow>();
+
+        for ( int i = 0; i < list.size(); i++ )
+        {
+            final Cow entity1 = (Cow) list.get( i );
+
+            // TODO: track combat correctly
+
+            if ( fairy.hasLineOfSight( entity1 ) && entity1.getHealth() > 0 && entity1.getTarget() == null
+                    && entity1.getAge() >= 0)
+            {
+                list2.add( entity1 );
+            }
+        }
+
+        if ( list2.size() <= 0 )
+        {
+            return null;
+        }
+        else
+        {
+            return list2;
+        }
+    }
+
+    public ArrayList<Chicken> getChickens( final Level world )
+    {
+        final List<?> list = world.getEntitiesOfClass(Chicken.class, fairy.getBoundingBox().inflate( 5D, 5D, 5D ) );
+
+        if ( list.size() < 1 )
+        {
+            return null;
+        }
+
+        final ArrayList<Chicken> list2 = new ArrayList<Chicken>();
+
+        for ( int i = 0; i < list.size(); i++ )
+        {
+            final Chicken entity1 = (Chicken) list.get( i );
+
+            // TODO: track combat correctly
+
+            if ( fairy.hasLineOfSight( entity1 ) && entity1.getHealth() > 0 && entity1.getTarget() == null
+                    && entity1.getAge() >= 0)
+            {
+                list2.add( entity1 );
+            }
+        }
+
+        if ( list2.size() <= 0 )
+        {
+            return null;
+        }
+        else
+        {
+            return list2;
+        }
+    }
+
     public ArrayList<Sheep> getSheep( final Level world )
     {
         final List<?> list = world.getEntitiesOfClass(Sheep.class, fairy.getBoundingBox().inflate( 5D, 5D, 5D ) );
@@ -604,6 +715,79 @@ public class FairyJobManager
                     world.playSound((Player)null, pos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + world.random.nextFloat() * 0.4F);
                     world.setBlock(pos, state.setValue(ageProperty, Integer.valueOf(1)), 2);
 
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private boolean gatherProductFromFurnace(int x, final int y, int z, final Level world )
+    {
+        final int m = x;
+        final int n = z;
+
+        for ( int a = 0; a < 9; a++ )
+        {
+            x = m + ((a / 3) % 9) - 1;
+            z = n + (a % 3) - 1;
+
+            if( popResoruceFromFurnace( world, x, y, z) )
+            {
+                fairy.armSwing( !fairy.didSwing );
+
+                fairy.attackAnim = 30;
+
+                if ( !fairy.flymode() && fairy.getFlyTime() > 0 )
+                {
+                    fairy.setFlyTime( 0 );
+                }
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean popResoruceFromFurnace(final Level world, final int x, final int y, final int z )
+    {
+        final BlockPos pos = new BlockPos(x,y,z);
+        final BlockState state = world.getBlockState(pos);
+        final Block block = state.getBlock();
+
+        //this.stateDefinition.any().setValue(AGE, 0)
+        //state.is(ModBlockTags.IS_BERRY_BUSH_BLOCK)
+        //state.is(Blocks.SWEET_BERRY_BUSH)
+        //SweetBerryBushBlock.AGE
+
+        if (state.getBlock() instanceof BlastFurnaceBlock )
+        {
+            BlastFurnaceBlock blastFurnaceBlock = (BlastFurnaceBlock) block;
+
+            final BlockEntity blockEntity = world.getBlockEntity(pos);
+
+            if ( blockEntity != null && blockEntity instanceof BlastFurnaceBlockEntity)
+            {
+                BlastFurnaceBlockEntity blastFurnace = (BlastFurnaceBlockEntity) blockEntity;
+
+                if(!blastFurnace.getItem(2).isEmpty())
+                {
+                    blastFurnaceBlock.popResource(world, pos, blastFurnace.getItem(2));
+
+                    //FairyJobManager.INSTANCE.cleanSlotInBlastFurnace(blastFurnace, 2);
+                    blastFurnace.setItem( 2, ItemStack.EMPTY );
                     return true;
                 }
                 else
@@ -801,7 +985,7 @@ public class FairyJobManager
                 || FairyUtils.isSaplingBlock(stack) || FairyUtils.isLogBlock(stack) || FairyUtils.acceptableFoods(fairy, stack)
                 ||  FairyUtils.isBreedingItem(stack) ||  FairyUtils.isShearingItem(stack) || FairyUtils.isClothBlock(stack) || FairyUtils.isFishingItem(stack)
                 || FairyUtils.isAnimalProduct(stack) || FairyUtils.isRawFish(stack) || FairyUtils.isFishLoot(stack) || FairyUtils.isFlower( stack.getItem())
-                || stack.is(Items.STICK) || stack.is(Blocks.PUMPKIN.asItem())|| FairyUtils.isAdditionalItemPickup(stack);
+                || stack.is(Items.STICK) || stack.is(Blocks.PUMPKIN.asItem())|| FairyUtils.isAdditionalItemPickup(stack) || stack.is(ModItemTags.ITEM_TO_SMELT) || stack.is(ItemTags.COALS);
     }
 
 }

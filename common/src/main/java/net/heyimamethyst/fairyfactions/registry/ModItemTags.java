@@ -30,6 +30,9 @@ public class ModItemTags
 	//For adding modded axes
 	public static final TagKey<Item> IS_AXE_ITEM = makeTag("is_axe_item");
 
+	//For adding modded swords
+	public static final TagKey<Item> IS_SWORD_ITEM = makeTag("is_sword_item");
+
 	//For adding modded hoe
 	public static final TagKey<Item> IS_HOE_ITEM = makeTag("is_hoe_item");
 
@@ -38,6 +41,7 @@ public class ModItemTags
 
 	public static final TagKey<Item> IS_ADDITIONAL_ITEM_PICKUP = makeTag("is_additional_item_pickup");
 
+	public static final TagKey<Item> ITEM_TO_SMELT = makeTag("item_to_smelt");
 	private static TagKey<Item> bind(String p_203855_)
 	{
 		return TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(p_203855_));
