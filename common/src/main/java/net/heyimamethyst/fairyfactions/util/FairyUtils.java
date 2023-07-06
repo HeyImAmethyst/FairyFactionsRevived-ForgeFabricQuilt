@@ -237,10 +237,15 @@ public class FairyUtils
 
         BlockState state = block.defaultBlockState();
 
-        if((state.isAir() && state.canBeReplaced()) || (state.getMapColor(fairy.level(), pos) == MapColor.PLANT && state.getPistonPushReaction() == PushReaction.DESTROY)
-            || (state.getMapColor(fairy.level(), pos) == MapColor.PLANT && state.canBeReplaced() && state.ignitedByLava() && state.getPistonPushReaction() == PushReaction.DESTROY)
-            || (state.getMapColor(fairy.level(), pos) == MapColor.FIRE && state.canBeReplaced() && state.getPistonPushReaction() == PushReaction.DESTROY)
-            || state.getPistonPushReaction() == PushReaction.DESTROY || state.getMapColor(fairy.level(), pos) == MapColor.SNOW)
+        boolean MATERIAL_AIR = state.getMapColor(fairy.level(), pos) == MapColor.NONE && state.canBeReplaced();
+        boolean MATERIAL_PLANT = state.getMapColor(fairy.level(), pos) == MapColor.PLANT && state.getPistonPushReaction() == PushReaction.DESTROY;
+        boolean MATERIAL_REPLACEABLE_PLANT = state.getMapColor(fairy.level(), pos) == MapColor.PLANT && state.canBeReplaced() && state.ignitedByLava() && state.getPistonPushReaction() == PushReaction.DESTROY;
+        boolean MATERIAL_FIRE = state.getMapColor(fairy.level(), pos) == MapColor.FIRE && state.canBeReplaced() && state.getPistonPushReaction() == PushReaction.DESTROY;
+        boolean MATERIAL_DECORATION = state.getMapColor(fairy.level(), pos) == MapColor.NONE && state.getPistonPushReaction() == PushReaction.DESTROY;
+        boolean MATERIAL_SNOW = state.getMapColor(fairy.level(), pos) == MapColor.SNOW;
+
+        if(MATERIAL_AIR || MATERIAL_PLANT|| MATERIAL_REPLACEABLE_PLANT || MATERIAL_FIRE
+            || MATERIAL_DECORATION|| MATERIAL_SNOW)
         {
             return true;
         }
@@ -335,6 +340,13 @@ public class FairyUtils
         }
 
         return false;
+    }
+
+
+    // Is the item a sword?
+    public static boolean isSwordItem( final ItemStack i )
+    {
+        return i.is(ModItemTags.IS_SWORD_ITEM);
     }
 
     public static boolean isSeedItem( final Item item )

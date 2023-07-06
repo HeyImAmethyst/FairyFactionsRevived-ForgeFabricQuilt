@@ -178,10 +178,15 @@ public class FairyGroupGenerator
 
             BlockState state = s.defaultBlockState();
 
-            if ((state.isAir() && state.canBeReplaced()) || (state.getMapColor(world, pos) == MapColor.PLANT && state.getPistonPushReaction() == PushReaction.DESTROY)
-                    || (state.getMapColor(world, pos) == MapColor.PLANT && state.canBeReplaced() && state.ignitedByLava() && state.getPistonPushReaction() == PushReaction.DESTROY)
-                    || (state.getMapColor(world, pos) == MapColor.FIRE && state.canBeReplaced() && state.getPistonPushReaction() == PushReaction.DESTROY)
-                    || state.getPistonPushReaction() == PushReaction.DESTROY || state.getMapColor(world, pos) == MapColor.SNOW)
+            boolean MATERIAL_AIR = state.getMapColor(world, pos) == MapColor.NONE && state.canBeReplaced();
+            boolean MATERIAL_PLANT = state.getMapColor(world, pos) == MapColor.PLANT && state.getPistonPushReaction() == PushReaction.DESTROY;
+            boolean MATERIAL_REPLACEABLE_PLANT = state.getMapColor(world, pos) == MapColor.PLANT && state.canBeReplaced() && state.ignitedByLava() && state.getPistonPushReaction() == PushReaction.DESTROY;
+            boolean MATERIAL_FIRE = state.getMapColor(world, pos) == MapColor.FIRE && state.canBeReplaced() && state.getPistonPushReaction() == PushReaction.DESTROY;
+            boolean MATERIAL_DECORATION = state.getMapColor(world, pos) == MapColor.NONE && state.getPistonPushReaction() == PushReaction.DESTROY;
+            boolean MATERIAL_SNOW = state.getMapColor(world, pos) == MapColor.SNOW;
+
+            if(MATERIAL_AIR || MATERIAL_PLANT|| MATERIAL_REPLACEABLE_PLANT || MATERIAL_FIRE
+                    || MATERIAL_DECORATION|| MATERIAL_SNOW)
             {
                 return true;
             }
