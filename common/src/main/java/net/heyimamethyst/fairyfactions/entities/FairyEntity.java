@@ -42,6 +42,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.animal.Animal;
@@ -171,7 +172,7 @@ public class FairyEntity extends FairyEntityBase
         this.fairyAttackGoal = new FairyAttackGoal(this, 0.3D, false);
 
         this.goalSelector.addGoal(1, new FloatGoal(this));
-
+        this.goalSelector.addGoal(1, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(1, fairyAttackGoal);
 
         this.goalSelector.addGoal(4, new FairyAIGoal((this)));
