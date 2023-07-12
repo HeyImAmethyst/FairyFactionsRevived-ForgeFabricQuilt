@@ -62,6 +62,6 @@ public class JobBonemeal extends FairyJob
     @Override
     public boolean canStart()
     {
-        return FairyUtils.isBonemealItem(itemStack.getItem());
+        return super.canStart() && FairyUtils.isBonemealItem(itemStack.getItem());
     }
 }

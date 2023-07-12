@@ -227,12 +227,6 @@ public class JobPlantVegitation extends FairyJob
         //return canPlaceSapling(x, y + 1, z, j, world) ? 1 : 0;
     }
 
-    @Override
-    public boolean canStart()
-    {
-        return false;
-    }
-
     public TagKey getPlantTag()
     {
         return null;

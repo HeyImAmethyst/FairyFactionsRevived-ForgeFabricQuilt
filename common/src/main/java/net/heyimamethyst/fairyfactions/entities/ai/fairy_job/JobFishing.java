@@ -191,6 +191,6 @@ public class JobFishing extends FairyJob
     @Override
     public boolean canStart()
     {
-        return FairyUtils.isFishingItem(itemStack);
+        return super.canStart() && FairyUtils.isFishingItem(itemStack);
     }
 }

@@ -13,6 +13,8 @@ import net.minecraft.tags.TagLoader;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionBrewing;
 import org.quiltmc.loader.api.QuiltLoader;
 
 import java.nio.file.Path;
@@ -45,5 +47,15 @@ public class ModExpectPlatformImpl
         }
 
         return items.iterator();
+    }
+
+    public static Potion getStartingPotionFromMix(PotionBrewing.Mix<Potion> potionMix)
+    {
+        return potionMix.from;
+    }
+
+    public static Item getStartingContainerFromMix(PotionBrewing.Mix<Item> potionMix)
+    {
+        return potionMix.from;
     }
 }

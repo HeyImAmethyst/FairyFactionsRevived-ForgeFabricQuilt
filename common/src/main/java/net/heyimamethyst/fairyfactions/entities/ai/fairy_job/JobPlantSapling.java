@@ -114,7 +114,7 @@ public class JobPlantSapling extends JobPlantVegitation
     @Override
     public boolean canStart()
     {
-        return FairyUtils.isSaplingBlock(itemStack);
+        return super.canStart() && FairyUtils.isSaplingBlock(itemStack);
     }
 
     @Override

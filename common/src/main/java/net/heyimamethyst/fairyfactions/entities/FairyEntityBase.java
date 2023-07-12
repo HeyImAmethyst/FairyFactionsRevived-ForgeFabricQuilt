@@ -39,6 +39,8 @@ public class FairyEntityBase extends Animal
 
     public static final EntityDataAccessor<Integer> WANTED_FOOD = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.INT);
 
+    protected static final EntityDataAccessor<Integer> ITEM_INDEX = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.INT);
+
     public static final int	MAX_SKIN	= 3;
     public static final int	MAX_JOB		= 3;
     public static final int	MAX_FACTION	= 15;
@@ -674,5 +676,15 @@ public class FairyEntityBase extends Animal
     public void setWantedFoodItem(Item item)
     {
         this.entityData.set(WANTED_FOOD, Item.getId(item));
+    }
+
+    public int getItemIndex()
+    {
+        return this.entityData.get(ITEM_INDEX);
+    }
+
+    public void setItemIndex(int index)
+    {
+        this.entityData.set(ITEM_INDEX, index);
     }
 }
