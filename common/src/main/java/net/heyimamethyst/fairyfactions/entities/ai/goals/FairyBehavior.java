@@ -27,10 +27,13 @@ public class FairyBehavior
     private FairyEntity theFairy;
     protected double speedModifier;
 
+    public FairyJobManager fairyJobManager;
+
     public FairyBehavior(FairyEntity theFairy, double speedModifier)
     {
         this.theFairy = theFairy;
         this.speedModifier = speedModifier;
+        fairyJobManager = new FairyJobManager(theFairy);
     }
 
     public void handleAnger()
@@ -942,7 +945,7 @@ public class FairyBehavior
             }
             else if (theFairy.getRandom().nextInt(2) == 0)
             {
-                new FairyJobManager(theFairy).sittingFishing(level);
+                fairyJobManager.sittingFishing(level);
             }
 
             return;
@@ -963,19 +966,14 @@ public class FairyBehavior
 
                 BlockPos pos = theFairy.roamBlockPos(aa, bb, cc, theFairy, 0F);
 
-                if (pos != null && !theFairy.isEmotional())
+                if (pos != null)
                     theFairy.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
             }
         }
 
         if (theFairy.posted())
         {
-//            if(!theFairy.isEmotional())
-//            {
-//                new FairyJobManager(theFairy).discover(level);
-//            }
-
-            new FairyJobManager(theFairy).discover(level);
+            fairyJobManager.discover(level);
         }
     }
 

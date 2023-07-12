@@ -30,8 +30,11 @@ public class JobSmelt extends FairyJob
         return smelt(stack, x, y, z, world);
     }
 
-    private boolean smelt(final ItemStack stack, int x, final int y, int z, final Level world )
+    private boolean smelt(final ItemStack stack, int x, final int y, int z, final Level world)
     {
+        if(!canStart())
+            return false;
+
         final int m = x;
         final int n = z;
 
@@ -76,7 +79,8 @@ public class JobSmelt extends FairyJob
             {
                 BlastFurnaceBlockEntity blastFurnace = (BlastFurnaceBlockEntity) blockEntity;
 
-                fairy.getNavigation().moveTo(x, y, z, 0.3D);
+                fairy.getNavigation().moveTo(x + 0.5, y, z + 0.5, 0.3D);
+
                 if (populateFuel(blastFurnace, stack))
                 {
                     return true;
@@ -144,6 +148,6 @@ public class JobSmelt extends FairyJob
     @Override
     public boolean canStart()
     {
-        return false;
+        return super.canStart();
     }
 }
