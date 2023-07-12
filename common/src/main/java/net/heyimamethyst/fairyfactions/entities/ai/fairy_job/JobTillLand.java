@@ -70,6 +70,6 @@ public class JobTillLand extends FairyJob
     @Override
     public boolean canStart()
     {
-        return FairyUtils.isHoeItem(itemStack);
+        return super.canStart() && FairyUtils.isHoeItem(itemStack);
     }
 }

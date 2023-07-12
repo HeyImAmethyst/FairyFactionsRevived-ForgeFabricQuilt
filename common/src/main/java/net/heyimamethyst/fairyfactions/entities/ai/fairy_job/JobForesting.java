@@ -130,6 +130,6 @@ public class JobForesting extends FairyJob
     @Override
     public boolean canStart()
     {
-        return FairyUtils.isAxeItem(itemStack);
+        return super.canStart() && FairyUtils.isAxeItem(itemStack);
     }
 }

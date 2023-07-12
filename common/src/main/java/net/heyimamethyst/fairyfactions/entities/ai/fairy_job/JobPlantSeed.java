@@ -88,6 +88,6 @@ public class JobPlantSeed extends FairyJob
     @Override
     public boolean canStart()
     {
-        return FairyUtils.isSeedItem(itemStack.getItem());
+        return super.canStart() && FairyUtils.isSeedItem(itemStack.getItem());
     }
 }

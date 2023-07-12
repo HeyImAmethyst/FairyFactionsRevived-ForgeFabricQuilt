@@ -426,6 +426,11 @@ public class FairyUtils
         return i.is(ModItemTags.IS_BREEDING_ITEM);
     }
 
+    public static boolean isPotionContainer(ItemStack item)
+    {
+        return item.getItem() == Items.POTION || item.getItem() == Items.SPLASH_POTION || item.getItem() == Items.LINGERING_POTION;
+    }
+
     public static boolean isAdditionalItemPickup( final ItemStack item )
     {
         return item.is(ModItemTags.IS_ADDITIONAL_ITEM_PICKUP);

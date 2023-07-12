@@ -115,6 +115,6 @@ public class JobPlantBamboo extends JobPlantVegitation
     @Override
     public boolean canStart()
     {
-        return FairyUtils.isBambooBlock(itemStack);
+        return super.canStart() && FairyUtils.isBambooBlock(itemStack);
     }
 }
