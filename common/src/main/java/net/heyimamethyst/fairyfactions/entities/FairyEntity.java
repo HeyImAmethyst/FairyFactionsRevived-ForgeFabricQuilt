@@ -5,6 +5,7 @@ import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.Loc;
 import net.heyimamethyst.fairyfactions.ModExpectPlatform;
 import net.heyimamethyst.fairyfactions.entities.ai.*;
+import net.heyimamethyst.fairyfactions.entities.ai.fairy_job.FairyJobManager;
 import net.heyimamethyst.fairyfactions.entities.ai.goals.*;
 import net.heyimamethyst.fairyfactions.proxy.ClientMethods;
 import net.heyimamethyst.fairyfactions.proxy.CommonMethods;
@@ -87,6 +88,7 @@ public class FairyEntity extends FairyEntityBase
     private int					snowballin;
 
     private int					flyTime;
+    private int					requestFoodTime;
     private int					healTime;
     private int					cryTime;
     private int					loseInterest;
@@ -104,6 +106,8 @@ public class FairyEntity extends FairyEntityBase
     double vehicleMotionZ = 0;
 
     public double speedModifier = 0.3D;
+
+    public int itemRandom;
 
     private LivingEntity	    ruler;
     public LivingEntity	        entityHeal;
@@ -152,6 +156,7 @@ public class FairyEntity extends FairyEntityBase
 
         this.sinage = getRandom().nextFloat();
         this.flyTime = 400 + this.getRandom().nextInt(200);
+        this.requestFoodTime = 300 + this.getRandom().nextInt(500);
         this.cower = this.getRandom().nextBoolean();
         this.postX = this.postY = this.postZ = -1;
 
@@ -234,6 +239,7 @@ public class FairyEntity extends FairyEntityBase
         this.entityData.define(S_NAME_REAL, "");
         this.entityData.define(I_TOOL, 0);
         this.entityData.define(WANTED_FOOD, 0);
+        this.entityData.define(ITEM_INDEX, 0);
         //this.entityData.define(WANTED_FOOD_STACK, ItemStack.EMPTY);
     }
 
@@ -252,6 +258,7 @@ public class FairyEntity extends FairyEntityBase
         tag.putIntArray("post", new int[] { postX, postY, postZ });
 
         tag.putShort("flyTime", (short) flyTime);
+        tag.putShort("requestFoodTIme", (short) requestFoodTime);
         tag.putShort("healTime", (short) healTime);
         tag.putShort("cryTime", (short) cryTime);
         tag.putShort("loseInterest", (short) loseInterest);
@@ -270,6 +277,7 @@ public class FairyEntity extends FairyEntityBase
         tag.putBoolean("emotional", this.isEmotional());
 
         tag.putInt("wanted_food", this.entityData.get(WANTED_FOOD));
+        tag.putInt("item_index", this.entityData.get(ITEM_INDEX));
 
     }
 
@@ -296,6 +304,7 @@ public class FairyEntity extends FairyEntityBase
         }
 
         flyTime = tag.getShort("flyTime");
+        requestFoodTime = tag.getShort("requestFoodTime");
         healTime = tag.getShort("healTime");
         cryTime = tag.getShort("cryTime");
         loseInterest = tag.getShort("loseInterest");
@@ -311,6 +320,7 @@ public class FairyEntity extends FairyEntityBase
         setEmotional(tag.getBoolean("emotional"));
 
         setWantedFoodItem(Item.byId(tag.getInt("wanted_food")));
+        setItemIndex(tag.getInt("item_index"));
 
         if (!this.level.isClientSide)
         {
@@ -525,27 +535,10 @@ public class FairyEntity extends FairyEntityBase
 
             setPosted(postY > -1);
 
-            if(posted() && getRandom().nextInt(200) == 0 && !isEmotional())
-            {
-                if(level.getBlockState(this.blockPosition().below()).isSolidRender(level, this.blockPosition()))
-                {
-                    setEmotional(true);
-
-                    setFlymode(false);
-                    flyTime = 0;
-                    //setCanFlap(false);
-
-                    setSitting(true);
-
-                    this.getNavigation().moveTo((Path) null, 0.0D);
-                    //setWantedFoodItem(rollWantedItem());
-                }
-            }
-
-            if(posted() && isEmotional() && !isSitting())
-            {
-                setSitting(true);
-            }
+//            if(posted() && isEmotional() && (queen() && !isSitting()))
+//            {
+//                setSitting(true);
+//            }
         }
 
         if (getHealth() > 0.0F)
@@ -686,6 +679,31 @@ public class FairyEntity extends FairyEntityBase
             // NB: this was only on the client in the original
             processSwinging();
 
+        }
+    }
+
+    public List<Item> getItemsFromFairyFoodTag()
+    {
+        Iterator<Item> items = ModExpectPlatform.getItemsOfTag(ModItemTags.IS_FAIRY_FOOD);
+        List<Item> itemsList = new ArrayList<>();
+
+        if(items != null)
+        {
+            while(items.hasNext())
+            {
+                Item item = items.next().asItem();
+                itemsList.add(item);
+            }
+
+            //System.out.println(itemsList);
+
+            return itemsList;
+        }
+        else
+        {
+            //System.out.println(itemsList);
+
+            return null;
         }
     }
 
@@ -831,6 +849,11 @@ public class FairyEntity extends FairyEntityBase
         if (this.flyTime > 0)
         {
             this.flyTime--;
+        }
+
+        if (this.requestFoodTime > 0)
+        {
+            this.requestFoodTime--;
         }
 
         boolean liftFlag = false;
@@ -988,33 +1011,6 @@ public class FairyEntity extends FairyEntityBase
 
         //_dump_();
     }
-
-//    public Item rollWantedItem()
-//    {
-//        Iterator<Item> items = ModExpectPlatform.getItemsOfTag(ModItemTags.IS_FAIRY_FOOD);
-//        List<Item> itemsList = new ArrayList<>();
-//
-//        if(items != null)
-//        {
-//            while(items.hasNext())
-//            {
-//                Item item = items.next().asItem();
-//                itemsList.add(item);
-//            }
-//
-//            //System.out.println(itemsList);
-//
-//            return itemsList.get(random.nextInt(itemsList.size()));
-//            //setWantedFoodItem(itemsList.get(random.nextInt(itemsList.size())));
-//            //wantedFood = new ItemStack(itemsList.get(random.nextInt(itemsList.size())));
-//        }
-//        else
-//        {
-//            //System.out.println(itemsList);
-//
-//            return null;
-//        }
-//    }
 
     public boolean canGetAngryAt()
     {
@@ -1735,7 +1731,11 @@ public class FairyEntity extends FairyEntityBase
 
                     setHearts(!hearts());
                     setEmotional(false);
-                    setSitting(false);
+
+                    if(queen())
+                    {
+                        setSitting(false);
+                    }
 
                     if(getHealth() < getMaxHealth())
                     {
@@ -1754,6 +1754,9 @@ public class FairyEntity extends FairyEntityBase
                             }
                         }
                     }
+
+                    setWantedFoodItem(Items.AIR);
+                    setRequestFoodTime(300);
 
                     return InteractionResult.SUCCESS;
                 }
@@ -2624,11 +2627,6 @@ public class FairyEntity extends FairyEntityBase
         this.loseInterest = loseInterest;
     }
 
-    public int getFlyTime()
-    {
-        return this.flyTime;
-    }
-
     public void setHealTime(int healTime)
     {
         this.healTime = healTime;
@@ -2642,6 +2640,21 @@ public class FairyEntity extends FairyEntityBase
     public void setFlyTime(int flyTime)
     {
         this.flyTime = flyTime;
+    }
+
+    public int getFlyTime()
+    {
+        return this.flyTime;
+    }
+
+    public void setRequestFoodTime(int requestFoodTime)
+    {
+        this.requestFoodTime = requestFoodTime;
+    }
+
+    public int getRequestFoodTime()
+    {
+        return requestFoodTime;
     }
 
     public boolean willCower()
