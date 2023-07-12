@@ -16,10 +16,10 @@ import net.minecraft.world.level.block.state.properties.Property;
 
 import java.util.Collection;
 
-public class MisActionGatherFromBerryBush extends FairyMiscAction
+public class MiscActionGatherFromBerryBush extends FairyMiscAction
 {
 
-    public MisActionGatherFromBerryBush(FairyEntity fairy)
+    public MiscActionGatherFromBerryBush(FairyEntity fairy)
     {
         super(fairy);
     }

@@ -5,22 +5,18 @@ import net.heyimamethyst.fairyfactions.entities.ai.fairy_job.FairyJobManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PotionItem;
-import net.minecraft.world.item.alchemy.PotionUtils;
-import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BrewingStandBlock;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class MisActionGatherProductFromBrewingStand extends FairyMiscAction
+public class MiscActionGatherProductFromBrewingStand extends FairyMiscAction
 {
 
-    public MisActionGatherProductFromBrewingStand(FairyEntity fairy)
+    public MiscActionGatherProductFromBrewingStand(FairyEntity fairy)
     {
         super(fairy);
     }
