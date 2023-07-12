@@ -1,30 +1,20 @@
 package net.heyimamethyst.fairyfactions.entities.ai.fairy_misc_action;
 
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
-import net.heyimamethyst.fairyfactions.registry.ModBlockTags;
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
-import net.minecraft.world.level.block.BlastFurnaceBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
-import net.minecraft.world.level.block.entity.BlastFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
 
-import java.util.Collection;
-
-public class MisActionGatherProductFromFurnace extends FairyMiscAction
+public class MiscActionGatherProductFromFurnace extends FairyMiscAction
 {
 
-    public MisActionGatherProductFromFurnace(FairyEntity fairy)
+    public MiscActionGatherProductFromFurnace(FairyEntity fairy)
     {
         super(fairy);
     }
