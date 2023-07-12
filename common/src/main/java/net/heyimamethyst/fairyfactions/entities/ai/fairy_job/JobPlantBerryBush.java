@@ -120,6 +120,6 @@ public class JobPlantBerryBush extends JobPlantVegitation
     @Override
     public boolean canStart()
     {
-        return FairyUtils.isBerryBushItem(itemStack);
+        return super.canStart() && FairyUtils.isBerryBushItem(itemStack);
     }
 }

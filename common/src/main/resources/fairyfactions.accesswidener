@@ -5,3 +5,12 @@ accessible method net/minecraft/world/entity/projectile/Projectile <init> (Lnet/
 accessible method net/minecraft/server/level/ServerLevel getEntities ()Lnet/minecraft/world/level/entity/LevelEntityGetter;
 accessible field net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity recipeType Lnet/minecraft/world/item/crafting/RecipeType;
 accessible method net/minecraft/world/level/block/CropBlock getAgeProperty ()Lnet/minecraft/world/level/block/state/properties/IntegerProperty;
+accessible field net/minecraft/world/item/alchemy/PotionBrewing POTION_MIXES Ljava/util/List;
+accessible field net/minecraft/world/item/alchemy/PotionBrewing CONTAINER_MIXES Ljava/util/List;
+accessible class net/minecraft/world/item/alchemy/PotionBrewing$Mix
+accessible field net/minecraft/world/item/alchemy/PotionBrewing$Mix from Ljava/lang/Object;
+accessible field net/minecraft/world/item/alchemy/PotionBrewing$Mix to Ljava/lang/Object;
+accessible field net/minecraft/world/item/alchemy/PotionBrewing$Mix ingredient Lnet/minecraft/world/item/crafting/Ingredient;
+accessible method net/minecraft/world/level/block/entity/ChestBlockEntity getItems ()Lnet/minecraft/core/NonNullList;
+accessible field net/minecraft/world/level/block/entity/BrewingStandBlockEntity items Lnet/minecraft/core/NonNullList;
+accessible method net/minecraft/world/level/block/entity/BrewingStandBlockEntity isBrewable (Lnet/minecraft/core/NonNullList;)Z
