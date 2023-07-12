@@ -80,6 +80,6 @@ public class JobBreeding extends FairyJob
     @Override
     public boolean canStart()
     {
-        return !FairyJobManager.INSTANCE.triedBreeding;
+        return super.canStart() && !FairyJobManager.INSTANCE.triedBreeding;
     }
 }

@@ -3,6 +3,7 @@ package net.heyimamethyst.fairyfactions.entities.ai.fairy_job;
 import com.google.common.collect.ImmutableSet;
 import net.heyimamethyst.fairyfactions.ModExpectPlatform;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
+import net.heyimamethyst.fairyfactions.entities.ai.fairy_misc_action.*;
 import net.heyimamethyst.fairyfactions.registry.ModBlockTags;
 import net.heyimamethyst.fairyfactions.registry.ModItemTags;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
@@ -20,6 +21,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlastFurnaceBlockEntity;
@@ -28,12 +31,9 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.pathfinder.Path;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class FairyJobManager
 {
@@ -51,11 +51,14 @@ public class FairyJobManager
 
     // Make sure that shearing is only attempted once per chest.
     public boolean				triedShearing;
+    public boolean				canRequestFood;
+    public boolean              setBrewingStandForClearing;
 
     // A list of items on the ground.
     private ArrayList<ItemEntity> goodies;
 
     public List<FairyJob> fairyJobs = new ArrayList<>();
+    public List<FairyMiscAction> fairyMiscActions = new ArrayList<>();
 
     public FairyJobManager(final FairyEntity entityfairy )
     {
@@ -63,6 +66,7 @@ public class FairyJobManager
         INSTANCE = this;
 
         createFairyJobs();
+        createFairyMiscActions();
     }
 
     public void createFairyJobs()
@@ -78,7 +82,19 @@ public class FairyJobManager
         fairyJobs.add(new JobShearing(fairy));
         fairyJobs.add(new JobFishing(fairy));
         fairyJobs.add(new JobSmelt(fairy));
+        fairyJobs.add(new JobCook(fairy));
+        fairyJobs.add(new JobMakePotion(fairy));
         fairyJobs.add(new JobButcher(fairy));
+    }
+
+    public void createFairyMiscActions()
+    {
+        fairyMiscActions.add(new MiscActionCutTallGrass(fairy));
+        fairyMiscActions.add(new MisActionGatherFromBerryBush(fairy));
+        fairyMiscActions.add(new MisActionGatherProductFromFurnace(fairy));
+        fairyMiscActions.add(new MisActionGatherProductFromBrewingStand(fairy));
+        fairyMiscActions.add(new MiscActionTrimExcessLeaves(fairy));
+        fairyMiscActions.add(new MiscActionBecomeEmotional(fairy));
     }
 
     public void discover( final Level world )
@@ -166,21 +182,6 @@ public class FairyJobManager
                                 return;
                             }
 
-                            if(fairy.isEmotional())
-                            {
-                                List<Item> foodItems = getItemsFromFairyFoodTag();
-
-                                if (foodItems != null)
-                                {
-                                    final Item itemFromList = foodItems.get(fairy.getRandom().nextInt(foodItems.size()));
-
-                                    if(!doesChestHaveWantedItem(chest, itemFromList))
-                                    {
-                                        fairy.setWantedFoodItem(itemFromList);
-                                    }
-                                }
-                            }
-
                             for ( int p = 0; p < chest.getContainerSize(); p++ )
                             {
                                 if ( checkChestItem(chest, p, x, y, z, world ) )
@@ -250,17 +251,6 @@ public class FairyJobManager
         }
     }
 
-    private boolean doesChestHaveWantedItem(ChestBlockEntity chest, Item itemFromList)
-    {
-
-        if(itemFromList != null)
-        {
-            return chest.hasAnyOf(ImmutableSet.of(itemFromList));
-        }
-
-        return false;
-    }
-
     public BlastFurnaceBlockEntity getNearbyBlastFurnace( final int x, final int y, final int z, final Level world )
     {
         int i, j, k;
@@ -309,6 +299,7 @@ public class FairyJobManager
 
             for (FairyJob fairyJob: fairyJobs )
             {
+                fairyJob.setChest(chest);
                 fairyJob.setItemStack(stack);
 
                 if(fairyJob.canRun(stack, x, y, z, world))
@@ -375,52 +366,16 @@ public class FairyJobManager
     private boolean miscActions( final ChestBlockEntity chest, final int x, final int y, final int z,
                                  final Level world )
     {
-        if ( cutTallGrass( x, y, z, world ) )
-        {
-            return true;
-        }
 
-        if (gatherFromBerryBush(x, y, z, world))
+        for (FairyMiscAction fairyMiscAction: fairyMiscActions )
         {
-            return true;
-        }
-
-        if(gatherProductFromFurnace(x, y, z, world))
-        {
-            return true;
-        }
-
-        if ( doHaveAxe && trimExcessLeaves( x, y, z, world ) )
-        {
-            return true;
+            if(fairyMiscAction.canRun(chest, x, y, z, world) && !fairy.isEmotional())
+            {
+                return true;
+            }
         }
 
         return false;
-    }
-
-    public List<Item> getItemsFromFairyFoodTag()
-    {
-        Iterator<Item> items = ModExpectPlatform.getItemsOfTag(ModItemTags.IS_FAIRY_FOOD);
-        List<Item> itemsList = new ArrayList<>();
-
-        if(items != null)
-        {
-            while(items.hasNext())
-            {
-                Item item = items.next().asItem();
-                itemsList.add(item);
-            }
-
-            //System.out.println(itemsList);
-
-            return itemsList;
-        }
-        else
-        {
-            //System.out.println(itemsList);
-
-            return null;
-        }
     }
 
     // Remove an itemstack that's been used up.
@@ -649,237 +604,6 @@ public class FairyJobManager
         }
     }
 
-    private boolean gatherFromBerryBush(int x, final int y, int z, final Level world )
-    {
-        final int m = x;
-        final int n = z;
-
-        for ( int a = 0; a < 9; a++ )
-        {
-            x = m + ((a / 3) % 9) - 1;
-            z = n + (a % 3) - 1;
-
-            if( harvestBerryBush( world, x, y, z) )
-            {
-                fairy.armSwing( !fairy.didSwing );
-
-                fairy.attackAnim = 30;
-
-                if ( !fairy.flymode() && fairy.getFlyTime() > 0 )
-                {
-                    fairy.setFlyTime( 0 );
-                }
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private boolean harvestBerryBush(final Level world, final int x, final int y, final int z )
-    {
-        final BlockPos pos = new BlockPos(x,y,z);
-        final BlockState state = world.getBlockState(pos);
-        final Block block = state.getBlock();
-        
-        //this.stateDefinition.any().setValue(AGE, 0)
-        //state.is(ModBlockTags.IS_BERRY_BUSH_BLOCK)
-        //state.is(Blocks.SWEET_BERRY_BUSH)
-        //SweetBerryBushBlock.AGE
-        
-        if (state.is(ModBlockTags.IS_BERRY_BUSH_BLOCK))
-        {
-            IntegerProperty ageProperty = null;
-
-            Collection<Property<?>> stateProperties = state.getProperties();
-
-            for (Property<?> property: stateProperties)
-            {
-                if(property.getName() == "age")
-                {
-                    ageProperty = (IntegerProperty) property;
-                }
-            }
-
-            if(ageProperty != null)
-            {
-                int i = state.getValue(ageProperty);
-                boolean flag = i == 3;
-
-                if (i > 1)
-                {
-                    int j = 1 + world.random.nextInt(2);
-                    //block.popResource(world, pos, new ItemStack(Items.SWEET_BERRIES, j + (flag ? 1 : 0)));
-                    block.popResource(world, pos, new ItemStack(block.getCloneItemStack(world, pos, state).getItem(), j + (flag ? 1 : 0)));
-                    world.playSound((Player)null, pos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + world.random.nextFloat() * 0.4F);
-                    world.setBlock(pos, state.setValue(ageProperty, Integer.valueOf(1)), 2);
-
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    private boolean gatherProductFromFurnace(int x, final int y, int z, final Level world )
-    {
-        final int m = x;
-        final int n = z;
-
-        for ( int a = 0; a < 9; a++ )
-        {
-            x = m + ((a / 3) % 9) - 1;
-            z = n + (a % 3) - 1;
-
-            if( popResoruceFromFurnace( world, x, y, z) )
-            {
-                fairy.armSwing( !fairy.didSwing );
-
-                fairy.attackAnim = 30;
-
-                if ( !fairy.flymode() && fairy.getFlyTime() > 0 )
-                {
-                    fairy.setFlyTime( 0 );
-                }
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private boolean popResoruceFromFurnace(final Level world, final int x, final int y, final int z )
-    {
-        final BlockPos pos = new BlockPos(x,y,z);
-        final BlockState state = world.getBlockState(pos);
-        final Block block = state.getBlock();
-
-        //this.stateDefinition.any().setValue(AGE, 0)
-        //state.is(ModBlockTags.IS_BERRY_BUSH_BLOCK)
-        //state.is(Blocks.SWEET_BERRY_BUSH)
-        //SweetBerryBushBlock.AGE
-
-        if (state.getBlock() instanceof BlastFurnaceBlock )
-        {
-            BlastFurnaceBlock blastFurnaceBlock = (BlastFurnaceBlock) block;
-
-            final BlockEntity blockEntity = world.getBlockEntity(pos);
-
-            if ( blockEntity != null && blockEntity instanceof BlastFurnaceBlockEntity)
-            {
-                BlastFurnaceBlockEntity blastFurnace = (BlastFurnaceBlockEntity) blockEntity;
-
-                if(!blastFurnace.getItem(2).isEmpty())
-                {
-                    blastFurnaceBlock.popResource(world, pos, blastFurnace.getItem(2));
-
-                    //FairyJobManager.INSTANCE.cleanSlotInBlastFurnace(blastFurnace, 2);
-                    blastFurnace.setItem( 2, ItemStack.EMPTY );
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    private boolean cutTallGrass( int x, final int y, int z, final Level world )
-    {
-        final int m = x;
-        final int n = z;
-
-        for ( int a = 0; a < 9; a++ )
-        {
-            x = m + (a / 3) - 1;
-            z = n + (a % 3) - 1;
-            //final BlockPos pos = new BlockPos(x,y,z);
-            final BlockState state = world.getBlockState(new BlockPos(x,y,z));
-            final Block above = world.getBlockState(new BlockPos(x,y + 1, z)).getBlock();
-            final Block below = world.getBlockState(new BlockPos(x,y - 1, z)).getBlock();
-
-            if (FairyUtils.breakablePlant( state, above, below ) )
-            {
-                final Block block = state.getBlock();
-
-                world.destroyBlock(new BlockPos(x, y, z), true, fairy);
-
-                fairy.armSwing( !fairy.didSwing );
-                fairy.attackAnim = 30;
-
-                if ( fairy.flymode() && fairy.getFlyTime() > 0 )
-                {
-                    fairy.setFlyTime( 0 );
-                }
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    // Pick apart trees
-    private boolean trimExcessLeaves( int x, int y, int z, final Level world )
-    {
-        for ( int d = 0; d < 3; d++ )
-        {
-            final int a = fairy.getRandom().nextInt( 3 );
-            final int b = (fairy.getRandom().nextInt( 2 ) * 2) - 1;
-
-            if ( a == 0 )
-            {
-                x += b;
-            }
-            else if ( a == 1 )
-            {
-                y += b;
-            }
-            else
-            {
-                z += b;
-            }
-
-            final BlockPos pos = new BlockPos(x,y,z);
-            final BlockState state = world.getBlockState(pos);
-
-            if ( state.is(BlockTags.LEAVES))
-            {
-                world.destroyBlock(pos, true, fairy);
-
-                fairy.armSwing( !fairy.didSwing );
-
-                fairy.attackAnim = 20;
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     // Pick up useful objects off of the ground
     private boolean collectGoodies( final ChestBlockEntity chest, final Level world )
     {
@@ -985,7 +709,8 @@ public class FairyJobManager
                 || FairyUtils.isSaplingBlock(stack) || FairyUtils.isLogBlock(stack) || FairyUtils.acceptableFoods(fairy, stack)
                 ||  FairyUtils.isBreedingItem(stack) ||  FairyUtils.isShearingItem(stack) || FairyUtils.isClothBlock(stack) || FairyUtils.isFishingItem(stack)
                 || FairyUtils.isAnimalProduct(stack) || FairyUtils.isRawFish(stack) || FairyUtils.isFishLoot(stack) || FairyUtils.isFlower( stack.getItem())
-                || stack.is(Items.STICK) || stack.is(Blocks.PUMPKIN.asItem())|| FairyUtils.isAdditionalItemPickup(stack) || stack.is(ModItemTags.ITEM_TO_SMELT) || stack.is(ItemTags.COALS);
+                || stack.is(Items.STICK) || stack.is(Blocks.PUMPKIN.asItem())|| FairyUtils.isAdditionalItemPickup(stack) || stack.is(ModItemTags.ITEM_TO_SMELT) || stack.is(ItemTags.COALS)
+                || PotionBrewing.isIngredient(stack) || FairyUtils.isPotionContainer(stack);
     }
 
 }

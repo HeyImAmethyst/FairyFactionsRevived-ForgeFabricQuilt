@@ -165,6 +165,6 @@ public class JobShearing extends FairyJob
     @Override
     public boolean canStart()
     {
-        return !FairyJobManager.INSTANCE.triedShearing && FairyUtils.isShearingItem(itemStack);
+        return super.canStart() && !FairyJobManager.INSTANCE.triedShearing && FairyUtils.isShearingItem(itemStack);
     }
 }

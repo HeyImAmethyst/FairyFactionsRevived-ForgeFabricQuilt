@@ -6,6 +6,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionBrewing;
 
 import java.nio.file.Path;
 import java.util.Iterator;
@@ -41,5 +43,17 @@ public class ModExpectPlatform {
     public static Iterator<Item> getItemsOfTag(TagKey<Item> tag)
     {
         throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static Potion getStartingPotionFromMix(PotionBrewing.Mix<Potion> potionMix)
+    {
+        return null;
+    }
+
+    @ExpectPlatform
+    public static Item getStartingContainerFromMix(PotionBrewing.Mix<Item> potionMix)
+    {
+        return null;
     }
 }

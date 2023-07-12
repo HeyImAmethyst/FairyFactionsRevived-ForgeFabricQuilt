@@ -203,6 +203,6 @@ public class JobButcher extends FairyJob
     @Override
     public boolean canStart()
     {
-        return FairyUtils.isSwordItem(itemStack);
+        return super.canStart() && FairyUtils.isSwordItem(itemStack);
     }
 }
