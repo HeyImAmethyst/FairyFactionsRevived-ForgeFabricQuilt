@@ -1,10 +1,7 @@
 package net.heyimamethyst.fairyfactions.entities.ai.fairy_job;
 
-import com.google.common.collect.ImmutableSet;
-import net.heyimamethyst.fairyfactions.ModExpectPlatform;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.entities.ai.fairy_misc_action.*;
-import net.heyimamethyst.fairyfactions.registry.ModBlockTags;
 import net.heyimamethyst.fairyfactions.registry.ModItemTags;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.minecraft.core.BlockPos;
@@ -12,26 +9,18 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.animal.*;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlastFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.level.pathfinder.Path;
 
 import java.util.*;
 
@@ -90,9 +79,9 @@ public class FairyJobManager
     public void createFairyMiscActions()
     {
         fairyMiscActions.add(new MiscActionCutTallGrass(fairy));
-        fairyMiscActions.add(new MisActionGatherFromBerryBush(fairy));
-        fairyMiscActions.add(new MisActionGatherProductFromFurnace(fairy));
-        fairyMiscActions.add(new MisActionGatherProductFromBrewingStand(fairy));
+        fairyMiscActions.add(new MiscActionGatherFromBerryBush(fairy));
+        fairyMiscActions.add(new MiscActionGatherProductFromFurnace(fairy));
+        fairyMiscActions.add(new MiscActionGatherProductFromBrewingStand(fairy));
         fairyMiscActions.add(new MiscActionTrimExcessLeaves(fairy));
         fairyMiscActions.add(new MiscActionBecomeEmotional(fairy));
     }
