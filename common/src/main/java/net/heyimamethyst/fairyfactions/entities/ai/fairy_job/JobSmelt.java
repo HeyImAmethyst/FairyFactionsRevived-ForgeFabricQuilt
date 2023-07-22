@@ -14,8 +14,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
-//TODO: Not yet finished implementing, still WIP!!
-
 public class JobSmelt extends FairyJob
 {
 
