@@ -5,7 +5,6 @@ import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.Loc;
 import net.heyimamethyst.fairyfactions.ModExpectPlatform;
 import net.heyimamethyst.fairyfactions.entities.ai.*;
-import net.heyimamethyst.fairyfactions.entities.ai.fairy_job.FairyJobManager;
 import net.heyimamethyst.fairyfactions.entities.ai.goals.*;
 import net.heyimamethyst.fairyfactions.proxy.ClientMethods;
 import net.heyimamethyst.fairyfactions.proxy.CommonMethods;
@@ -132,6 +131,8 @@ public class FairyEntity extends FairyEntityBase
 
     private boolean isLandNavigator;
 
+    FairyBedEntity myBed;
+
     public FairyEntity(EntityType<? extends Animal> entityType, Level level)
     {
         super(entityType, level);
@@ -233,6 +234,7 @@ public class FairyEntity extends FairyEntityBase
 
         this.entityData.define(SITTING, false);
         this.entityData.define(EMOTIONAL, false);
+        this.entityData.define(SLEEPING, false);
 
         this.entityData.define(B_FLAGS, (byte) 0);
         this.entityData.define(B_FLAGS2, (byte) 0);
@@ -279,6 +281,7 @@ public class FairyEntity extends FairyEntityBase
 
         tag.putBoolean("sitting", this.isSitting());
         tag.putBoolean("emotional", this.isEmotional());
+        tag.putBoolean("sleeping", this.isSleeping());
 
         tag.putInt("wanted_food", this.entityData.get(WANTED_FOOD));
         tag.putInt("item_index", this.entityData.get(ITEM_INDEX));
@@ -322,6 +325,7 @@ public class FairyEntity extends FairyEntityBase
 
         setSitting(tag.getBoolean("sitting"));
         setEmotional(tag.getBoolean("emotional"));
+        setSleeping(tag.getBoolean("sleeping"));
 
         setWantedFoodItem(Item.byId(tag.getInt("wanted_food")));
         setItemIndex(tag.getInt("item_index"));
@@ -458,18 +462,16 @@ public class FairyEntity extends FairyEntityBase
 //    }
 
     @Override
-    public void tick()
-    {
+    public void tick() {
         super.tick();
         //_dump_();
 
-        if (this.createGroup)
-        {
+        if (this.createGroup) {
 
             createGroup = false;
-            int i = (int)Math.floor(position().x);
-            int j = (int)Math.floor(getBoundingBox().minY) - 1;
-            int k = (int)Math.floor(position().z);
+            int i = (int) Math.floor(position().x);
+            int j = (int) Math.floor(getBoundingBox().minY) - 1;
+            int k = (int) Math.floor(position().z);
 
             final FairyGroupGenerator group = new FairyGroupGenerator(
                     FairyConfigValues.SPAWN_FACTION_MIN_SIZE,
@@ -532,7 +534,7 @@ public class FairyEntity extends FairyEntityBase
             Path currentPath = this.getNavigation().getPath();
             setFairyClimbing(flymode() && canFlap() && currentPath != null && horizontalCollision);
 
-            if (isSitting() && (getVehicle() != null || !onGround() ))
+            if (isSitting() && ((getVehicle() != null && !isSleeping()) || !onGround() ))
             {
                 setSitting(false);
             }
@@ -566,7 +568,7 @@ public class FairyEntity extends FairyEntityBase
             Vec3 vec3 = this.getDeltaMovement();
             Vec3 vehicleVec3 = Vec3.ZERO;
 
-            if(this.getVehicle() != null)
+            if (this.getVehicle() != null)
                 vehicleVec3 = this.getVehicle().getDeltaMovement();
 
             motionX = vec3.x;
@@ -579,14 +581,14 @@ public class FairyEntity extends FairyEntityBase
 
             if (flymode())
             {
-                if (!liftOff() && getVehicle() != null && !getVehicle().onGround()
+                if (!liftOff() && getVehicle() != null  && !(this.getVehicle() instanceof FairyBedEntity) && !getVehicle().onGround()
                         && getVehicle() instanceof LivingEntity)
                 {
                     getVehicle().fallDistance = 0F;
 
                     if (vehicleMotionY < FairyConfigValues.DEF_FLOAT_RATE)
                     {
-                          vehicleMotionY = FairyConfigValues.DEF_FLOAT_RATE;
+                        vehicleMotionY = FairyConfigValues.DEF_FLOAT_RATE;
                     }
 
                     boolean isJumping = ((LivingEntity) getVehicle()).jumping;
@@ -596,14 +598,15 @@ public class FairyEntity extends FairyEntityBase
                         vehicleMotionY = FairyConfigValues.DEF_FLAP_RATE;
                     }
 
-                    if( (((LivingEntity)getVehicle() instanceof Player && isJumping) || !((LivingEntity) getVehicle() instanceof Player))
-                        && vehicleMotionY < FairyConfigValues.DEF_FLAP_RATE && canFlap())
+                    if ((((LivingEntity) getVehicle() instanceof Player && isJumping) || !((LivingEntity) getVehicle() instanceof Player))
+                            && vehicleMotionY < FairyConfigValues.DEF_FLAP_RATE && canFlap())
                     {
                         vehicleMotionY = FairyConfigValues.DEF_FLAP_RATE;
                     }
                 }
                 else
                 {
+
                     if (motionY < FairyConfigValues.DEF_FLOAT_RATE)
                     {
                         motionY = FairyConfigValues.DEF_FLOAT_RATE;
@@ -623,7 +626,7 @@ public class FairyEntity extends FairyEntityBase
                     }
                 }
 
-                if(this.getVehicle() != null)
+                if (this.getVehicle() != null)
                 {
                     vehicleMotionX = this.getVehicle().getDeltaMovement().x;
                     vehicleMotionZ = this.getVehicle().getDeltaMovement().z;
@@ -633,7 +636,7 @@ public class FairyEntity extends FairyEntityBase
                 motionZ = this.getDeltaMovement().z;
             }
 
-            if(this.getVehicle() != null)
+            if (this.getVehicle() != null)
                 this.getVehicle().setDeltaMovement(vehicleMotionX, vehicleMotionY, vehicleMotionZ);
 
             this.setDeltaMovement(motionX, motionY, motionZ);
@@ -683,31 +686,6 @@ public class FairyEntity extends FairyEntityBase
             // NB: this was only on the client in the original
             processSwinging();
 
-        }
-    }
-
-    public List<Item> getItemsFromFairyFoodTag()
-    {
-        Iterator<Item> items = ModExpectPlatform.getItemsOfTag(ModItemTags.IS_FAIRY_FOOD);
-        List<Item> itemsList = new ArrayList<>();
-
-        if(items != null)
-        {
-            while(items.hasNext())
-            {
-                Item item = items.next().asItem();
-                itemsList.add(item);
-            }
-
-            //System.out.println(itemsList);
-
-            return itemsList;
-        }
-        else
-        {
-            //System.out.println(itemsList);
-
-            return null;
         }
     }
 
@@ -876,7 +854,7 @@ public class FairyEntity extends FairyEntityBase
         {
             fallDistance = 0F;
 
-            if (this.getVehicle() != null)
+            if (this.getVehicle() != null && !(this.getVehicle() instanceof FairyBedEntity))
             {
                 if(this.getTarget() != null && this.getVehicle() == this.getTarget())
                 {
@@ -892,7 +870,7 @@ public class FairyEntity extends FairyEntityBase
                     }
                     else if (tamed())
                     {
-                        if (this.getVehicle().onGround() || this.getVehicle().isInWater())
+                        if (this.getVehicle().onGround() || this.getVehicle().isInWater() && !isSleeping())
                         {
                             //setFlyTime((queen() || scout() ? 60 : 40 ));
                             setFlyTime((!queen() && !scout()) ? 40 : 60);
@@ -908,7 +886,7 @@ public class FairyEntity extends FairyEntityBase
 
             if (this.flyTime <= 0 || isEmotional() || (this.flyBlocked
                     && (this.getVehicle() == null || (this.getTarget() != null
-                    && this.getVehicle() == this.getTarget()))))
+                    && this.getVehicle() == this.getTarget() && this.getVehicle() instanceof FairyBedEntity))))
             {
                 setCanFlap(false);
             }
@@ -931,7 +909,7 @@ public class FairyEntity extends FairyEntityBase
         }
         else
         {
-            if (this.flyTime <= 0 && !this.flyBlocked)
+            if (this.flyTime <= 0 && !this.flyBlocked && this.getVehicle() != null && !(this.getVehicle() instanceof FairyBedEntity))
             {
                 this.jumpFromGround();
                 setFlymode(true);
@@ -945,7 +923,7 @@ public class FairyEntity extends FairyEntityBase
                 }
             }
 
-            if (this.getVehicle() != null && !flymode())
+            if (this.getVehicle() != null && !(this.getVehicle() instanceof FairyBedEntity) && !flymode())
             {
                 setFlymode(true);
                 setCanFlap(true);
@@ -991,6 +969,90 @@ public class FairyEntity extends FairyEntityBase
             fairyBehavior.handleRuler();
         }
 
+        if(tamed() && level.isNight() && this.getVehicle() == null)
+        {
+            if(myBed != null)
+            {
+                //System.out.println(this.toString() + ": myBed is not null");
+
+                //this.flyTime = 0;
+                setFlymode(false);
+
+                getNavigation().moveTo(myBed, 0.3D);
+                //navigation.stop();
+
+                if(myBed != null && this.distanceTo(myBed) < 1.1F)
+                {
+                    startRiding(myBed);
+                    setSitting(true);
+                    setSleeping(true);
+                }
+            }
+            else
+            {
+                if(myBed == null)
+                {
+                    //System.out.println(this.toString() + ": myBed is null");
+                    setFlymode(false);
+
+                    int x = (int)Math.floor( this.position().x );
+                    int y = (int)Math.floor( this.getBoundingBox().minY );
+
+                    if ( this.flymode() )
+                    {
+                        y--;
+                    }
+
+                    int z = (int)Math.floor( this.position().z );
+
+                    if ( y < 0 || y >= this.level.getHeight() )
+                    {
+                        return;
+                    }
+
+                    final int m = x;
+                    final int n = z;
+
+                    for ( int a = 0; a < 9; a++ )
+                    {
+                        x = m + ((a / 3) % 9) - 1;
+                        z = n + (a % 3) - 1;
+
+                        if( findBed( this.level, x, y, z) )
+                        {
+                            //return true;
+                        }
+                    }
+                }
+            }
+        }
+        else if(tamed() && level.isDay())
+        {
+            if(this.getVehicle() != null && this.getVehicle() instanceof FairyBedEntity)
+            {
+                stopRiding();
+            }
+
+            setSitting(false);
+            setSleeping(false);
+        }
+
+        if(tamed() && isSleeping())
+        {
+            if(flymode())
+                setFlymode(false);
+
+            if(!isSitting())
+                setSitting(true);
+
+            if(this.getVehicle() == null)
+            {
+                setSitting(false);
+                setSleeping(false);
+                myBed = null;
+            }
+        }
+
         // fairies run away from players in peaceful
 
         if (this.level().getDifficulty() == Difficulty.PEACEFUL
@@ -1014,6 +1076,39 @@ public class FairyEntity extends FairyEntityBase
         setCanHeal(this.healTime <= 0);
 
         //_dump_();
+    }
+
+    private boolean findBed(final Level world, final int x, final int y, final int z )
+    {
+        final BlockPos pos = new BlockPos(x,y,z);
+
+        final List<?> list = world.getEntitiesOfClass(FairyBedEntity.class, getBoundingBox().inflate( 5D, 5D, 5D ) );
+
+        if(list.size() >= 1)
+        {
+            for ( int i = 0; i < list.size(); i++ )
+            {
+                final FairyBedEntity entity1 = (FairyBedEntity) list.get( i );
+
+                if(entity1.getPassengers().size() == 1)
+                {
+                    continue;
+                }
+
+                if(entity1.getPassengers().size() == 0)
+                {
+                    myBed = entity1;
+                    return true;
+                }
+            }
+
+        }
+        else
+        {
+            return false;
+        }
+
+        return false;
     }
 
     public boolean canGetAngryAt()
