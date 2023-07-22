@@ -1143,17 +1143,25 @@ public class FairyEntity extends FairyEntityBase
                     {
                         final FairyBedEntity entity1 = (FairyBedEntity) list.get(i);
 
-                        if(entity1.distanceToSqr(bedPos.getX(),bedPos.getY(),bedPos.getZ()) < 2)
+                        if (entity1.getPassengers().size() == 1)
                         {
-                            getNavigation().moveTo(bedPos.getX(), bedPos.getY(), bedPos.getZ(), 0.3D);
+                            continue;
+                        }
 
-                            if(this.distanceTo(entity1) < 2.1F)//if(myBed != null && this.distanceTo(myBed) < 1.1F)
+                        if (entity1.getPassengers().size() == 0)
+                        {
+                            if(entity1.distanceToSqr(bedPos.getX(),bedPos.getY(),bedPos.getZ()) < 2)
                             {
-                                startRiding(entity1);
-                                setSitting(true);
-                                setSleeping(true);
+                                getNavigation().moveTo(bedPos.getX(), bedPos.getY(), bedPos.getZ(), 0.3D);
 
-                                foundBed = true;
+                                if(this.distanceTo(entity1) < 2.1F)//if(myBed != null && this.distanceTo(myBed) < 1.1F)
+                                {
+                                    startRiding(entity1);
+                                    setSitting(true);
+                                    setSleeping(true);
+
+                                    foundBed = true;
+                                }
                             }
                         }
                     }
