@@ -1002,7 +1002,7 @@ public class FairyEntity extends FairyEntityBase
 
         //System.out.println(this + ": " + this.entityData.get(BED_LOCATION).toString());
 
-        if(tamed() && level.isNight() && this.getVehicle() == null)
+        if(tamed() && level().isNight() && this.getVehicle() == null)
         {
             //System.out.println(this.toString() + ": myBed is null");
             setFlymode(false);
@@ -1017,7 +1017,7 @@ public class FairyEntity extends FairyEntityBase
 
             int z = (int)Math.floor( this.position().z );
 
-            if ( y < 0 || y >= this.level.getHeight() )
+            if ( y < 0 || y >= this.level().getHeight() )
             {
                 return;
             }
@@ -1030,11 +1030,11 @@ public class FairyEntity extends FairyEntityBase
                 x = m + ((a / 3) % 9) - 1;
                 z = n + (a % 3) - 1;
 
-                findBed( this.level, x, y, z);
+                findBed( this.level(), x, y, z);
             }
         }
 
-        if(tamed() && level.isDay() && getBedLocation().isPresent())
+        if(tamed() && level().isDay() && getBedLocation().isPresent())
         {
             if(this.getVehicle() != null && this.getVehicle() instanceof FairyBedEntity)
             {
