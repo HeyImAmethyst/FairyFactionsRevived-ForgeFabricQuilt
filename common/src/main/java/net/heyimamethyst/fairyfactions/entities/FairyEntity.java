@@ -25,6 +25,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
@@ -72,6 +73,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 public class FairyEntity extends FairyEntityBase
 {
@@ -164,6 +166,7 @@ public class FairyEntity extends FairyEntityBase
         fairyBehavior = new FairyBehavior(this, speedModifier);
         switchNavigator(false);
 
+        //this.maxUpStep = 1.0f;
 //        this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, -1.0f);
 //        this.setPathfindingMalus(BlockPathTypes.WATER, -1.0f);
 //        this.setPathfindingMalus(BlockPathTypes.WATER_BORDER, 16.0f);
@@ -242,7 +245,7 @@ public class FairyEntity extends FairyEntityBase
         this.entityData.define(I_TOOL, 0);
         this.entityData.define(WANTED_FOOD, 0);
         this.entityData.define(ITEM_INDEX, 0);
-        //this.entityData.define(WANTED_FOOD_STACK, ItemStack.EMPTY);
+        this.entityData.define(BED_LOCATION, Optional.empty());
     }
 
     @Override
@@ -282,6 +285,12 @@ public class FairyEntity extends FairyEntityBase
         tag.putInt("wanted_food", this.entityData.get(WANTED_FOOD));
         tag.putInt("item_index", this.entityData.get(ITEM_INDEX));
 
+        this.entityData.get(BED_LOCATION).ifPresent(blockPos ->
+        {
+            tag.putInt("bedPosX", blockPos.getX());
+            tag.putInt("bedPosY", blockPos.getY());
+            tag.putInt("bedPosZ", blockPos.getZ());
+        });
     }
 
     @Override
@@ -326,6 +335,20 @@ public class FairyEntity extends FairyEntityBase
         setWantedFoodItem(Item.byId(tag.getInt("wanted_food")));
         setItemIndex(tag.getInt("item_index"));
 
+        if (tag.contains("bedPosX") && tag.contains("bedPosY") && tag.contains("bedPosZ"))
+        {
+            BlockPos blockPos = new BlockPos(tag.getInt("bedPosX"), tag.getInt("bedPosY"), tag.getInt("bedPosZ"));
+
+            this.setBedLocation(blockPos);
+
+//            this.entityData.set(DATA_POSE, Pose.SLEEPING);
+//
+//            if (!this.firstTick)
+//            {
+//                this.setPosToBed(blockPos);
+//            }
+        }
+
         if (!this.level.isClientSide)
         {
             setCanHeal(healTime <= 0);
@@ -337,6 +360,14 @@ public class FairyEntity extends FairyEntityBase
     public void onSyncedDataUpdated(EntityDataAccessor<?> entityDataAccessor)
     {
         super.onSyncedDataUpdated(entityDataAccessor);
+
+//        if (BED_LOCATION.equals(entityDataAccessor))
+//        {
+//            if (this.level.isClientSide)
+//            {
+//                this.getBedLocation().ifPresent(this::setPosToBed);
+//            }
+//        }
     }
 
     public static AttributeSupplier.Builder createAttributes()
@@ -961,64 +992,41 @@ public class FairyEntity extends FairyEntityBase
             fairyBehavior.handleRuler();
         }
 
+        //System.out.println(this + ": " + this.entityData.get(BED_LOCATION).toString());
+
         if(tamed() && level.isNight() && this.getVehicle() == null)
         {
-            if(myBed != null)
+            //System.out.println(this.toString() + ": myBed is null");
+            setFlymode(false);
+
+            int x = (int)Math.floor( this.position().x );
+            int y = (int)Math.floor( this.getBoundingBox().minY );
+
+            if ( this.flymode() )
             {
-                //System.out.println(this.toString() + ": myBed is not null");
-
-                //this.flyTime = 0;
-                setFlymode(false);
-
-                getNavigation().moveTo(myBed, 0.3D);
-                //navigation.stop();
-
-                if(myBed != null && this.distanceTo(myBed) < 1.1F)
-                {
-                    startRiding(myBed);
-                    setSitting(true);
-                    setSleeping(true);
-                }
+                y--;
             }
-            else
+
+            int z = (int)Math.floor( this.position().z );
+
+            if ( y < 0 || y >= this.level.getHeight() )
             {
-                if(myBed == null)
-                {
-                    //System.out.println(this.toString() + ": myBed is null");
-                    setFlymode(false);
+                return;
+            }
 
-                    int x = (int)Math.floor( this.position().x );
-                    int y = (int)Math.floor( this.getBoundingBox().minY );
+            final int m = x;
+            final int n = z;
 
-                    if ( this.flymode() )
-                    {
-                        y--;
-                    }
+            for ( int a = 0; a < 9; a++ )
+            {
+                x = m + ((a / 3) % 9) - 1;
+                z = n + (a % 3) - 1;
 
-                    int z = (int)Math.floor( this.position().z );
-
-                    if ( y < 0 || y >= this.level.getHeight() )
-                    {
-                        return;
-                    }
-
-                    final int m = x;
-                    final int n = z;
-
-                    for ( int a = 0; a < 9; a++ )
-                    {
-                        x = m + ((a / 3) % 9) - 1;
-                        z = n + (a % 3) - 1;
-
-                        if( findBed( this.level, x, y, z) )
-                        {
-                            //return true;
-                        }
-                    }
-                }
+                findBed( this.level, x, y, z);
             }
         }
-        else if(tamed() && level.isDay())
+
+        if(tamed() && level.isDay() && getBedLocation().isPresent())
         {
             if(this.getVehicle() != null && this.getVehicle() instanceof FairyBedEntity)
             {
@@ -1041,7 +1049,8 @@ public class FairyEntity extends FairyEntityBase
             {
                 setSitting(false);
                 setSleeping(false);
-                myBed = null;
+                //myBed = null;
+                clearBedLocation();
             }
         }
 
@@ -1070,37 +1079,95 @@ public class FairyEntity extends FairyEntityBase
         //_dump_();
     }
 
-    private boolean findBed(final Level world, final int x, final int y, final int z )
+    public float distanceToBlockPos(BlockPos blockPos)
     {
+        float f = (float)(this.blockPosition().getX() - blockPos.getX());
+        float g = (float)(this.blockPosition().getY() - blockPos.getY());
+        float h = (float)(this.blockPosition().getZ() - blockPos.getZ());
+
+        return Mth.sqrt(f * f + g * g + h * h);
+    }
+
+    private void findBed(final Level world, final int x, final int y, final int z )
+    {
+        setFlymode(false);
+
         final BlockPos pos = new BlockPos(x,y,z);
 
-        final List<?> list = world.getEntitiesOfClass(FairyBedEntity.class, getBoundingBox().inflate( 5D, 5D, 5D ) );
+        final List<?> list = world.getEntitiesOfClass(FairyBedEntity.class, getBoundingBox().inflate(5D, 5D, 5D));
 
-        if(list.size() >= 1)
+        if(getBedLocation().isEmpty())
         {
-            for ( int i = 0; i < list.size(); i++ )
+            if (list.size() >= 1)
             {
-                final FairyBedEntity entity1 = (FairyBedEntity) list.get( i );
-
-                if(entity1.getPassengers().size() == 1)
+                for (int i = 0; i < list.size(); i++)
                 {
-                    continue;
+                    final FairyBedEntity entity1 = (FairyBedEntity) list.get(i);
+
+                    if (entity1.getPassengers().size() == 1)
+                    {
+                        continue;
+                    }
+
+                    if (entity1.getPassengers().size() == 0)
+                    {
+                        //myBed = entity1;
+                        setBedLocation(entity1.blockPosition());
+                        //return true;
+                    }
                 }
 
-                if(entity1.getPassengers().size() == 0)
+            }
+        }
+        else if(getBedLocation().isPresent())
+        {
+            BlockPos bedPos = getBedLocation().get();
+
+            boolean foundBed = false;
+
+            if (list.size() >= 1)
+            {
+                int tries = 0;
+
+                for (int t = 0; t < 4; t++)
                 {
-                    myBed = entity1;
-                    return true;
+                    for (int i = 0; i < list.size(); i++)
+                    {
+                        final FairyBedEntity entity1 = (FairyBedEntity) list.get(i);
+
+                        if(entity1.distanceToSqr(bedPos.getX(),bedPos.getY(),bedPos.getZ()) < 2)
+                        {
+                            getNavigation().moveTo(bedPos.getX(), bedPos.getY(), bedPos.getZ(), 0.3D);
+
+                            if(this.distanceTo(entity1) < 2.1F)//if(myBed != null && this.distanceTo(myBed) < 1.1F)
+                            {
+                                startRiding(entity1);
+                                setSitting(true);
+                                setSleeping(true);
+
+                                foundBed = true;
+                            }
+                        }
+                    }
+
+                    tries++;
+                }
+
+                if(tries == 3)
+                {
+                    clearBedLocation();
                 }
             }
-
         }
         else
         {
-            return false;
+            clearBedLocation();
         }
+    }
 
-        return false;
+    private void setPosToBed(BlockPos blockPos)
+    {
+        this.setPos((double)blockPos.getX(), (double)blockPos.getY(), (double)blockPos.getZ());
     }
 
     public boolean canGetAngryAt()
