@@ -114,7 +114,7 @@ public class FairyBedEntity extends Entity
         this.setHurtTime(10);
         this.setDamage(this.getDamage() + f * 10.0f);
         this.markHurt();
-        this.gameEvent(GameEvent.ENTITY_DAMAGED, damageSource.getEntity());
+        this.gameEvent(GameEvent.ENTITY_DAMAGE, damageSource.getEntity());
 
         boolean bl2 = bl = damageSource.getEntity() instanceof Player && ((Player)damageSource.getEntity()).getAbilities().instabuild;
 
