@@ -6,6 +6,25 @@
 	"entity.fairyfactions.fairy_fishing_bobber_entity": "Fairy Fishing Bobber",
 	"item.fairyfactions.fairy_spawn_egg": "Fairy Spawn Egg",
 
+	//Items
+
+	"item.fairyfactions.oak_white_fairy_bed" : "Oak White Fairy Bed",
+	"item.fairyfactions.oak_orange_fairy_bed" : "Oak Orange Fairy Bed",
+	"item.fairyfactions.oak_magenta_fairy_bed" : "Oak Magenta Fairy Bed",
+	"item.fairyfactions.oak_light_blue_fairy_bed" : "Oak Light Blue Fairy Bed",
+	"item.fairyfactions.oak_yellow_fairy_bed" : "Oak Yellow Fairy Bed",
+	"item.fairyfactions.oak_lime_fairy_bed" : "Oak Lime Fairy Bed",
+	"item.fairyfactions.oak_pink_fairy_bed" : "Oak Pink Fairy Bed",
+	"item.fairyfactions.oak_gray_fairy_bed" : "Oak Gray Fairy Bed",
+	"item.fairyfactions.oak_light_gray_fairy_bed" : "Oak Light Gray Fairy Bed",
+	"item.fairyfactions.oak_cyan_fairy_bed" : "Oak Cyan Fairy Bed",
+	"item.fairyfactions.oak_purple_fairy_bed" : "Oak Purple Fairy Bed",
+	"item.fairyfactions.oak_blue_fairy_bed" : "Oak Blue Fairy Bed",
+	"item.fairyfactions.oak_brown_fairy_bed" : "Oak Brown Fairy Bed",
+	"item.fairyfactions.oak_green_fairy_bed" : "Oak Green Fairy Bed",
+	"item.fairyfactions.oak_red_fairy_bed" : "Oak Red Fairy Bed",
+	"item.fairyfactions.oak_black_fairy_bed" : "Oak Black Fairy Bed",
+
 	//Other
 
 	"text.queen.prefix" : "Queen ",

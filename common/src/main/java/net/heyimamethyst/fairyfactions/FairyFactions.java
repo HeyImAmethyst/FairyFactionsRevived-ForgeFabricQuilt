@@ -36,8 +36,10 @@ public class FairyFactions
         FairyConfig.registerConfigs();
         FairyConfig.passConfigValues();
 
-        ModEntities.Init();
+        ModBlocks.Init();
         ModItems.Init();
+        //ModBlockEntityTypes.Init();
+        ModEntities.Init();
         ModSounds.Init();
 
         System.out.println(ModExpectPlatform.getConfigDirectory().toAbsolutePath().normalize().toString());
