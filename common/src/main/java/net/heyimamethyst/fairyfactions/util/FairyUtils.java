@@ -2,6 +2,7 @@ package net.heyimamethyst.fairyfactions.util;
 
 
 import net.heyimamethyst.fairyfactions.Loc;
+import net.heyimamethyst.fairyfactions.ModExpectPlatform;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.entities.FairyEntityBase;
 import net.heyimamethyst.fairyfactions.entities.ai.fairy_job.FairyJobManager;
@@ -20,6 +21,10 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class FairyUtils
 {
@@ -242,6 +247,31 @@ public class FairyUtils
         }
 
         return false;
+    }
+
+    public static List<Item> getItemsFromFairyFoodTag()
+    {
+        Iterator<Item> items = ModExpectPlatform.getItemsOfTag(ModItemTags.IS_FAIRY_FOOD);
+        List<Item> itemsList = new ArrayList<>();
+
+        if(items != null)
+        {
+            while(items.hasNext())
+            {
+                Item item = items.next().asItem();
+                itemsList.add(item);
+            }
+
+            //System.out.println(itemsList);
+
+            return itemsList;
+        }
+        else
+        {
+            //System.out.println(itemsList);
+
+            return null;
+        }
     }
 
     public static boolean peacefulAnimal(Animal animal)
