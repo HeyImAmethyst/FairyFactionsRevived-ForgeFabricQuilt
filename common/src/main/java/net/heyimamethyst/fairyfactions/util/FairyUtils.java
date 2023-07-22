@@ -3,6 +3,7 @@ package net.heyimamethyst.fairyfactions.util;
 
 import com.google.common.collect.Maps;
 import net.heyimamethyst.fairyfactions.Loc;
+import net.heyimamethyst.fairyfactions.ModExpectPlatform;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.entities.FairyEntityBase;
 import net.heyimamethyst.fairyfactions.entities.ai.fairy_job.FairyJobManager;
@@ -265,6 +266,31 @@ public class FairyUtils
         }
 
         return false;
+    }
+
+    public static List<Item> getItemsFromFairyFoodTag()
+    {
+        Iterator<Item> items = ModExpectPlatform.getItemsOfTag(ModItemTags.IS_FAIRY_FOOD);
+        List<Item> itemsList = new ArrayList<>();
+
+        if(items != null)
+        {
+            while(items.hasNext())
+            {
+                Item item = items.next().asItem();
+                itemsList.add(item);
+            }
+
+            //System.out.println(itemsList);
+
+            return itemsList;
+        }
+        else
+        {
+            //System.out.println(itemsList);
+
+            return null;
+        }
     }
 
     public static boolean peacefulAnimal(Animal animal)
