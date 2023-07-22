@@ -11,6 +11,7 @@ import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Block;
 import org.spongepowered.tools.obfuscation.ObfuscationDataProvider;
 
 import java.nio.file.Path;
@@ -35,14 +36,11 @@ public class ModExpectPlatformImpl
 
     public static Iterator<Item> getItemsOfTag(TagKey<Item> tag)
     {
-        Iterable<Holder<Item>> tags = Registry.ITEM.getTagOrEmpty(tag);
-
         List<Item> items = new ArrayList<>();
 
-        while(tags.iterator().hasNext())
+        for (Holder<Item> item : Registry.ITEM.getTagOrEmpty(tag))
         {
-            Item item = tags.iterator().next().value();
-            items.add(item);
+            items.add(item.value());
         }
 
         return items.iterator();
