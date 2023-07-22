@@ -30,7 +30,7 @@ public class FairyMiscAction
     {
         boolean chance = FairyUtils.percentChance(fairy, fairy.isEmotional() ? 0.2 : 1.0);
 
-        if(chance && !fairy.isEmotional() && !fairy.queen())
+        if(chance)
         {
             return true;
         }
