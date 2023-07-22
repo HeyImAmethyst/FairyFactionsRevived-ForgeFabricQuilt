@@ -582,7 +582,7 @@ public class FairyEntity extends FairyEntityBase
         {
             // wing animations
 
-            if (!this.onGround())
+            if (!this.onGround() && !(this.getVehicle() instanceof FairyBedEntity))
             {
                 this.sinage += 0.75F;
             }

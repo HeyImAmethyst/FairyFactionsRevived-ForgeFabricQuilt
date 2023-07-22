@@ -106,7 +106,7 @@ public class FairyBedEntity extends Entity
             return false;
         }
 
-        if (this.level.isClientSide || this.isRemoved())
+        if (this.level().isClientSide || this.isRemoved())
         {
             return true;
         }
@@ -121,7 +121,7 @@ public class FairyBedEntity extends Entity
 
         if (bl || this.getDamage() > 40.0f)
         {
-            if (!bl && this.level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS))
+            if (!bl && this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS))
             {
                 this.spawnAtLocation(this.getDropItem());
             }
@@ -269,10 +269,10 @@ public class FairyBedEntity extends Entity
             {
                 this.causeFallDamage(this.fallDistance, 1.0f, this.damageSources().fall());
 
-                if (!this.level.isClientSide && !this.isRemoved())
+                if (!this.level().isClientSide && !this.isRemoved())
                 {
                     this.kill();
-                    if (this.level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS))
+                    if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS))
                     {
 //                        int i;
 //                        for (i = 0; i < 3; ++i)
@@ -288,7 +288,7 @@ public class FairyBedEntity extends Entity
             }
             this.resetFallDistance();
         }
-        else if (!this.level.getFluidState(this.blockPosition().below()).is(FluidTags.WATER) && d < 0.0)
+        else if (!this.level().getFluidState(this.blockPosition().below()).is(FluidTags.WATER) && d < 0.0)
         {
             this.fallDistance -= (float)d;
         }
