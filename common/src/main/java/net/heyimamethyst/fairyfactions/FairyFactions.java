@@ -2,6 +2,7 @@ package net.heyimamethyst.fairyfactions;
 
 import com.mojang.logging.LogUtils;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
+import net.heyimamethyst.fairyfactions.registry.ModBlocks;
 import net.heyimamethyst.fairyfactions.registry.ModEntities;
 import net.heyimamethyst.fairyfactions.registry.ModItems;
 import net.heyimamethyst.fairyfactions.registry.ModSounds;

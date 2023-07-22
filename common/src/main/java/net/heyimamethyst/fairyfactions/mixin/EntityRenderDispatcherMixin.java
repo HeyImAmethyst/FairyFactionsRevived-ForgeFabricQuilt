@@ -3,13 +3,13 @@ package net.heyimamethyst.fairyfactions.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import com.mojang.math.Quaternion;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.client.render.entity.EmoticonRenderHelper;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.Entity;
 
+import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class EntityRenderDispatcherMixin
 {
     @Shadow
-    public abstract Quaternion cameraOrientation();
+    public abstract Quaternionf cameraOrientation();
 
     @Inject(
             method = "render", at = @At(

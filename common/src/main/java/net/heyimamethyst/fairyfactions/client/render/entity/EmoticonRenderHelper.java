@@ -2,10 +2,7 @@ package net.heyimamethyst.fairyfactions.client.render.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.minecraft.client.Minecraft;
@@ -15,6 +12,10 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 public class EmoticonRenderHelper
 {
@@ -23,7 +24,7 @@ public class EmoticonRenderHelper
     private static final RenderType RENDER_TYPE = RenderType.entityCutout(TEXTURE_LOCATION);
     private static final RenderType SLEEPING_RENDER_TYPE = RenderType.entityCutout(SLEEPING_TEXTURE_LOCATION);
 
-    public static void renderEmoticon(FairyEntity fairy, Quaternion cameraOrientation, PoseStack poseStack, MultiBufferSource pBuffer,
+    public static void renderEmoticon(FairyEntity fairy, Quaternionf cameraOrientation, PoseStack poseStack, MultiBufferSource pBuffer,
                                       double worldX, double worldY, double worldZ, float entityYRot, float partialTicks, int light)
     {
         float f = fairy.getBbHeight() + 0.5F;
@@ -38,7 +39,7 @@ public class EmoticonRenderHelper
         {
             poseStack.pushPose();
 
-            poseStack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
             VertexConsumer builder = pBuffer.getBuffer(RENDER_TYPE);
 
             PoseStack.Pose pose = poseStack.last();
@@ -65,7 +66,7 @@ public class EmoticonRenderHelper
         {
             poseStack.pushPose();
 
-            poseStack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
             VertexConsumer builder = pBuffer.getBuffer(SLEEPING_RENDER_TYPE);
 
             PoseStack.Pose pose = poseStack.last();
@@ -99,7 +100,7 @@ public class EmoticonRenderHelper
             poseStack.translate(0, 0.2F, 0);
 
             poseStack.scale(iconScale, iconScale, iconScale);
-            poseStack.mulPose(Vector3f.YP.rotationDegrees(180F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(180F));
             Minecraft.getInstance().getItemRenderer().renderStatic(icon, ItemTransforms.TransformType.NONE, 0xF000F0,
                     OverlayTexture.NO_OVERLAY, poseStack, buffers, 0);
 
