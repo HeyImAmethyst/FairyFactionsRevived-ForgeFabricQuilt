@@ -14,8 +14,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SmokerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-//TODO: Not yet finished implementing, still WIP!!
-
 public class JobCook extends FairyJob
 {
 
