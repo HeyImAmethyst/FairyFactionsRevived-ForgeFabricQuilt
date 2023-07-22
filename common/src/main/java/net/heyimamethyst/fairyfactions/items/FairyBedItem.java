@@ -76,7 +76,7 @@ public class FairyBedItem extends Item
             if (!level.isClientSide)
             {
                 level.addFreshEntity(fairyBed);
-                level.gameEvent((Entity)player, GameEvent.ENTITY_PLACE, new BlockPos(hitResult.getLocation()));
+                level.gameEvent((Entity)player, GameEvent.ENTITY_PLACE, hitResult.getLocation());
 
                 if (!player.getAbilities().instabuild)
                 {

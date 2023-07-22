@@ -11,11 +11,12 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 public class EmoticonRenderHelper
 {
@@ -56,7 +57,7 @@ public class EmoticonRenderHelper
             poseStack.pushPose();
 
             if(fairy.getWantedFoodItem() != null)
-                renderIcon(new ItemStack(fairy.getWantedFoodItem()), poseStack, pBuffer);
+                renderIcon(new ItemStack(fairy.getWantedFoodItem()), poseStack, pBuffer, fairy.level);
 
             poseStack.popPose();
 
@@ -89,7 +90,7 @@ public class EmoticonRenderHelper
         arg.vertex(arg2, f - 0.5F, (float)j - 0.5F, 0.0F).color(255, 255, 255, 255).uv((float)k, (float)l).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(i).normal(arg3, 0.0F, 1.0F, 0.0F).endVertex();
     }
 
-    private static void renderIcon(ItemStack icon, PoseStack poseStack, MultiBufferSource buffers)
+    private static void renderIcon(ItemStack icon, PoseStack poseStack, MultiBufferSource buffers, Level level)
     {
         if (!icon.isEmpty())
         {
@@ -101,8 +102,8 @@ public class EmoticonRenderHelper
 
             poseStack.scale(iconScale, iconScale, iconScale);
             poseStack.mulPose(Axis.YP.rotationDegrees(180F));
-            Minecraft.getInstance().getItemRenderer().renderStatic(icon, ItemTransforms.TransformType.NONE, 0xF000F0,
-                    OverlayTexture.NO_OVERLAY, poseStack, buffers, 0);
+            Minecraft.getInstance().getItemRenderer().renderStatic(icon, ItemDisplayContext.NONE, 0xF000F0,
+                    OverlayTexture.NO_OVERLAY, poseStack, buffers, level, 0);
 
             poseStack.popPose();
         }
