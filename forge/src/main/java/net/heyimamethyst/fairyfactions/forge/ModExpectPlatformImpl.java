@@ -33,18 +33,6 @@ public class ModExpectPlatformImpl {
     public static Iterator<Item> getItemsOfTag(TagKey<Item> tag)
     {
         return Objects.requireNonNull(ForgeRegistries.ITEMS.tags()).getTag(tag).iterator();
-
-//        Iterable<Holder<Item>> tags = Registry.ITEM.getTagOrEmpty(tag);
-//
-//        List<Item> items = new ArrayList<>();
-//
-//        while(tags.iterator().hasNext())
-//        {
-//            Item item = tags.iterator().next().value();
-//            items.add(item);
-//        }
-//
-//        return items.iterator();
     }
 
     public static Potion getStartingPotionFromMix(PotionBrewing.Mix<Potion> potionMix)
