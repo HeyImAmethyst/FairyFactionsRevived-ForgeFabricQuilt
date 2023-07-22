@@ -178,7 +178,7 @@ public class JobButcher extends FairyJob
 
     private void attackAnimal(LivingEntity animalToBeKilled, ItemStack stack)
     {
-        double pDistToEnemySqr = this.fairy.getPerceivedTargetDistanceSquareForMeleeAttack(animalToBeKilled);
+        double pDistToEnemySqr = this.fairy.distanceToSqr(animalToBeKilled);
         double d0 = this.getAttackReachSqr(animalToBeKilled);
 
         if (fairy.attackAnim <= 0 && pDistToEnemySqr < d0
