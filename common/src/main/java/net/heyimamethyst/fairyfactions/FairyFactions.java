@@ -6,6 +6,7 @@ import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
+import net.heyimamethyst.fairyfactions.registry.ModBlocks;
 import net.heyimamethyst.fairyfactions.network.ModNetwork;
 import net.heyimamethyst.fairyfactions.registry.ModEntities;
 import net.heyimamethyst.fairyfactions.registry.ModItems;
