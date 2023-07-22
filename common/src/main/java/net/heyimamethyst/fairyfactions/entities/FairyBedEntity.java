@@ -202,7 +202,7 @@ public class FairyBedEntity extends Entity
     }
 
     @Override
-    public void animateHurt()
+    public void animateHurt(float f)
     {
         this.setHurtDir(-this.getHurtDir());
         this.setHurtTime(10);
@@ -267,7 +267,7 @@ public class FairyBedEntity extends Entity
         {
             if (this.fallDistance > 3.0f)
             {
-                this.causeFallDamage(this.fallDistance, 1.0f, DamageSource.FALL);
+                this.causeFallDamage(this.fallDistance, 1.0f, this.damageSources().fall());
 
                 if (!this.level.isClientSide && !this.isRemoved())
                 {
