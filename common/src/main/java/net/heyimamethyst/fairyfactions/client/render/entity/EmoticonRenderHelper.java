@@ -57,7 +57,7 @@ public class EmoticonRenderHelper
             poseStack.pushPose();
 
             if(fairy.getWantedFoodItem() != null)
-                renderIcon(new ItemStack(fairy.getWantedFoodItem()), poseStack, pBuffer, fairy.level);
+                renderIcon(new ItemStack(fairy.getWantedFoodItem()), poseStack, pBuffer, fairy.level());
 
             poseStack.popPose();
 

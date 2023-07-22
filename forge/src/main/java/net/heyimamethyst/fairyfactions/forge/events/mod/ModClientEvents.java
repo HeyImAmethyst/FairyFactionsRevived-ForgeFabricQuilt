@@ -49,7 +49,7 @@ public class ModClientEvents
 			event.accept(ModItems.FAIRY_SPAWN_EGG);
 		}
 
-		if(event.getTab() == CreativeModeTabs.COLORED_BLOCKS)
+		if(event.getTabKey() == CreativeModeTabs.COLORED_BLOCKS)
 		{
 			event.accept(ModItems.OAK_WHITE_FAIRY_BED);
 			event.accept(ModItems.OAK_ORANGE_FAIRY_BED);
