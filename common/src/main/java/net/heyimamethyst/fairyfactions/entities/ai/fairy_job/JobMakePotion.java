@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.SmokerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.ArrayList;
 import java.util.List;
 
 //TODO: Not yet finished implementing, still WIP!!
@@ -99,11 +100,6 @@ public class JobMakePotion extends FairyJob
                     return true;
                 }
 
-//                if (populateWaterBottles(brewingStand, stack))
-//                {
-//                    return true;
-//                }
-
                 if (populateInput(brewingStand, stack))
                 {
                     return true;
@@ -145,150 +141,45 @@ public class JobMakePotion extends FairyJob
         return false;
     }
 
-//    private boolean populateWaterBottles(BrewingStandBlockEntity brewingStand, ItemStack stack)
-//    {
-//
-//        if(stack.is(Items.POTION) && (PotionUtils.getPotion(stack) == Potions.WATER || PotionUtils.getPotion(stack) == Potions.AWKWARD || PotionUtils.getPotion(stack) == Potions.MUNDANE))
-//        {
-//
-//            for (int i = 0; i < 3; ++i)
-//            {
-//                ItemStack brewingStandStack = brewingStand.getItem(i);
-//                ItemStack itemStackForBrewingStand = new ItemStack(stack.getItem());
-//
-//                if(brewingStandStack.isEmpty())
-//                {
-//                    brewingStand.setItem(i, PotionUtils.setPotion(new ItemStack(stack.getItem()), PotionUtils.getPotion(stack)));
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
-
     private boolean populateInput(BrewingStandBlockEntity brewingStand, ItemStack stack)
     {
-        List<PotionBrewing.Mix<Potion>> potionMixes =  PotionBrewing.POTION_MIXES;
-        List<PotionBrewing.Mix<Item>> containerMixes =  PotionBrewing.CONTAINER_MIXES;
-
-        NonNullList<ItemStack> chestItems = chest.getItems();
-
-//        for (PotionBrewing.Mix<Potion> potionMix : potionMixes)
+//        if(canPutPotionIn(brewingStand, stack))
 //        {
-//
-////            if(isPotionContainer(stack.getItem()))
-////            {
-////                if(ModExpectPlatform.getStartingPotionFromMix(potionMix) != null)
-////                {
-////                    if(PotionUtils.getPotion(stack) == ModExpectPlatform.getStartingPotionFromMix(potionMix))
-////                    {
-////                        for (int j = 0; j < 3; ++j)
-////                        {
-////                            ItemStack brewingStandStack = brewingStand.getItem(j);
-////                            ItemStack itemStackForBrewingStand = new ItemStack(stack.getItem());
-////
-////                            if(brewingStandStack.isEmpty())
-////                            {
-////                                brewingStand.setItem(j, PotionUtils.setPotion(itemStackForBrewingStand, PotionUtils.getPotion(stack)));
-////                                return true;
-////                            }
-////                        }
-////                    }
-////                }
-////            }
-//
-//            if(Ingredient.of(stack) == potionMix.ingredient)
+//            for (int j = 0; j < 3; ++j)
 //            {
-//                ItemStack brewingStandStack = brewingStand.getItem(3);
+//                ItemStack brewingStandStack = brewingStand.getItem(j);
 //                ItemStack itemStackForBrewingStand = new ItemStack(stack.getItem());
 //
-//                if(brewingStandStack.getCount() == brewingStandStack.getMaxStackSize())
-//                {
-//                    return false;
-//                }
-//
-//                itemStackForBrewingStand.setCount(brewingStandStack.getCount() + stack.getCount());
-//
-//                brewingStand.setItem(3, itemStackForBrewingStand);
-//
-//                return true;
-//            }
-//        }
-
-//        for (PotionBrewing.Mix<Item> containerMix : containerMixes)
-//        {
-//
-////            if(isPotionContainer(stack.getItem()))
-////            {
-////                if(ModExpectPlatform.getStartingContainerFromMix(containerMix) != null)
+////                if(brewingStandStack.isEmpty())
 ////                {
-////                    if(stack.getItem() == ModExpectPlatform.getStartingContainerFromMix(containerMix))
-////                    {
-////                        for (int j = 0; j < 3; ++j)
-////                        {
-////                            ItemStack brewingStandStack = brewingStand.getItem(j);
-////                            ItemStack itemStackForBrewingStand = new ItemStack(stack.getItem());
-////
-////                            if(brewingStandStack.isEmpty())
-////                            {
-////                                brewingStand.setItem(j, PotionUtils.setPotion(itemStackForBrewingStand, PotionUtils.getPotion(stack)));
-////                                return true;
-////                            }
-////                        }
-////                    }
+////                    return true;
 ////                }
-////            }
-//
-//            if(Ingredient.of(stack) == containerMix.ingredient)
-//            {
-//                ItemStack brewingStandStack = brewingStand.getItem(3);
-//                ItemStack itemStackForBrewingStand = new ItemStack(stack.getItem());
-//
-//                if(brewingStandStack.getCount() == brewingStandStack.getMaxStackSize())
-//                {
-//                    return false;
-//                }
-//
-//                itemStackForBrewingStand.setCount(brewingStandStack.getCount() + stack.getCount());
-//
-//                brewingStand.setItem(3, itemStackForBrewingStand);
-//
-//                return true;
 //            }
+//
+//            return true;
 //        }
 
-        if(canPutPotionIn(brewingStand, stack))
-        {
-            for (int j = 0; j < 3; ++j)
-            {
-                ItemStack brewingStandStack = brewingStand.getItem(j);
-                ItemStack itemStackForBrewingStand = new ItemStack(stack.getItem());
-
-                if(!brewingStandStack.isEmpty())
-                {
-                    return false;
-                }
-
-                brewingStand.setItem(j, PotionUtils.setPotion(itemStackForBrewingStand, PotionUtils.getPotion(stack)));
-            }
-        }
-
-        if(canPutIngredientIn(brewingStand, stack))
+        if(PotionBrewing.isIngredient(stack))
         {
             ItemStack brewingStandStack = brewingStand.getItem(3);
             ItemStack itemStackForBrewingStand = new ItemStack(stack.getItem());
 
-            if(brewingStandStack.getCount() == brewingStandStack.getMaxStackSize())
-            {
-                return false;
-            }
-            else
-            {
-                itemStackForBrewingStand.setCount(brewingStandStack.getCount() + stack.getCount());
-                brewingStand.setItem(3, itemStackForBrewingStand);
+//            if(brewingStandStack.getCount() == brewingStandStack.getMaxStackSize())
+//            {
+//                return false;
+//            }
+//            else
+//            {
+//                itemStackForBrewingStand.setCount(brewingStandStack.getCount() + stack.getCount());
+//                brewingStand.setItem(3, itemStackForBrewingStand);
+//
+//                return true;
+//            }
 
-                return true;
-            }
+            itemStackForBrewingStand.setCount(brewingStandStack.getCount() + stack.getCount());
+            brewingStand.setItem(3, itemStackForBrewingStand);
+
+            return true;
         }
 
         return false;
@@ -312,25 +203,27 @@ public class JobMakePotion extends FairyJob
         {
             return false;
         }
-
-        if (!PotionBrewing.isIngredient(itemStack))
+        else if (!PotionBrewing.isIngredient(itemStack))
+        {
+            return false;
+        }
+        else if(!(brewingStand.getItem(3) == ItemStack.EMPTY))
         {
             return false;
         }
 
-        if(!brewingStand.getItem(3).isEmpty())
-        {
-            return false;
-        }
+        List<ItemStack> items = new ArrayList<>();
 
         for (int i = 0; i < 3; ++i)
         {
             ItemStack itemStack2 = brewingStand.getItem(i);
-            if (itemStack2.isEmpty() || !PotionBrewing.hasMix(itemStack2, itemStack)) continue;
-            return true;
+            if (!itemStack2.isEmpty() || PotionBrewing.hasMix(itemStack2, itemStack))
+            {
+                items.add(itemStack2);
+            }
         }
 
-        return false;
+        return items.size() == 3;
     }
 
     private static boolean canPutPotionIn(BrewingStandBlockEntity brewingStand, ItemStack itemStack)
@@ -339,8 +232,7 @@ public class JobMakePotion extends FairyJob
         {
             return false;
         }
-
-        if (!FairyUtils.isPotionContainer(itemStack))
+        else if (!FairyUtils.isPotionContainer(itemStack))
         {
             return false;
         }
@@ -348,17 +240,12 @@ public class JobMakePotion extends FairyJob
         for (int i = 0; i < 3; ++i)
         {
             ItemStack itemStack2 = brewingStand.getItem(i);
-            if (!itemStack2.isEmpty()) continue;
+            if (itemStack2 != ItemStack.EMPTY) continue;
             return true;
         }
 
         ItemStack itemStack2 = brewingStand.getItem(3);
-        if (itemStack2.isEmpty() || !PotionBrewing.hasMix(itemStack2, itemStack))
-        {
-            return true;
-        }
-
-        return false;
+        return itemStack2.isEmpty() || !PotionBrewing.hasMix(itemStack2, itemStack);
     }
 
     @Override
