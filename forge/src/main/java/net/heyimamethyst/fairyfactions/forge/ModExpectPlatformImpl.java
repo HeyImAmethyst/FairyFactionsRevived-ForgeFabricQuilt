@@ -12,7 +12,6 @@ import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import java.nio.file.Path;
 import java.util.*;
