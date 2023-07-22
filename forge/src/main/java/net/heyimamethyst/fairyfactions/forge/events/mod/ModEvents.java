@@ -1,18 +1,24 @@
 package net.heyimamethyst.fairyfactions.forge.events.mod;
 
+import dev.architectury.registry.registries.Registries;
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
+import net.heyimamethyst.fairyfactions.registry.ModBlocks;
 import net.heyimamethyst.fairyfactions.registry.ModEntities;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +26,17 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = FairyFactions.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModEvents
 {
+
+	@SubscribeEvent
+	public static void onRegisterItems(final RegistryEvent.Register<Item> event)
+	{
+		ModBlocks.BLOCKS.forEach(block ->
+		{
+			event.getRegistry().register(new BlockItem(block.get(), new Item.Properties()
+					.tab(CreativeModeTab.TAB_DECORATIONS))
+					.setRegistryName(block.get().getRegistryName()));
+		});
+	}
 
 	//@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void gen(BiomeLoadingEvent event)

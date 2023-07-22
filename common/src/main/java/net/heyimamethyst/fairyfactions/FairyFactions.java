@@ -8,9 +8,7 @@ import dev.architectury.registry.registries.Registries;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.network.ModNetwork;
-import net.heyimamethyst.fairyfactions.registry.ModEntities;
-import net.heyimamethyst.fairyfactions.registry.ModItems;
-import net.heyimamethyst.fairyfactions.registry.ModSounds;
+import net.heyimamethyst.fairyfactions.registry.*;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -43,8 +41,10 @@ public class FairyFactions
         FairyConfig.registerConfigs();
         FairyConfig.passConfigValues();
 
-        ModEntities.Init();
+        ModBlocks.Init();
         ModItems.Init();
+        //ModBlockEntityTypes.Init();
+        ModEntities.Init();
         ModSounds.Init();
 
         System.out.println(ModExpectPlatform.getConfigDirectory().toAbsolutePath().normalize().toString());

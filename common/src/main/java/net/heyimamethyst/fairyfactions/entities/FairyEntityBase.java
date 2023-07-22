@@ -41,6 +41,8 @@ public class FairyEntityBase extends Animal
 
     protected static final EntityDataAccessor<Integer> ITEM_INDEX = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.INT);
 
+    public static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.BOOLEAN);
+
     public static final int	MAX_SKIN	= 3;
     public static final int	MAX_JOB		= 3;
     public static final int	MAX_FACTION	= 15;
@@ -518,6 +520,16 @@ public class FairyEntityBase extends Animal
     public boolean isEmotional()
     {
         return this.entityData.get(EMOTIONAL);
+    }
+
+    public void setSleeping(boolean flag)
+    {
+        this.entityData.set(SLEEPING, flag);
+    }
+
+    public boolean isSleeping()
+    {
+        return this.entityData.get(SLEEPING);
     }
 
     public boolean angry()
