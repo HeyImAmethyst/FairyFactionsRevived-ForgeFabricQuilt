@@ -29,7 +29,7 @@ public class MiscActionBecomeEmotional extends FairyMiscAction
         {
             if(world.getBlockState(fairy.blockPosition().below()).isSolidRender(world, fairy.blockPosition()))
             {
-                List<Item> foodItems = fairy.getItemsFromFairyFoodTag();
+                List<Item> foodItems = FairyUtils.getItemsFromFairyFoodTag();
                 fairy.setItemIndex(fairy.getRandom().nextInt(foodItems.size()));
 
                 Item itemFromList = foodItems.get(fairy.getItemIndex());
