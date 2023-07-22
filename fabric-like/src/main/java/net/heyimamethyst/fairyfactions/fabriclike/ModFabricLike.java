@@ -26,6 +26,23 @@ public class ModFabricLike
     public static void addItemsToItemGroups()
     {
         addToItemGroup(CreativeModeTabs.SPAWN_EGGS, ModItems.FAIRY_SPAWN_EGG.get());
+
+        addToItemGroup(CreativeModeTabs.COLORED_BLOCKS, ModItems.OAK_WHITE_FAIRY_BED.get());
+        addToItemGroup(CreativeModeTabs.COLORED_BLOCKS, ModItems.OAK_ORANGE_FAIRY_BED.get());
+        addToItemGroup(CreativeModeTabs.COLORED_BLOCKS, ModItems.OAK_MAGENTA_FAIRY_BED.get());
+        addToItemGroup(CreativeModeTabs.COLORED_BLOCKS, ModItems.OAK_LIGHT_BLUE_FAIRY_BED.get());
+        addToItemGroup(CreativeModeTabs.COLORED_BLOCKS, ModItems.OAK_YELLOW_FAIRY_BED.get());
+        addToItemGroup(CreativeModeTabs.COLORED_BLOCKS, ModItems.OAK_LIME_FAIRY_BED.get());
+        addToItemGroup(CreativeModeTabs.COLORED_BLOCKS, ModItems.OAK_PINK_FAIRY_BED.get());
+        addToItemGroup(CreativeModeTabs.COLORED_BLOCKS, ModItems.OAK_GRAY_FAIRY_BED.get());
+        addToItemGroup(CreativeModeTabs.COLORED_BLOCKS, ModItems.OAK_LIGHT_GRAY_FAIRY_BED.get());
+        addToItemGroup(CreativeModeTabs.COLORED_BLOCKS, ModItems.OAK_CYAN_FAIRY_BED.get());
+        addToItemGroup(CreativeModeTabs.COLORED_BLOCKS, ModItems.OAK_PURPLE_FAIRY_BED.get());
+        addToItemGroup(CreativeModeTabs.COLORED_BLOCKS, ModItems.OAK_BLUE_FAIRY_BED.get());
+        addToItemGroup(CreativeModeTabs.COLORED_BLOCKS, ModItems.OAK_BROWN_FAIRY_BED.get());
+        addToItemGroup(CreativeModeTabs.COLORED_BLOCKS, ModItems.OAK_GREEN_FAIRY_BED.get());
+        addToItemGroup(CreativeModeTabs.COLORED_BLOCKS, ModItems.OAK_RED_FAIRY_BED.get());
+        addToItemGroup(CreativeModeTabs.COLORED_BLOCKS, ModItems.OAK_BLACK_FAIRY_BED.get());
     }
 
     public static void addToItemGroup(CreativeModeTab group, Item item)

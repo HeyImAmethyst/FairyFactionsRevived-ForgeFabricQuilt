@@ -1,6 +1,5 @@
 package net.heyimamethyst.fairyfactions.forge.events.mod;
 
-import dev.architectury.registry.registries.Registries;
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.registry.ModBlocks;
