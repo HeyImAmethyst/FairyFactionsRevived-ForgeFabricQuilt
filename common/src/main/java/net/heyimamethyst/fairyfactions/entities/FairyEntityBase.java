@@ -21,6 +21,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 public class FairyEntityBase extends Animal
 {
     protected static final EntityDataAccessor<Byte> B_FLAGS = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.BYTE);
@@ -42,6 +44,8 @@ public class FairyEntityBase extends Animal
     protected static final EntityDataAccessor<Integer> ITEM_INDEX = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.INT);
 
     public static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.BOOLEAN);
+
+    public static final EntityDataAccessor<Optional<BlockPos>> BED_LOCATION = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
 
     public static final int	MAX_SKIN	= 3;
     public static final int	MAX_JOB		= 3;
@@ -698,5 +702,20 @@ public class FairyEntityBase extends Animal
     public void setItemIndex(int index)
     {
         this.entityData.set(ITEM_INDEX, index);
+    }
+
+    public Optional<BlockPos> getBedLocation()
+    {
+        return this.entityData.get(BED_LOCATION);
+    }
+
+    public void setBedLocation(BlockPos bedBlockPos)
+    {
+        this.entityData.set(BED_LOCATION, Optional.of(bedBlockPos));
+    }
+
+    public void clearBedLocation()
+    {
+        this.entityData.set(BED_LOCATION, Optional.empty());
     }
 }
