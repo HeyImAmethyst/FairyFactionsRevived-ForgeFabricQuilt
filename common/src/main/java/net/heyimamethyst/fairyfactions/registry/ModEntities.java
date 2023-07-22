@@ -4,6 +4,7 @@ package net.heyimamethyst.fairyfactions.registry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.heyimamethyst.fairyfactions.FairyFactions;
+import net.heyimamethyst.fairyfactions.entities.FairyBedEntity;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.entities.FairyFishHookEntity;
 import net.minecraft.core.Registry;
@@ -35,4 +36,9 @@ public class ModEntities
 					.updateInterval(5)
 					.build(new ResourceLocation(FairyFactions.MOD_ID, "fairy_fishing_bobber_entity").toString()));
 
+	public static final RegistrySupplier<EntityType<FairyBedEntity>> FAIRY_BED_ENTITY = ENTITY_TYPES.register("fairy_bed_entity",
+			() -> EntityType.Builder.<FairyBedEntity>of(FairyBedEntity::new, MobCategory.MISC)
+					.sized(1.0F, 1.0F)
+					.clientTrackingRange(10)
+					.build(new ResourceLocation(FairyFactions.MOD_ID, "fairy_bed_entity").toString()));
 }

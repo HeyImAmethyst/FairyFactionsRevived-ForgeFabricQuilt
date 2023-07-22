@@ -3,10 +3,8 @@ package net.heyimamethyst.fairyfactions.forge.events.mod;
 
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.client.model.ModModelLayers;
-import net.heyimamethyst.fairyfactions.client.model.entity.FairyEyesModel;
-import net.heyimamethyst.fairyfactions.client.model.entity.FairyModel;
-import net.heyimamethyst.fairyfactions.client.model.entity.FairyProps2Model;
-import net.heyimamethyst.fairyfactions.client.model.entity.FairyPropsModel;
+import net.heyimamethyst.fairyfactions.client.model.entity.*;
+import net.heyimamethyst.fairyfactions.client.render.entity.FairyBedRenderer;
 import net.heyimamethyst.fairyfactions.client.render.entity.FairyFishHookEntityRenderer;
 import net.heyimamethyst.fairyfactions.client.render.entity.FairyRenderer;
 import net.heyimamethyst.fairyfactions.items.ModSpawnEggItem;
@@ -56,6 +54,11 @@ public class ModClientEvents
 		event.registerLayerDefinition(ModModelLayers.FAIRY_PROPS_LAYER_LOCATION, FairyPropsModel::createBodyLayer);
 		event.registerLayerDefinition(ModModelLayers.FAIRY_PROPS2_LAYER_LOCATION, FairyProps2Model::createBodyLayer);
 		event.registerLayerDefinition(ModModelLayers.FAIRY_WITHERED_LAYER_LOCATION, FairyModel::createBodyLayer);
+
+		ModModelLayers.FAIRY_BED_LAYER_LOCATION.values().forEach(fairyBed ->
+		{
+			event.registerLayerDefinition(fairyBed, FairyBedModel::createBodyLayer);
+		});
 	}
 	
 	@SubscribeEvent
@@ -63,6 +66,7 @@ public class ModClientEvents
 	{
 		event.registerEntityRenderer(ModEntities.FAIRY_ENTITY.get(), FairyRenderer::new);
 		event.registerEntityRenderer(ModEntities.FAIRY_FISHING_BOBBER_ENTITY.get(), FairyFishHookEntityRenderer::new);
+		event.registerEntityRenderer(ModEntities.FAIRY_BED_ENTITY.get(), FairyBedRenderer::new);
 	}
 
 }
