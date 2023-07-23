@@ -96,7 +96,7 @@ unifiedPublishing {
         displayName = "[Forge] ${rootProject.archives_base_name}-${mod_version}"
         changelog = "see the changelog page in the pages tab for more info on the latest changes"
         releaseType = "release"
-        gameVersions = ["1.18.2"]
+        gameVersions = ["1.19.4"]
         gameLoaders = ["forge"]
 
         mainPublication tasks.remapJar // Declares the publicated jar
