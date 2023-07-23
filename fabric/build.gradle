@@ -1,5 +1,6 @@
 plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "me.shedaniel.unified-publishing"
 }
 
 archivesBaseName = "[Fabric] ${rootProject.archives_base_name}"
@@ -91,5 +92,35 @@ publishing {
     // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
     repositories {
         // Add repositories to publish to here.
+    }
+}
+
+unifiedPublishing {
+    project{
+        displayName = "[Fabric] ${rootProject.archives_base_name}-${mod_version}"
+        changelog = "see the changelog page in the pages tab for more info on the latest changes"
+        releaseType = "release"
+        gameVersions = ["1.18.2"]
+        gameLoaders = ["fabric"]
+
+        mainPublication tasks.remapJar // Declares the publicated jar
+
+        relations {
+            depends { // Mark as a required dependency
+                curseforge = "architectury-api" // Optional, project slug
+            }
+            includes {} // Mark as an included dependency
+            optional {} // Mark as an optional dependency
+            conflicts {} // Mark as a conflicted dependency
+        }
+
+        var cfToken = System.getenv("CF_TOKEN")
+        if (project.hasProperty("CF_TOKEN") || cfToken != null)
+        {
+            curseforge {
+                token = cfToken
+                id = "839349" // Required, must be a string, ID of CurseForge project
+            }
+        }
     }
 }
