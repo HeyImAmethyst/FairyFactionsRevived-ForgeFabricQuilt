@@ -4,6 +4,8 @@ import net.heyimamethyst.fairyfactions.ModExpectPlatform;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -38,7 +40,7 @@ public class ModExpectPlatformImpl
     {
         List<Item> items = new ArrayList<>();
 
-        for (Holder<Item> item : Registry.ITEM.getTagOrEmpty(tag))
+        for (Holder<Item> item : BuiltInRegistries.ITEM.getTagOrEmpty(tag))
         {
             items.add(item.value());
         }
