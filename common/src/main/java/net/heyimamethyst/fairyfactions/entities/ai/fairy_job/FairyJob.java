@@ -33,7 +33,7 @@ public class FairyJob
 
     public boolean canStart()
     {
-        boolean chance = FairyUtils.percentChance(fairy, fairy.isEmotional() ? 0.2 : 1.0);
+        boolean chance = FairyUtils.percentChance(fairy, fairy.isEmotional() ? 0.75 : 1.0);
 
         if(chance)
         {
