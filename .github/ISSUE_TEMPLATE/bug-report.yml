@@ -64,7 +64,7 @@ body:
       options:
         - Forge
         - Fabric
-      default: 0
+      default: 1
     validations:
       required: true
   - type: textarea
