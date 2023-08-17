@@ -65,6 +65,8 @@ body:
         - Forge
         - Fabric
       default: 0
+    validations:
+      required: true
   - type: textarea
     id: crash-log
     attributes:
