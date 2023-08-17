@@ -51,7 +51,7 @@ body:
         - 1.19.2
         - 1.19.3
         - 1.19.4
-        - 1.20
+        - 1.20.0
         - 1.20.1
       default: 0
     validations:
@@ -64,6 +64,7 @@ body:
       options:
         - Forge
         - Fabric
+      default: 0
   - type: textarea
     id: crash-log
     attributes:
