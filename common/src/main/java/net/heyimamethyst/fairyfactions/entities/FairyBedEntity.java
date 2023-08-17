@@ -133,72 +133,82 @@ public class FairyBedEntity extends Entity
 
     public Item getDropItem()
     {
-        switch (this.getFairyBedType())
+//        switch (this.getFairyBedType())
+//        {
+//            default:
+//            {
+//                return  ModItems.OAK_WHITE_FAIRY_BED.get();
+//            }
+//            case OAK_ORANGE:
+//            {
+//                return ModItems.OAK_ORANGE_FAIRY_BED.get();
+//            }
+//            case OAK_MAGENTA:
+//            {
+//                return ModItems.OAK_MAGENTA_FAIRY_BED.get();
+//            }
+//            case OAK_LIGHT_BLUE:
+//            {
+//                return ModItems.OAK_LIGHT_BLUE_FAIRY_BED.get();
+//            }
+//            case OAK_YELLOW:
+//            {
+//                return ModItems.OAK_YELLOW_FAIRY_BED.get();
+//            }
+//            case OAK_LIME:
+//            {
+//                return ModItems.OAK_LIME_FAIRY_BED.get();
+//            }
+//            case OAK_PINK:
+//            {
+//                return ModItems.OAK_PINK_FAIRY_BED.get();
+//            }
+//            case OAK_GRAY:
+//            {
+//                return ModItems.OAK_GRAY_FAIRY_BED.get();
+//            }
+//            case OAK_LIGHT_GRAY:
+//            {
+//                return ModItems.OAK_LIGHT_GRAY_FAIRY_BED.get();
+//            }
+//            case OAK_CYAN:
+//            {
+//                return ModItems.OAK_CYAN_FAIRY_BED.get();
+//            }
+//            case OAK_PURPLE:
+//            {
+//                return ModItems.OAK_PURPLE_FAIRY_BED.get();
+//            }
+//            case OAK_BLUE:
+//            {
+//                return ModItems.OAK_BLUE_FAIRY_BED.get();
+//            }
+//            case OAK_BROWN:
+//            {
+//                return ModItems.OAK_BROWN_FAIRY_BED.get();
+//            }
+//            case OAK_GREEN:
+//            {
+//                return ModItems.OAK_GREEN_FAIRY_BED.get();
+//            }
+//            case OAK_RED:
+//            {
+//                return ModItems.OAK_RED_FAIRY_BED.get();
+//            }
+//            case OAK_BLACK:
+//        }
+//
+//        return ModItems.OAK_BLACK_FAIRY_BED.get();
+
+        for (FairyBedEntity.Type type: FairyBedEntity.Type.values())
         {
-            default:
+            if(type == this.getFairyBedType())
             {
-                return  ModItems.OAK_WHITE_FAIRY_BED.get();
+                return ModItems.FAIRY_BED_ITEMS.get(type).get();
             }
-            case OAK_ORANGE:
-            {
-                return ModItems.OAK_ORANGE_FAIRY_BED.get();
-            }
-            case OAK_MAGENTA:
-            {
-                return ModItems.OAK_MAGENTA_FAIRY_BED.get();
-            }
-            case OAK_LIGHT_BLUE:
-            {
-                return ModItems.OAK_LIGHT_BLUE_FAIRY_BED.get();
-            }
-            case OAK_YELLOW:
-            {
-                return ModItems.OAK_YELLOW_FAIRY_BED.get();
-            }
-            case OAK_LIME:
-            {
-                return ModItems.OAK_LIME_FAIRY_BED.get();
-            }
-            case OAK_PINK:
-            {
-                return ModItems.OAK_PINK_FAIRY_BED.get();
-            }
-            case OAK_GRAY:
-            {
-                return ModItems.OAK_GRAY_FAIRY_BED.get();
-            }
-            case OAK_LIGHT_GRAY:
-            {
-                return ModItems.OAK_LIGHT_GRAY_FAIRY_BED.get();
-            }
-            case OAK_CYAN:
-            {
-                return ModItems.OAK_CYAN_FAIRY_BED.get();
-            }
-            case OAK_PURPLE:
-            {
-                return ModItems.OAK_PURPLE_FAIRY_BED.get();
-            }
-            case OAK_BLUE:
-            {
-                return ModItems.OAK_BLUE_FAIRY_BED.get();
-            }
-            case OAK_BROWN:
-            {
-                return ModItems.OAK_BROWN_FAIRY_BED.get();
-            }
-            case OAK_GREEN:
-            {
-                return ModItems.OAK_GREEN_FAIRY_BED.get();
-            }
-            case OAK_RED:
-            {
-                return ModItems.OAK_RED_FAIRY_BED.get();
-            }
-            case OAK_BLACK:
         }
 
-        return ModItems.OAK_BLACK_FAIRY_BED.get();
+        return ModItems.FAIRY_BED_ITEMS.get(Type.OAK_WHITE).get();
     }
 
     @Override
