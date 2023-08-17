@@ -3,7 +3,11 @@ package net.heyimamethyst.fairyfactions.forge.events.mod;
 
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.client.model.ModModelLayers;
-import net.heyimamethyst.fairyfactions.client.model.entity.*;
+import net.heyimamethyst.fairyfactions.client.model.entity.fairy.FairyEyesModel;
+import net.heyimamethyst.fairyfactions.client.model.entity.fairy.FairyModel;
+import net.heyimamethyst.fairyfactions.client.model.entity.fairy.FairyProps2Model;
+import net.heyimamethyst.fairyfactions.client.model.entity.fairy.FairyPropsModel;
+import net.heyimamethyst.fairyfactions.client.model.entity.fairy_bed.FairyBedModel;
 import net.heyimamethyst.fairyfactions.client.render.entity.FairyBedRenderer;
 import net.heyimamethyst.fairyfactions.client.render.entity.FairyFishHookEntityRenderer;
 import net.heyimamethyst.fairyfactions.client.render.entity.FairyRenderer;
