@@ -1,4 +1,4 @@
-package net.heyimamethyst.fairyfactions.client.render.entity;
+package net.heyimamethyst.fairyfactions.client.render.entity.layer.fairy;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;

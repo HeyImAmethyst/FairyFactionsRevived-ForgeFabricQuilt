@@ -1,10 +1,10 @@
-package net.heyimamethyst.fairyfactions.client.render.entity;
+package net.heyimamethyst.fairyfactions.client.render.entity.layer.fairy;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.client.model.ModModelLayers;
-import net.heyimamethyst.fairyfactions.client.model.entity.FairyPropsModel;
+import net.heyimamethyst.fairyfactions.client.model.entity.fairy.FairyPropsModel;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.MultiBufferSource;
