@@ -7,7 +7,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Axis;
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.client.model.ModModelLayers;
-import net.heyimamethyst.fairyfactions.client.model.entity.FairyBedModel;
+import net.heyimamethyst.fairyfactions.client.model.entity.fairy_bed.FairyBedModel;
 import net.heyimamethyst.fairyfactions.entities.FairyBedEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
