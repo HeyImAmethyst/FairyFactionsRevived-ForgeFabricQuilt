@@ -2461,7 +2461,7 @@ public class FairyEntity extends FairyEntityBase
         }
 
         if (ruler != null && entity != null && ruler == entity
-                && ruler instanceof Player)
+                && ruler instanceof ServerPlayer)
         {
             if (snowballFight(damagesource))
             {
@@ -2482,8 +2482,8 @@ public class FairyEntity extends FairyEntityBase
 
         if (tamed() && !rulerName().equals("") && entity != null)
         {
-            if (entity instanceof Player
-                    && isRuler((Player) entity))
+            if (entity instanceof ServerPlayer
+                    && isRuler((ServerPlayer) entity))
             {
                 if (!ignoreTarget && snowballFight(damagesource))
                 {
@@ -2497,7 +2497,7 @@ public class FairyEntity extends FairyEntityBase
             }
             else if (entity instanceof Wolf
                     && ( (Wolf) entity ).isTame()
-                    && isRuler((Player) ((Wolf) entity).getOwner()))
+                    && isRuler((ServerPlayer) ((Wolf) entity).getOwner()))
             {
                 // Protects against ruler-owned wolves.
                 Wolf wolf = (Wolf) entity;

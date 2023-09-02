@@ -1,5 +1,7 @@
 package net.heyimamethyst.fairyfactions.entities;
 
+import com.mojang.datafixers.util.Pair;
+import net.heyimamethyst.fairyfactions.client.model.ModModelLayers;
 import net.heyimamethyst.fairyfactions.registry.ModEntities;
 import net.heyimamethyst.fairyfactions.registry.ModItems;
 import net.minecraft.core.BlockPos;
@@ -19,6 +21,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -26,11 +29,13 @@ import net.minecraft.world.phys.Vec3;
 
 public class FairyBedEntity extends Entity
 {
-    private static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> DATA_ID_HURTDIR = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Integer> DATA_ID_TYPE = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_ID_HURTDIR = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.FLOAT);
 
+    private static final EntityDataAccessor<Integer> DATA_ID_TYPE = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_ID_LOG_TYPE = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_ID_WOOL_TYPE = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.INT);
     private double lastYd;
 
     public FairyBedEntity(EntityType<?> entityType, Level level)
@@ -64,7 +69,10 @@ public class FairyBedEntity extends Entity
         this.entityData.define(DATA_ID_HURT, 0);
         this.entityData.define(DATA_ID_HURTDIR, 1);
         this.entityData.define(DATA_ID_DAMAGE, Float.valueOf(0.0f));
-        this.entityData.define(DATA_ID_TYPE, Type.OAK_WHITE.ordinal());
+
+        //this.entityData.define(DATA_ID_TYPE, Type.OAK_WHITE.ordinal());
+        this.entityData.define(DATA_ID_LOG_TYPE, LogType.OAK.ordinal());
+        this.entityData.define(DATA_ID_WOOL_TYPE, WoolType.WHITE.ordinal());
     }
 
     @Override
@@ -132,82 +140,30 @@ public class FairyBedEntity extends Entity
 
     public Item getDropItem()
     {
-//        switch (this.getFairyBedType())
+//        for (FairyBedEntity.Type type: FairyBedEntity.Type.values())
 //        {
-//            default:
+//            if(type == this.getFairyBedType())
 //            {
-//                return  ModItems.OAK_WHITE_FAIRY_BED.get();
+//                return ModItems.FAIRY_BED_ITEMS.get(type).get();
 //            }
-//            case OAK_ORANGE:
-//            {
-//                return ModItems.OAK_ORANGE_FAIRY_BED.get();
-//            }
-//            case OAK_MAGENTA:
-//            {
-//                return ModItems.OAK_MAGENTA_FAIRY_BED.get();
-//            }
-//            case OAK_LIGHT_BLUE:
-//            {
-//                return ModItems.OAK_LIGHT_BLUE_FAIRY_BED.get();
-//            }
-//            case OAK_YELLOW:
-//            {
-//                return ModItems.OAK_YELLOW_FAIRY_BED.get();
-//            }
-//            case OAK_LIME:
-//            {
-//                return ModItems.OAK_LIME_FAIRY_BED.get();
-//            }
-//            case OAK_PINK:
-//            {
-//                return ModItems.OAK_PINK_FAIRY_BED.get();
-//            }
-//            case OAK_GRAY:
-//            {
-//                return ModItems.OAK_GRAY_FAIRY_BED.get();
-//            }
-//            case OAK_LIGHT_GRAY:
-//            {
-//                return ModItems.OAK_LIGHT_GRAY_FAIRY_BED.get();
-//            }
-//            case OAK_CYAN:
-//            {
-//                return ModItems.OAK_CYAN_FAIRY_BED.get();
-//            }
-//            case OAK_PURPLE:
-//            {
-//                return ModItems.OAK_PURPLE_FAIRY_BED.get();
-//            }
-//            case OAK_BLUE:
-//            {
-//                return ModItems.OAK_BLUE_FAIRY_BED.get();
-//            }
-//            case OAK_BROWN:
-//            {
-//                return ModItems.OAK_BROWN_FAIRY_BED.get();
-//            }
-//            case OAK_GREEN:
-//            {
-//                return ModItems.OAK_GREEN_FAIRY_BED.get();
-//            }
-//            case OAK_RED:
-//            {
-//                return ModItems.OAK_RED_FAIRY_BED.get();
-//            }
-//            case OAK_BLACK:
 //        }
 //
-//        return ModItems.OAK_BLACK_FAIRY_BED.get();
+//        return ModItems.FAIRY_BED_ITEMS.get(Type.OAK_WHITE).get();
 
-        for (FairyBedEntity.Type type: FairyBedEntity.Type.values())
-        {
-            if(type == this.getFairyBedType())
-            {
-                return ModItems.FAIRY_BED_ITEMS.get(type).get();
-            }
-        }
+//        for (FairyBedEntity.LogType logType : FairyBedEntity.LogType.values())
+//        {
+//            for (FairyBedEntity.WoolType woolType : FairyBedEntity.WoolType.values())
+//            {
+//                if(logType == this.getFairyBedLogType() && woolType == this.getFairyBedWoolType())
+//                {
+//
+//                    Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType> pair = Pair.of(logType, woolType);
+//                    return ModItems.FAIRY_BED_ITEMS.get(pair).get();
+//                }
+//            }
+//        }
 
-        return ModItems.FAIRY_BED_ITEMS.get(Type.OAK_WHITE).get();
+        return ModItems.FAIRY_BED_ITEMS.get(Pair.of(this.getFairyBedLogType(), this.getFairyBedWoolType())).get();
     }
 
     @Override
@@ -306,16 +262,32 @@ public class FairyBedEntity extends Entity
     @Override
     protected void readAdditionalSaveData(CompoundTag compoundTag)
     {
-        if (compoundTag.contains("Type", 8))
-        {
-            this.setType(FairyBedEntity.Type.byName(compoundTag.getString("Type")));
-        }
+//        if (compoundTag.contains("Type", 8))
+//        {
+//            this.setType(FairyBedEntity.Type.byName(compoundTag.getString("Type")));
+//        }
+
+//        if (compoundTag.contains("LogType", 8))
+//        {
+//            this.setLogType(FairyBedEntity.LogType.byName(compoundTag.getString("LogType")));
+//        }
+//
+//        if (compoundTag.contains("WoolType", 9))
+//        {
+//            this.setWoolType(FairyBedEntity.WoolType.byName(compoundTag.getString("WoolType")));
+//        }
+
+        this.setLogType(FairyBedEntity.LogType.byName(compoundTag.getString("LogType")));
+        this.setWoolType(FairyBedEntity.WoolType.byName(compoundTag.getString("WoolType")));
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compoundTag)
     {
-        compoundTag.putString("Type", this.getFairyBedType().getName());
+        //compoundTag.putString("Type", this.getFairyBedType().getName());
+
+        compoundTag.putString("LogType", this.getFairyBedLogType().getName());
+        compoundTag.putString("WoolType", this.getFairyBedWoolType().getName());
     }
 
     public void setDamage(float f)
@@ -348,14 +320,34 @@ public class FairyBedEntity extends Entity
         return this.entityData.get(DATA_ID_HURTDIR);
     }
 
-    public void setType(FairyBedEntity.Type type)
+//    public void setType(FairyBedEntity.Type type)
+//    {
+//        this.entityData.set(DATA_ID_TYPE, type.ordinal());
+//    }
+//
+//    public FairyBedEntity.Type getFairyBedType()
+//    {
+//        return FairyBedEntity.Type.byId(this.entityData.get(DATA_ID_TYPE));
+//    }
+
+    public void setLogType(FairyBedEntity.LogType type)
     {
-        this.entityData.set(DATA_ID_TYPE, type.ordinal());
+        this.entityData.set(DATA_ID_LOG_TYPE, type.ordinal());
     }
 
-    public FairyBedEntity.Type getFairyBedType()
+    public FairyBedEntity.LogType getFairyBedLogType()
     {
-        return FairyBedEntity.Type.byId(this.entityData.get(DATA_ID_TYPE));
+        return FairyBedEntity.LogType.byId(this.entityData.get(DATA_ID_LOG_TYPE));
+    }
+
+    public void setWoolType(FairyBedEntity.WoolType type)
+    {
+        this.entityData.set(DATA_ID_WOOL_TYPE, type.ordinal());
+    }
+
+    public FairyBedEntity.WoolType getFairyBedWoolType()
+    {
+        return FairyBedEntity.WoolType.byId(this.entityData.get(DATA_ID_WOOL_TYPE));
     }
 
     @Override
@@ -398,25 +390,9 @@ public class FairyBedEntity extends Entity
 //                (int) this.posY, (int) this.posZ - 1);
 //    }
 
-    public static enum Type
+    public static enum LogType
     {
-        OAK_WHITE(WoodType.OAK, DyeColor.WHITE),
-        OAK_ORANGE(WoodType.OAK, DyeColor.ORANGE),
-        OAK_MAGENTA(WoodType.OAK, DyeColor.MAGENTA),
-        OAK_LIGHT_BLUE(WoodType.OAK, DyeColor.LIGHT_BLUE),
-        OAK_YELLOW(WoodType.OAK, DyeColor.YELLOW),
-        OAK_LIME(WoodType.OAK, DyeColor.LIME),
-        OAK_PINK(WoodType.OAK, DyeColor.PINK),
-        OAK_GRAY(WoodType.OAK, DyeColor.GRAY),
-        OAK_LIGHT_GRAY(WoodType.OAK, DyeColor.LIGHT_GRAY),
-        OAK_CYAN(WoodType.OAK, DyeColor.CYAN),
-        OAK_PURPLE(WoodType.OAK, DyeColor.PURPLE),
-        OAK_BLUE(WoodType.OAK, DyeColor.BLUE),
-        OAK_BROWN(WoodType.OAK, DyeColor.BROWN),
-        OAK_GREEN(WoodType.OAK, DyeColor.GREEN),
-        OAK_RED(WoodType.OAK, DyeColor.RED),
-        OAK_BLACK(WoodType.OAK, DyeColor.BLACK);
-
+        OAK(WoodType.OAK);
         //SPRUCE(Blocks.SPRUCE_LOG, "spruce"),
         //BIRCH(Blocks.BIRCH_LOG, "birch"),
         //JUNGLE(Blocks.JUNGLE_LOG, "jungle"),
@@ -426,13 +402,10 @@ public class FairyBedEntity extends Entity
         private final String name;
         private final WoodType log;
 
-        private final DyeColor dyeColor;
-
-        private Type(WoodType woodType, DyeColor dyeColor)
+        private LogType(WoodType woodType)
         {
-            this.name = woodType.name() + "_" + dyeColor.getName();
+            this.name = woodType.name();
             this.log = woodType;
-            this.dyeColor = dyeColor;
         }
 
         public String getName()
@@ -445,19 +418,14 @@ public class FairyBedEntity extends Entity
             return this.log;
         }
 
-        public DyeColor getDyeColor()
-        {
-            return this.dyeColor;
-        }
-
         public String toString()
         {
             return this.name;
         }
 
-        public static FairyBedEntity.Type byId(int i)
+        public static FairyBedEntity.LogType byId(int i)
         {
-            FairyBedEntity.Type[] types = FairyBedEntity.Type.values();
+            FairyBedEntity.LogType[] types = FairyBedEntity.LogType.values();
 
             if (i < 0 || i >= types.length)
             {
@@ -467,9 +435,9 @@ public class FairyBedEntity extends Entity
             return types[i];
         }
 
-        public static FairyBedEntity.Type byName(String string)
+        public static FairyBedEntity.LogType byName(String string)
         {
-            FairyBedEntity.Type[] types = FairyBedEntity.Type.values();
+            FairyBedEntity.LogType[] types = FairyBedEntity.LogType.values();
 
             for (int i = 0; i < types.length; ++i)
             {
@@ -480,4 +448,156 @@ public class FairyBedEntity extends Entity
             return types[0];
         }
     }
+
+    public static enum WoolType
+    {
+        WHITE(DyeColor.WHITE),
+        ORANGE(DyeColor.ORANGE),
+        MAGENTA(DyeColor.MAGENTA),
+        LIGHT_BLUE(DyeColor.LIGHT_BLUE),
+        YELLOW(DyeColor.YELLOW),
+        LIME(DyeColor.LIME),
+        PINK(DyeColor.PINK),
+        GRAY(DyeColor.GRAY),
+        LIGHT_GRAY(DyeColor.LIGHT_GRAY),
+        CYAN(DyeColor.CYAN),
+        PURPLE(DyeColor.PURPLE),
+        BLUE(DyeColor.BLUE),
+        BROWN(DyeColor.BROWN),
+        GREEN(DyeColor.GREEN),
+        RED(DyeColor.RED),
+        BLACK(DyeColor.BLACK);
+
+        private final String name;
+        private final DyeColor dyeColor;
+
+        private WoolType(DyeColor dyeColor)
+        {
+            this.name = dyeColor.name();
+            this.dyeColor = dyeColor;
+        }
+
+        public String getName()
+        {
+            return this.name.toLowerCase();
+        }
+
+        public DyeColor getDyeColor()
+        {
+            return this.dyeColor;
+        }
+
+        public String toString()
+        {
+            return this.name;
+        }
+
+        public static FairyBedEntity.WoolType byId(int i)
+        {
+            FairyBedEntity.WoolType[] types = FairyBedEntity.WoolType.values();
+
+            if (i < 0 || i >= types.length)
+            {
+                i = 0;
+            }
+
+            return types[i];
+        }
+
+        public static FairyBedEntity.WoolType byName(String string)
+        {
+            FairyBedEntity.WoolType[] types = FairyBedEntity.WoolType.values();
+
+            for (int i = 0; i < types.length; ++i)
+            {
+                if (!types[i].getName().equals(string)) continue;
+                return types[i];
+            }
+
+            return types[0];
+        }
+    }
+
+//    public static enum Type
+//    {
+//        OAK_WHITE(WoodType.OAK, DyeColor.WHITE),
+//        OAK_ORANGE(WoodType.OAK, DyeColor.ORANGE),
+//        OAK_MAGENTA(WoodType.OAK, DyeColor.MAGENTA),
+//        OAK_LIGHT_BLUE(WoodType.OAK, DyeColor.LIGHT_BLUE),
+//        OAK_YELLOW(WoodType.OAK, DyeColor.YELLOW),
+//        OAK_LIME(WoodType.OAK, DyeColor.LIME),
+//        OAK_PINK(WoodType.OAK, DyeColor.PINK),
+//        OAK_GRAY(WoodType.OAK, DyeColor.GRAY),
+//        OAK_LIGHT_GRAY(WoodType.OAK, DyeColor.LIGHT_GRAY),
+//        OAK_CYAN(WoodType.OAK, DyeColor.CYAN),
+//        OAK_PURPLE(WoodType.OAK, DyeColor.PURPLE),
+//        OAK_BLUE(WoodType.OAK, DyeColor.BLUE),
+//        OAK_BROWN(WoodType.OAK, DyeColor.BROWN),
+//        OAK_GREEN(WoodType.OAK, DyeColor.GREEN),
+//        OAK_RED(WoodType.OAK, DyeColor.RED),
+//        OAK_BLACK(WoodType.OAK, DyeColor.BLACK);
+//
+//        //SPRUCE(Blocks.SPRUCE_LOG, "spruce"),
+//        //BIRCH(Blocks.BIRCH_LOG, "birch"),
+//        //JUNGLE(Blocks.JUNGLE_LOG, "jungle"),
+//        //ACACIA(Blocks.ACACIA_LOG, "acacia"),
+//        //DARK_OAK(Blocks.DARK_OAK_LOG, "dark_oak");
+//
+//        private final String name;
+//        private final WoodType log;
+//
+//        private final DyeColor dyeColor;
+//
+//        private Type(WoodType woodType, DyeColor dyeColor)
+//        {
+//            this.name = woodType.name() + "_" + dyeColor.getName();
+//            this.log = woodType;
+//            this.dyeColor = dyeColor;
+//        }
+//
+//        public String getName()
+//        {
+//            return this.name;
+//        }
+//
+//        public WoodType getWoodLog()
+//        {
+//            return this.log;
+//        }
+//
+//        public DyeColor getDyeColor()
+//        {
+//            return this.dyeColor;
+//        }
+//
+//        public String toString()
+//        {
+//            return this.name;
+//        }
+//
+//        public static FairyBedEntity.Type byId(int i)
+//        {
+//            FairyBedEntity.Type[] types = FairyBedEntity.Type.values();
+//
+//            if (i < 0 || i >= types.length)
+//            {
+//                i = 0;
+//            }
+//
+//            return types[i];
+//        }
+//
+//        public static FairyBedEntity.Type byName(String string)
+//        {
+//            FairyBedEntity.Type[] types = FairyBedEntity.Type.values();
+//
+//            for (int i = 0; i < types.length; ++i)
+//            {
+//                if (!types[i].getName().equals(string)) continue;
+//                return types[i];
+//            }
+//
+//            return types[0];
+//        }
+//    }
 }
