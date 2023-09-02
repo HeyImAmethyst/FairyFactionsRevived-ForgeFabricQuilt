@@ -19,6 +19,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.lwjgl.system.CallbackI;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -26,13 +27,32 @@ import java.util.function.Predicate;
 public class FairyBedItem extends Item
 {
     private static final Predicate<Entity> ENTITY_PREDICATE = EntitySelector.NO_SPECTATORS.and(Entity::isPickable);
-    private final FairyBedEntity.Type type;
+    //private final FairyBedEntity.Type type;
 
-    public FairyBedItem(FairyBedEntity.Type type, Item.Properties properties)
+    private final FairyBedEntity.LogType logType;
+    private final FairyBedEntity.WoolType woolType;
+
+//    public FairyBedItem(FairyBedEntity.Type type, Item.Properties properties)
+//    {
+//        this(type, FairyBedEntity.LogType.OAK, FairyBedEntity.WoolType.WHITE, properties);
+//    }
+
+    public FairyBedItem(FairyBedEntity.LogType logType, FairyBedEntity.WoolType woolType,Item.Properties properties)
     {
+        //this(FairyBedEntity.Type.OAK_WHITE, logType, woolType, properties);
+
         super(properties);
-        this.type = type;
+        this.logType = logType;
+        this.woolType = woolType;
     }
+
+//    public FairyBedItem(FairyBedEntity.Type type, FairyBedEntity.LogType logType, FairyBedEntity.WoolType woolType,Item.Properties properties)
+//    {
+//        super(properties);
+//        this.logType = logType;
+//        this.woolType = woolType;
+//        this.type = type;
+//    }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand)
@@ -65,7 +85,11 @@ public class FairyBedItem extends Item
         if (((HitResult)hitResult).getType() == HitResult.Type.BLOCK)
         {
             FairyBedEntity fairyBed = new FairyBedEntity(level, hitResult.getLocation().x, hitResult.getLocation().y, hitResult.getLocation().z);
-            fairyBed.setType(this.type);
+
+            //fairyBed.setType(this.type);
+            fairyBed.setLogType(this.logType);
+            fairyBed.setWoolType(this.woolType);
+
             fairyBed.setYRot(player.getYRot());
 
             if (!level.noCollision(fairyBed, fairyBed.getBoundingBox()))
