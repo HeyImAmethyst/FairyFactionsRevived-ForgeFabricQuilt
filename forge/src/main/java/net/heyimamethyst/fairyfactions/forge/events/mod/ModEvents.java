@@ -2,10 +2,14 @@ package net.heyimamethyst.fairyfactions.forge.events.mod;
 
 import dev.architectury.registry.registries.Registries;
 import net.heyimamethyst.fairyfactions.FairyFactions;
+import net.heyimamethyst.fairyfactions.client.texture.fairy_bed_texture.FairyBedTextureGenerator;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.registry.ModBlocks;
 import net.heyimamethyst.fairyfactions.registry.ModEntities;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -13,6 +17,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
@@ -134,5 +139,12 @@ public class ModEvents
 	{
 		List<MobSpawnSettings.SpawnerData> base = event.getSpawns().getSpawner(type.getCategory());
 		base.add(new MobSpawnSettings.SpawnerData(type,weight, minCount, maxCount));
+	}
+
+	@SubscribeEvent
+	//@OnlyIn(Dist.CLIENT)
+	public static void registerParticleFactories(ParticleFactoryRegisterEvent event)
+	{
+		((ReloadableResourceManager)Minecraft.getInstance().getResourceManager()).registerReloadListener(FairyBedTextureGenerator.INSTANCE);
 	}
 }

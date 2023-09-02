@@ -13,3 +13,11 @@ accessible field net/minecraft/world/item/alchemy/PotionBrewing$Mix ingredient L
 accessible method net/minecraft/world/level/block/entity/ChestBlockEntity getItems ()Lnet/minecraft/core/NonNullList;
 accessible field net/minecraft/world/level/block/entity/BrewingStandBlockEntity items Lnet/minecraft/core/NonNullList;
 accessible method net/minecraft/world/level/block/entity/BrewingStandBlockEntity isBrewable (Lnet/minecraft/core/NonNullList;)Z
+accessible class net/minecraft/client/renderer/texture/SimpleTexture$TextureImage
+accessible method net/minecraft/client/renderer/texture/TextureAtlasSprite <init> (Lnet/minecraft/client/renderer/texture/TextureAtlas;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite$Info;IIIIILcom/mojang/blaze3d/platform/NativeImage;)V
+accessible method net/minecraft/client/renderer/texture/SimpleTexture getTextureImage (Lnet/minecraft/server/packs/resources/ResourceManager;)Lnet/minecraft/client/renderer/texture/SimpleTexture$TextureImage;
+accessible field net/minecraft/client/renderer/texture/TextureAtlas$Preparations mipLevel I
+accessible field net/minecraft/client/renderer/texture/TextureAtlas$Preparations regions Ljava/util/List;
+accessible field net/minecraft/client/renderer/texture/TextureAtlas$Preparations width I
+accessible field net/minecraft/client/renderer/texture/TextureAtlas$Preparations height I
+accessible field net/minecraft/client/renderer/texture/TextureAtlas$Preparations sprites Ljava/util/Set;

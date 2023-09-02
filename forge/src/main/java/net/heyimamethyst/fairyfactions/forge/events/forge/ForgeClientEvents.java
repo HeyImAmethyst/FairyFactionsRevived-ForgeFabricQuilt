@@ -2,6 +2,7 @@ package net.heyimamethyst.fairyfactions.forge.events.forge;
 
 
 import net.heyimamethyst.fairyfactions.FairyFactions;
+import net.heyimamethyst.fairyfactions.client.texture.fairy_bed_texture.FairyBedTextureGenerator;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.proxy.CommonMethods;
 import net.heyimamethyst.fairyfactions.util.EntityHelper;
@@ -13,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +30,13 @@ public class ForgeClientEvents
 	private static final Logger LOGGER = LogManager.getLogger();
 	public static double rand;
 	public static Random random = new Random();
+
+//	@SubscribeEvent
+//	public static void addReloadListenerEvent(AddReloadListenerEvent event)
+//	{
+//		event.addListener(new FairyBedTextureGenerator(Minecraft.getInstance().getTextureManager()));
+//		FairyFactions.LOGGER.info("ReloadListener registered.");
+//	}
 
 	@SubscribeEvent
 	public static void onKeyPress(InputEvent.MouseInputEvent event)
