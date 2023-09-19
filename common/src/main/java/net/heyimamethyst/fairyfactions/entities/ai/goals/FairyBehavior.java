@@ -275,7 +275,7 @@ public class FairyBehavior
                 else
                 {
                     // Regular fairies stay moderately close.
-                    if (dist > 16F && theFairy.getRuler() instanceof Player
+                    if (dist > FairyConfigValues.TELEPORT_RANGE && theFairy.getRuler() instanceof Player
                             && theFairy.canTeleportToRuler((Player) theFairy.getRuler()))
                     {
                         // Can teleport to the owning player if he has an ender
