@@ -13,6 +13,9 @@ public class FairyConfig
     public static int SPAWN_FACTION_MAX_SIZE;
 
     public static boolean ALWAYS_FAIRY_TELETPORT;
+    public static int TELEPORT_RANGE;
+
+    public static double BASE_EMOTIONAL_PERCENT_CHANCE;
 
     public static double GENERAL_HEALTH_BASE;
     public static double GENERAL_SPEED_BASE;
@@ -67,7 +70,11 @@ public class FairyConfig
     {
         configs.addKeyValuePair(new Pair<>("minimum.fairy.spawn.group.size", 10), 0, 30, "maximum fairy spawn group size");
         configs.addKeyValuePair(new Pair<>("maximum.fairy.spawn.group.size", 8), 0, 30, "maximum fairy spawn group size");
+
         configs.addKeyValuePair(new Pair<>("always.fairy.teleport", true), "whether or not a fairy will always teleport to a player who is its ruler, regardless if the player has an ender pearl");
+        configs.addKeyValuePair(new Pair<>("always.fairy.teleport.range", 6), "the distance between between the fairy and its ruler for teleportation");
+
+        configs.addKeyValuePair(new Pair<>("base.emotional.percent.chance", 0.02D), "the percent chance for a fairy to request food");
 
         /**
          * General fairy stats
@@ -110,6 +117,9 @@ public class FairyConfig
 //        MAX_DAMAGE_DOWSING_ROD = CONFIG.getOrDefault("dowsing.rod.max.damage", 32);
 
         ALWAYS_FAIRY_TELETPORT = CONFIG.getOrDefault("always.fairy.teleport", true);
+        TELEPORT_RANGE = CONFIG.getOrDefault("always.fairy.teleport.range", 16);
+
+        BASE_EMOTIONAL_PERCENT_CHANCE = CONFIG.getOrDefault("base.emotional.percent.chance", 0.02D);
 
         /**
          * Spawning behaviors
@@ -156,6 +166,9 @@ public class FairyConfig
         FairyConfigValues.SPAWN_FACTION_MAX_SIZE = SPAWN_FACTION_MAX_SIZE;
 
         FairyConfigValues.ALWAYS_FAIRY_TELEPORT = ALWAYS_FAIRY_TELETPORT;
+        FairyConfigValues.TELEPORT_RANGE = TELEPORT_RANGE;
+
+        FairyConfigValues.BASE_EMOTIONAL_PERCENT_CHANCE = BASE_EMOTIONAL_PERCENT_CHANCE;
 
         FairyConfigValues.GENERAL_HEALTH_BASE = GENERAL_HEALTH_BASE;
         FairyConfigValues.GENERAL_SPEED_BASE = GENERAL_SPEED_BASE;

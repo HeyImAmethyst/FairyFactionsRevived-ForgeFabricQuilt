@@ -6,6 +6,9 @@ public class FairyConfigValues
     public static int SPAWN_FACTION_MAX_SIZE= 0;
 
     public static boolean ALWAYS_FAIRY_TELEPORT = true;
+    public static int TELEPORT_RANGE = 16;
+
+    public static double BASE_EMOTIONAL_PERCENT_CHANCE = 0;
 
     public static double GENERAL_HEALTH_BASE= 0;
     public static double GENERAL_SPEED_BASE= 0;
