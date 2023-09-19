@@ -133,7 +133,8 @@ public class FairyUtils
 
     public static boolean percentChance(FairyEntity fairy, double chance)
     {
-        return fairy.getRandom().nextDouble() <= chance;
+        //return fairy.getRandom().nextDouble() < chance;
+        return Math.random() <= chance;
     }
 
     public static boolean sameTeam(FairyEntity thisFairy, FairyEntity entity)
