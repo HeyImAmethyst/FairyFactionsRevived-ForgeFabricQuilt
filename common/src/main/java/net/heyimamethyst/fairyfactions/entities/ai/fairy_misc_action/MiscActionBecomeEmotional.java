@@ -1,6 +1,7 @@
 package net.heyimamethyst.fairyfactions.entities.ai.fairy_misc_action;
 
 import com.google.common.collect.ImmutableSet;
+import net.heyimamethyst.fairyfactions.FairyConfigValues;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.entities.ai.fairy_job.FairyJobManager;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
@@ -25,7 +26,7 @@ public class MiscActionBecomeEmotional extends FairyMiscAction
     @Override
     public boolean canRun(ChestBlockEntity chestBlockEntity, int x, int y, int z, Level world)
     {
-        if(FairyUtils.percentChance(fairy, fairy.queen() ? 0.07 : 0.02) && fairy.getRequestFoodTime() == 0 && !fairy.isEmotional())
+        if(FairyUtils.percentChance(fairy, fairy.queen() ? FairyConfigValues.BASE_EMOTIONAL_PERCENT_CHANCE * 4 : FairyConfigValues.BASE_EMOTIONAL_PERCENT_CHANCE) && fairy.getRequestFoodTime() == 0 && !fairy.isEmotional())
         {
             if(world.getBlockState(fairy.blockPosition().below()).isSolidRender(world, fairy.blockPosition()))
             {
