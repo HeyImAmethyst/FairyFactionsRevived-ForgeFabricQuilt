@@ -11,6 +11,8 @@ import net.heyimamethyst.fairyfactions.client.model.entity.fairy_bed.FairyBedMod
 import net.heyimamethyst.fairyfactions.client.texture.fairy_bed_texture.FairyBedTextureGenerator;
 import net.heyimamethyst.fairyfactions.entities.FairyBedEntity;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.BoatModel;
+import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -19,6 +21,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.vehicle.Boat;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -48,7 +51,7 @@ public class FairyBedRenderer extends EntityRenderer<FairyBedEntity>
 //            for (FairyBedEntity.WoolType woolType : FairyBedEntity.WoolType.values())
 //            {
 //                Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType> pair = Pair.of(logType, woolType);
-//                fairyBedResources.put(pair, Pair.of(new ResourceLocation(FairyFactions.MOD_ID,"textures/atlas/entity/fairy_bed/" + logType.getName() + "_" + woolType.getName() + ".png-atlas"), new FairyBedModel(context.bakeLayer(ModModelLayers.FAIRY_BED_LAYER_LOCATION.get(pair)))));
+//                fairyBedResources.put(pair, Pair.of(new ResourceLocation(FairyFactions.MOD_ID,"textures/entity/fairy_bed/" + logType.getName() + "_" + woolType.getName() + ".png-atlas"), new FairyBedModel(context.bakeLayer(ModModelLayers.FAIRY_BED_LAYER_LOCATION.get(pair)))));
 //            }
 //        }
 
@@ -59,7 +62,9 @@ public class FairyBedRenderer extends EntityRenderer<FairyBedEntity>
                 Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType> pair = Pair.of(logType, woolType);
                 //fairyBedResources.put(pair, Pair.of(FairyBedTextureGenerator.INSTANCE.getSprite(new ResourceLocation(FairyFactions.MOD_ID,"fairy_bed/textures/atlas/entity/fairy_bed/" + logType.getName() + "_" + woolType.getName() + ".png-atlas")), new FairyBedModel(context.bakeLayer(ModModelLayers.FAIRY_BED_LAYER_LOCATION.get(pair)))));
                 //fairyBedResources.put(pair, Pair.of(FairyBedTextureGenerator.INSTANCE.FAIRY_BED_TEXTURE_ATLASES.get(new ResourceLocation(FairyFactions.MOD_ID,"fairy_bed/textures/atlas/entity/fairy_bed/" + logType.getName() + "_" + woolType.getName() + ".png-atlas")), new FairyBedModel(context.bakeLayer(ModModelLayers.FAIRY_BED_LAYER_LOCATION.get(pair)))));
+
                 fairyBedResources.put(pair, Pair.of(FairyBedTextureGenerator.INSTANCE.FAIRY_BED_TEXTURE_ATLASES.get(pair), new FairyBedModel(context.bakeLayer(ModModelLayers.FAIRY_BED_LAYER_LOCATION.get(pair)))));
+                //fairyBedResources.put(pair, Pair.of(new ResourceLocation(FairyFactions.MOD_ID,"textures/entity/fairy_bed/" + logType.getName() + "_" + woolType.getName() + ".png"), new FairyBedModel(context.bakeLayer(ModModelLayers.FAIRY_BED_LAYER_LOCATION.get(pair)))));
             }
         }
     }
