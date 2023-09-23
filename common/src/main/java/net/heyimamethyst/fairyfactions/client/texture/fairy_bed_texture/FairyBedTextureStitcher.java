@@ -24,7 +24,7 @@ public class FairyBedTextureStitcher
     //private static final Comparator<Holder> HOLDER_COMPARATOR = Comparator.comparing(holder -> -holder.height).thenComparing(holder -> -holder.width);
     //.thenComparing(holder -> holder.spriteInfo.name());
     //private static final Comparator<Holder> HOLDER_COMPARATOR = Comparator.comparing(Holder::getHeight).thenComparing(Holder::getWidth).thenComparing(Holder::getSpriteInfoName);
-    private static final Comparator<Holder> HOLDER_COMPARATOR = Comparator.comparing(Holder::getHeight).thenComparing(Holder::getWidth);
+    //private static final Comparator<Holder> HOLDER_COMPARATOR = Comparator.comparing(Holder::getHeight).thenComparing(Holder::getWidth);
 //    private static final Comparator<Holder> HOLDER_COMPARATOR = Comparator.comparing((arg) -> {
 //        return -arg.height;
 //    }).thenComparing((arg) -> {
@@ -32,6 +32,8 @@ public class FairyBedTextureStitcher
 //    }).thenComparing((arg) -> {
 //        return arg.spriteInfo.name();
 //    });
+
+    private static final Comparator<Holder> HOLDER_COMPARATOR = Comparator.comparing(Holder::getHeight).thenComparing(Holder::getWidth).thenComparingInt(Holder::getIndex);
 
     private final int mipLevel;
     private final Set<Holder> texturesToBeStitched = Sets.newHashSetWithExpectedSize(256);
@@ -58,16 +60,17 @@ public class FairyBedTextureStitcher
         return this.storageY;
     }
 
-    public void registerSprite(TextureAtlasSprite.Info info)
+    public void registerSprite(TextureAtlasSprite.Info info, int index)
     {
-        Holder holder = new Holder(info, this.mipLevel);
+        Holder holder = new Holder(info, this.mipLevel, index);
         this.texturesToBeStitched.add(holder);
     }
 
     public void stitch()
     {
         ArrayList<FairyBedTextureStitcher.Holder> list = Lists.newArrayList(this.texturesToBeStitched);
-        //list.sort(HOLDER_COMPARATOR);
+        list.sort(HOLDER_COMPARATOR);
+        System.out.println(list);
         for (FairyBedTextureStitcher.Holder holder2 : list)
         {
             if (this.addToStorage(holder2)) continue;
@@ -157,16 +160,19 @@ public class FairyBedTextureStitcher
         public int width;
         public int height;
 
-        public Holder(TextureAtlasSprite.Info info, int i)
+        public int index;
+
+        public Holder(TextureAtlasSprite.Info info, int i, int index)
         {
             this.spriteInfo = info;
             width = smallestFittingMinTexel(info.width(), i);
             height = smallestFittingMinTexel(info.height(), i);
+            this.index = index;
         }
 
         public String toString()
         {
-            return "Holder{width=" + width + ", height=" + height + "}";
+            return "Holder{width=" + width + ", height=" + height + ", name=" + spriteInfo.name() + "}";
         }
 
         public int getHeight()
@@ -177,6 +183,11 @@ public class FairyBedTextureStitcher
         public int getWidth()
         {
             return width;
+        }
+
+        public int getIndex()
+        {
+            return index;
         }
 
         public TextureAtlasSprite.Info getSpriteInfo()
