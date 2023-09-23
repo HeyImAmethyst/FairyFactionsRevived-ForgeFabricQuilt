@@ -11,6 +11,8 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.heyimamethyst.fairyfactions.FairyFactions;
+import net.heyimamethyst.fairyfactions.entities.FairyBedEntity;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -100,7 +102,58 @@ public class FairyBedTextureAtlas extends TextureAtlas
                 LOGGER.warn("Texture {} with size {}x{} limits mip level from {} to {}", info2.name(), info2.width(), info2.height(), Mth.log2(l), Mth.log2(m));
                 l = m;
             }
-            stitcher.registerSprite(info2);
+
+            int index = 9;
+
+            for (FairyBedEntity.LogType logType: FairyBedEntity.LogType.values())
+            {
+                if(Objects.equals(info2.name(), new ResourceLocation("block/" + logType.getName() + "_log")))
+                {
+                    index = 0;
+                }
+
+                if(Objects.equals(info2.name(), new ResourceLocation("block/" + logType.getName() + "_log_top")))
+                {
+                    index = 1;
+                }
+
+            }
+
+            if(Objects.equals(info2.name(), new ResourceLocation(FairyFactions.MOD_ID,"block/framed_white_wool")))
+            {
+                index = 4;
+            }
+
+            for (FairyBedEntity.WoolType woolType: FairyBedEntity.WoolType.values())
+            {
+                if(Objects.equals(info2.name(), new ResourceLocation("block/" + woolType.getName() + "_wool")))
+                {
+                    index = 6;
+                }
+            }
+
+            if(Objects.equals(info2.name(), new ResourceLocation("block/chain")))
+            {
+                index = 2;
+            }
+
+            if(Objects.equals(info2.name(), new ResourceLocation("block/glowstone")))
+            {
+                index = 3;
+            }
+
+            if(Objects.equals(info2.name(), new ResourceLocation("block/iron_block")))
+            {
+                index = 5;
+            }
+
+            if(Objects.equals(info2.name(), new ResourceLocation("block/gold_block")))
+            {
+                //stitcher.registerSprite(info2, 7);
+                index = 7;
+            }
+
+            stitcher.registerSprite(info2, index);
         }
         int n = Math.min(k, l);
         int o = Mth.log2(n);
@@ -111,7 +164,7 @@ public class FairyBedTextureAtlas extends TextureAtlas
             m = i;
         }
         profilerFiller.popPush("register");
-        stitcher.registerSprite(MissingTextureAtlasSprite.info());
+        stitcher.registerSprite(MissingTextureAtlasSprite.info(), 100);
         profilerFiller.popPush("stitching");
         try {
             stitcher.stitch();
