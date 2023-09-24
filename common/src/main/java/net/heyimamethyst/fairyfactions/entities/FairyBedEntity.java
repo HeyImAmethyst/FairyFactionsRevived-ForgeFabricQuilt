@@ -2,6 +2,7 @@ package net.heyimamethyst.fairyfactions.entities;
 
 import com.mojang.datafixers.util.Pair;
 import net.heyimamethyst.fairyfactions.client.model.ModModelLayers;
+import net.heyimamethyst.fairyfactions.items.IWandable;
 import net.heyimamethyst.fairyfactions.registry.ModEntities;
 import net.heyimamethyst.fairyfactions.registry.ModItems;
 import net.minecraft.core.BlockPos;
@@ -27,7 +28,7 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 
-public class FairyBedEntity extends Entity
+public class FairyBedEntity extends Entity implements IWandable
 {
     private static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ID_HURTDIR = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.INT);

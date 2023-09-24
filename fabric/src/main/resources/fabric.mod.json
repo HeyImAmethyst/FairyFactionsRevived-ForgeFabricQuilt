@@ -27,7 +27,8 @@
   },
   "mixins":
   [
-    "fairyfactions-common.mixins.json"
+    "fairyfactions-common.mixins.json",
+    "fairyfactions.mixins.json"
   ],
   "depends": {
     "fabric": "*",
