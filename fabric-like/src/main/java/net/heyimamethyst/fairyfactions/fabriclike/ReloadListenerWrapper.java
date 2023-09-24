@@ -12,7 +12,6 @@ import java.util.concurrent.Executor;
 
 public class ReloadListenerWrapper<T> implements IdentifiableResourceReloadListener
 {
-
     private final ResourceLocation id;
     private final SimplePreparableReloadListener<T> listener;
 
