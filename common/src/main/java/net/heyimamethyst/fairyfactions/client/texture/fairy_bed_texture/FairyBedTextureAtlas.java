@@ -52,7 +52,7 @@ public class FairyBedTextureAtlas extends TextureAtlas
     public FairyBedTextureAtlas(ResourceLocation resourceLocation) {
         super(resourceLocation);
         this.location = resourceLocation;
-        this.maxSupportedTextureSize = RenderSystem.maxSupportedTextureSize();
+        maxSupportedTextureSize = RenderSystem.maxSupportedTextureSize();
     }
 
     @Override

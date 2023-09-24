@@ -70,7 +70,7 @@ public class FairyBedTextureStitcher
     {
         ArrayList<FairyBedTextureStitcher.Holder> list = Lists.newArrayList(this.texturesToBeStitched);
         list.sort(HOLDER_COMPARATOR);
-        System.out.println(list);
+        //System.out.println(list);
         for (FairyBedTextureStitcher.Holder holder2 : list)
         {
             if (this.addToStorage(holder2)) continue;
