@@ -34,7 +34,7 @@ public class ModFabricLike
     {
         addToItemGroup(CreativeModeTabs.SPAWN_EGGS, ModItems.FAIRY_SPAWN_EGG.get());
 
-        for (RegistrySupplier<FairyBedItem> fairyBedItem: ModItems.FAIRY_BED_ITEMS.values())
+        for (RegistrySupplier<Item> fairyBedItem: ModItems.FAIRY_BED_ITEMS.values())
         {
             addToItemGroup(CreativeModeTabs.COLORED_BLOCKS, fairyBedItem.get());
         }
