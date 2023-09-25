@@ -107,12 +107,12 @@ public class FairyBedTextureAtlas extends TextureAtlas
 
             for (FairyBedEntity.LogType logType: FairyBedEntity.LogType.values())
             {
-                if(Objects.equals(info2.name(), new ResourceLocation("block/" + logType.getName() + "_log")))
+                if(Objects.equals(info2.name(), new ResourceLocation(FairyFactions.MOD_ID,"block/" + logType.getName() + "_log")))
                 {
                     index = 0;
                 }
 
-                if(Objects.equals(info2.name(), new ResourceLocation("block/" + logType.getName() + "_log_top")))
+                if(Objects.equals(info2.name(), new ResourceLocation(FairyFactions.MOD_ID,"block/" + logType.getName() + "_log_top")))
                 {
                     index = 1;
                 }
@@ -126,23 +126,23 @@ public class FairyBedTextureAtlas extends TextureAtlas
 
             for (FairyBedEntity.WoolType woolType: FairyBedEntity.WoolType.values())
             {
-                if(Objects.equals(info2.name(), new ResourceLocation("block/" + woolType.getName() + "_wool")))
+                if(Objects.equals(info2.name(), new ResourceLocation(FairyFactions.MOD_ID,"block/" + woolType.getName() + "_wool")))
                 {
                     index = 6;
                 }
             }
 
-            if(Objects.equals(info2.name(), new ResourceLocation("block/chain")))
+            if(Objects.equals(info2.name(), new ResourceLocation(FairyFactions.MOD_ID,"block/chain")))
             {
                 index = 2;
             }
 
-            if(Objects.equals(info2.name(), new ResourceLocation("block/glowstone")))
+            if(Objects.equals(info2.name(), new ResourceLocation(FairyFactions.MOD_ID,"block/glowstone")))
             {
                 index = 3;
             }
 
-            if(Objects.equals(info2.name(), new ResourceLocation("block/iron_block")))
+            if(Objects.equals(info2.name(), new ResourceLocation(FairyFactions.MOD_ID,"block/iron_block")))
             {
                 index = 5;
             }
