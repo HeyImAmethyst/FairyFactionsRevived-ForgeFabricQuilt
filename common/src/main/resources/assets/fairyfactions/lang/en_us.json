@@ -1,12 +1,10 @@
 {
 
-	//Mobs
-
 	"entity.fairyfactions.fairy_entity": "Fairy",
 	"entity.fairyfactions.fairy_fishing_bobber_entity": "Fairy Fishing Bobber",
 	"item.fairyfactions.fairy_spawn_egg": "Fairy Spawn Egg",
 
-	//Items
+
 
 	"item.fairyfactions.oak_white_fairy_bed" : "Oak White Fairy Bed",
 	"item.fairyfactions.oak_orange_fairy_bed" : "Oak Orange Fairy Bed",
@@ -112,7 +110,7 @@
 
 	"item.fairyfactions.fairy_wand" : "Fairy Wand",
 
-	//Other
+
 
 	"text.queen.prefix" : "Queen ",
 
@@ -183,8 +181,6 @@
 	"text.fairy.store": "§a will store items here.",
 	"text.fairy.take": "§a will take from this inventory.",
 	"text.fairy.store_and_take": "§a will store and take items here.",
-	//"text.fairy.storing": "§a Storing items at %d locations",
-	//"text.fairy.taking": "§a Taking items from %d locations",
 	
 	"text.fairy.cant_assign_take_chest": "§9 Can't assign 'take' chest to this fairy. She is not in delivery mode",
 
@@ -193,7 +189,4 @@
 	"text.position" : "X: %1$d Y: %2$d Z: %3$d",
 
 	"text.fairy.set_bed": "§aBed set for "
-
-	//"key.category.fairyfactions" : "Fairy Factions",
-	//"keyfairyfactions.unmount_fairy_key" : "Unmount Fairy"
 }
