@@ -2,6 +2,7 @@ package net.heyimamethyst.fairyfactions.entities;
 
 import net.heyimamethyst.fairyfactions.FairyConfigValues;
 import net.heyimamethyst.fairyfactions.FairyFactions;
+import net.heyimamethyst.fairyfactions.items.IWandable;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class FairyEntityBase extends Animal
+public class FairyEntityBase extends Animal implements IWandable
 {
     protected static final EntityDataAccessor<Byte> B_FLAGS = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.BYTE);
     protected static final EntityDataAccessor<Byte> B_TYPE = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.BYTE);           // skin, job, faction
@@ -46,6 +47,14 @@ public class FairyEntityBase extends Animal
     public static final EntityDataAccessor<Boolean> SLEEPING = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.BOOLEAN);
 
     public static final EntityDataAccessor<Optional<BlockPos>> BED_LOCATION = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
+    public static final EntityDataAccessor<Optional<BlockPos>> POST_CHEST_LOCATION = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
+
+    public static final EntityDataAccessor<Integer> TO_POS_SIZE = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> FROM_POS_SIZE = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.INT);
+
+    public static final EntityDataAccessor<Boolean> DELIVERY_MODE = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.BOOLEAN);
+
+    public static final EntityDataAccessor<ItemStack> HELD_STACK = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.ITEM_STACK);
 
     public static final int	MAX_SKIN	= 3;
     public static final int	MAX_JOB		= 3;
@@ -718,4 +727,40 @@ public class FairyEntityBase extends Animal
     {
         this.entityData.set(BED_LOCATION, Optional.empty());
     }
+
+    public Optional<BlockPos> getPostChestLocation()
+    {
+        return this.entityData.get(POST_CHEST_LOCATION);
+    }
+
+    public void setPostChestLocation(BlockPos chestLocation)
+    {
+        this.entityData.set(POST_CHEST_LOCATION, Optional.of(chestLocation));
+    }
+
+    public void clearPostChestLocation()
+    {
+        this.entityData.set(POST_CHEST_LOCATION, Optional.empty());
+    }
+
+    public void setDeliveryMode(boolean flag)
+    {
+        this.entityData.set(DELIVERY_MODE, flag);
+    }
+
+    public boolean getDeliveryMode()
+    {
+        return this.entityData.get(DELIVERY_MODE);
+    }
+
+    public ItemStack getHeldItem()
+    {
+        return this.entityData.get(HELD_STACK);
+    }
+
+    public void setHeldItem(ItemStack stack)
+    {
+        this.entityData.set(HELD_STACK, stack);
+    }
+
 }

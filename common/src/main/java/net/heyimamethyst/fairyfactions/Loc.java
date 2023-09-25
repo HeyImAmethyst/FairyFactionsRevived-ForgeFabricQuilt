@@ -59,7 +59,29 @@ public enum Loc
     DEATH_4("text.death.4.message"),
     DEATH_5("text.death.5.message"),
     DEATH_6("text.death.6.message"),
-    DEATH_7("text.death.7.message");
+    DEATH_7("text.death.7.message"),
+
+    FAIRY_ABANDON_POST("text.fairy.abandon_post"),
+
+    POSITION("text.position"),
+    FAIRY_WAND_NO_ENTITY("text.fairy_wand.no_entity"),
+    FAIRY_WAND_ENTITY_STORED("text.fairy_wand.entity_stored"),
+    FAIRY_WAND_NO_LOCATION("text.fairy_wand.no_location"),
+    FAIRY_WAND_POSITION_STORED("text.fairy_wand.position_stored"),
+    FAIRY_WAND_STORED_ENTITY("text.fairy_wand.stored_entity"),
+    FAIRY_WAND_POSITION_SET("text.fairy_wand.position_set"),
+
+    FAIRY_WAND_DELIVERY_MODE_TRUE("text.fairy_wand.delivery_mode_set_true"),
+    FAIRY_WAND_DELIVERY_MODE_FALSE("text.fairy_wand.delivery_mode_set_false"),
+
+    FAIRY_STORE("text.fairy.store"),
+    FAIRY_TAKE("text.fairy.take"),
+    FAIRY_STORE_AND_TAKE("text.fairy.store_and_take"),
+    FAIRY_CLEARED("text.fairy.cleared"),
+
+    FAIRY_CANT_ASSIGN_TAKE_CHEST("text.fairy.cant_assign_take_chest"),
+
+    FAIRY_SET_BED("text.fairy.set_bed");
 
     public final String key;
 
