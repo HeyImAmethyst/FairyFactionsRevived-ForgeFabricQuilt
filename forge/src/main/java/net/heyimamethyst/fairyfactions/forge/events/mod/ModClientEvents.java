@@ -11,14 +11,17 @@ import net.heyimamethyst.fairyfactions.client.model.entity.fairy_bed.FairyBedMod
 import net.heyimamethyst.fairyfactions.client.render.entity.FairyBedRenderer;
 import net.heyimamethyst.fairyfactions.client.render.entity.FairyFishHookEntityRenderer;
 import net.heyimamethyst.fairyfactions.client.render.entity.FairyRenderer;
+import net.heyimamethyst.fairyfactions.client.texture.fairy_bed_texture.FairyBedTextureGenerator;
 import net.heyimamethyst.fairyfactions.items.ModSpawnEggItem;
 import net.heyimamethyst.fairyfactions.registry.ModEntities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -73,4 +76,10 @@ public class ModClientEvents
 		event.registerEntityRenderer(ModEntities.FAIRY_BED_ENTITY.get(), FairyBedRenderer::new);
 	}
 
+	@SubscribeEvent
+	//@OnlyIn(Dist.CLIENT)
+	public static void registerParticleFactories(RegisterParticleProvidersEvent event)
+	{
+		((ReloadableResourceManager)Minecraft.getInstance().getResourceManager()).registerReloadListener(FairyBedTextureGenerator.INSTANCE);
+	}
 }

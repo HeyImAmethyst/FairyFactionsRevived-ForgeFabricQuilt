@@ -11,6 +11,7 @@ import net.heyimamethyst.fairyfactions.items.ModSpawnEggItem;
 import net.minecraft.core.Registry;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.SpawnEggItem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class ModItems
 //    public static final RegistryObject<ModSpawnEggItem> FAIRY_SPAWN_EGG = ITEMS.register("fairy_spawn_egg",
 //            () -> new ModSpawnEggItem(ModEntities.FAIRY_ENTITY, 0xea8fde, 0x8658bf, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
 
-    public static final RegistrySupplier<Item> FAIRY_SPAWN_EGG = ITEMS.register("fairy_spawn_egg", () ->
+    public static final RegistrySupplier<ModSpawnEggItem> FAIRY_SPAWN_EGG = ITEMS.register("fairy_spawn_egg", () ->
             new ModSpawnEggItem(ModEntities.FAIRY_ENTITY, 0xea8fde, 0x8658bf, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
 
     public static final RegistrySupplier<FairyWandItem> FAIRY_WAND = ITEMS.register("fairy_wand", () ->
