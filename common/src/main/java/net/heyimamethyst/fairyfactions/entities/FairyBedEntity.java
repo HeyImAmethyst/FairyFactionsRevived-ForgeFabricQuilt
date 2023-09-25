@@ -394,12 +394,12 @@ public class FairyBedEntity extends Entity implements IWandable
 
     public static enum LogType
     {
-        OAK(WoodType.OAK);
-        //SPRUCE(Blocks.SPRUCE_LOG, "spruce"),
-        //BIRCH(Blocks.BIRCH_LOG, "birch"),
-        //JUNGLE(Blocks.JUNGLE_LOG, "jungle"),
-        //ACACIA(Blocks.ACACIA_LOG, "acacia"),
-        //DARK_OAK(Blocks.DARK_OAK_LOG, "dark_oak");
+        OAK(WoodType.OAK),
+        SPRUCE(WoodType.SPRUCE),
+        BIRCH(WoodType.BIRCH),
+        JUNGLE(WoodType.JUNGLE),
+        ACACIA(WoodType.ACACIA),
+        DARK_OAK(WoodType.DARK_OAK);
 
         private final String name;
         private final WoodType log;
