@@ -11,7 +11,6 @@ import net.heyimamethyst.fairyfactions.util.NBTUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -69,7 +68,7 @@ public class FairyWandItem extends Item
             data.setStoredEntityID(target.getId());
 
             if (playerEntity.level.isClientSide || hand != InteractionHand.MAIN_HAND)
-                playerEntity.displayClientMessage(new TranslatableComponent(Loc.FAIRY_WAND_STORED_ENTITY.get()), false);
+                playerEntity.displayClientMessage(Component.translatable(Loc.FAIRY_WAND_STORED_ENTITY.get()), false);
 
             //CommonMethods.sendChat((ServerPlayer) playerEntity, new TranslatableComponent(Loc.FAIRY_WAND_STORED_ENTITY.get()));
 
@@ -174,7 +173,7 @@ public class FairyWandItem extends Item
         if (!data.hasStoredData())
         {
             data.setStoredPos(pos.immutable());
-            CommonMethods.sendChat((ServerPlayer) playerEntity, new TranslatableComponent(Loc.FAIRY_WAND_POSITION_SET.get()));
+            CommonMethods.sendChat((ServerPlayer) playerEntity, Component.translatable(Loc.FAIRY_WAND_POSITION_SET.get()));
             return InteractionResult.SUCCESS;
         }
 
@@ -205,26 +204,26 @@ public class FairyWandItem extends Item
 
         if(data.getStoredEntityID() == -1)
         {
-            tooltip.add(new TranslatableComponent(Loc.FAIRY_WAND_NO_ENTITY.get()));
+            tooltip.add(Component.translatable(Loc.FAIRY_WAND_NO_ENTITY.get()));
         }
         else
         {
-            tooltip.add(new TranslatableComponent(Loc.FAIRY_WAND_ENTITY_STORED.get()));
+            tooltip.add(Component.translatable(Loc.FAIRY_WAND_ENTITY_STORED.get()));
         }
 
         if(data.getStoredPos() == null)
         {
-            tooltip.add(new TranslatableComponent(Loc.FAIRY_WAND_NO_LOCATION.get()));
+            tooltip.add(Component.translatable(Loc.FAIRY_WAND_NO_LOCATION.get()));
         }
         else
         {
-            tooltip.add(new TranslatableComponent(Loc.FAIRY_WAND_POSITION_STORED.get(), getPosString(data.getStoredPos())));
+            tooltip.add(Component.translatable(Loc.FAIRY_WAND_POSITION_STORED.get(), getPosString(data.getStoredPos())));
         }
     }
 
     public static String getPosString(BlockPos pos)
     {
-        return new TranslatableComponent(Loc.POSITION.get(), pos.getX(), pos.getY(), pos.getZ()).getString();
+        return Component.translatable(Loc.POSITION.get(), pos.getX(), pos.getY(), pos.getZ()).getString();
     }
 
     public static class FairyWandData extends ItemstackData

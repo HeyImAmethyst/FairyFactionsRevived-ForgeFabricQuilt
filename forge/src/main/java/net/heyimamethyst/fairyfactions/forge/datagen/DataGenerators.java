@@ -16,9 +16,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -45,53 +45,10 @@ public class DataGenerators
 				.create();
 			
 			//generator.addProvider(MakeBuiltinRegistryProvider(MagiThings.MOD_ID, outputFolder, gson, ops, registries, Registry.CONFIGURED_FEATURE_REGISTRY, ConfiguredFeature.DIRECT_CODEC, ArcaneLevelStem.ARCANE));
-			generator.addProvider(new ModRecipeProvider(generator));
+			generator.addProvider(event.includeServer(), new ModRecipeProvider(generator));
 			//generator.addProvider(new ModLootTableProvider(generator));
-			generator.addProvider(new ModItemModelProvider(generator, existingFileHelper));
-			//generator.addProvider(new ModBlockStateProvider(generator, existingFileHelper));
-	}
-	
-	/* Helper method that serializes many objects of the same registry type for us (note the vararg)*/
-	@SafeVarargs
-	private static <T> DataProvider MakeBuiltinRegistryProvider(String modid, Path outputFolder, Gson gson, RegistryOps<JsonElement> ops, RegistryAccess registries, ResourceKey<Registry<T>> registryKey, Codec<T> codec, ResourceKey<T>... keys)
-	{
-		return new DataProvider()
-		{
-			@Override
-			public void run(HashCache cache) throws IOException
-			{
-				// 3) get the relevant registry from the registryaccess
-				// we must retrieve objects from registryaccess and not via our RegistryObject
-				// (as this is where RegistryOps looks up the id names of things to write out)
-				Registry<T> registry = registries.registryOrThrow(registryKey);
-				for (ResourceKey<T> key : keys)
-				{
-					ResourceLocation id = key.location();
-					Path path = outputFolder.resolve(String.join("/", PackType.SERVER_DATA.getDirectory(), id.getNamespace(), registryKey.location().getPath(), id.getPath()+".json"));
-					// 4) get the object from that registry
-					T t = registry.getOrThrow(key);
-					// 5) use the RegistryOps and direct codec to serialize it
-					// (as of 1.18.2 the indirect codec is no longer the correct codec for datagen)
-					codec.encodeStart(ops, t)
-						.resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", path, msg))
-						.ifPresent(json -> {
-							try
-							{
-								DataProvider.save(gson, cache, json, path);
-							}
-							catch (IOException e) // we're inside this ifpresent so the throws can't deal with this
-							{
-								e.printStackTrace();
-							}
-						});
-				}
-			}
 
-			@Override
-			public String getName()
-			{
-				return modid + " " + registryKey.location().toString();
-			}
-		};
+			generator.addProvider(event.includeClient(), new ModItemModelProvider(generator, existingFileHelper));
+			//generator.addProvider(new ModBlockStateProvider(generator, existingFileHelper));
 	}
 }

@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -181,113 +182,235 @@ public class FairyBedTextureAtlas extends TextureAtlas
         return new TextureAtlas.Preparations(set, stitcher.getWidth(), stitcher.getHeight(), m, list);
     }
 
+//    private Collection<TextureAtlasSprite.Info> getBasicSpriteInfos(ResourceManager resourceManager, Set<ResourceLocation> set) {
+//        ArrayList<CompletableFuture<Void>> list = Lists.newArrayList();
+//        ConcurrentLinkedQueue<TextureAtlasSprite.Info> queue = new ConcurrentLinkedQueue<TextureAtlasSprite.Info>();
+//        for (ResourceLocation resourceLocation : set) {
+//            if (MissingTextureAtlasSprite.getLocation().equals(resourceLocation)) continue;
+//            list.add(CompletableFuture.runAsync(() -> {
+//                TextureAtlasSprite.Info info;
+//                ResourceLocation resourceLocation2 = this.getResourceLocation(resourceLocation);
+//                try (Resource resource = resourceManager.getResource(resourceLocation2);){
+//                    PngInfo pngInfo = new PngInfo(resource.toString(), resource.getInputStream());
+//                    AnimationMetadataSection animationMetadataSection = resource.getMetadata(AnimationMetadataSection.SERIALIZER);
+//                    if (animationMetadataSection == null) {
+//                        animationMetadataSection = AnimationMetadataSection.EMPTY;
+//                    }
+//                    Pair<Integer, Integer> pair = animationMetadataSection.getFrameSize(pngInfo.width, pngInfo.height);
+//                    info = new TextureAtlasSprite.Info(resourceLocation, pair.getFirst(), pair.getSecond(), animationMetadataSection);
+//                } catch (RuntimeException runtimeException) {
+//                    LOGGER.error("Unable to parse metadata from {} : {}", (Object)resourceLocation2, (Object)runtimeException);
+//                    return;
+//                } catch (IOException iOException) {
+//                    LOGGER.error("Using missing texture, unable to load {} : {}", (Object)resourceLocation2, (Object)iOException);
+//                    return;
+//                }
+//                queue.add(info);
+//            }, Util.backgroundExecutor()));
+//        }
+//        CompletableFuture.allOf(list.toArray(new CompletableFuture[0])).join();
+//        return queue;
+//    }
+
     private Collection<TextureAtlasSprite.Info> getBasicSpriteInfos(ResourceManager resourceManager, Set<ResourceLocation> set) {
-        ArrayList<CompletableFuture<Void>> list = Lists.newArrayList();
-        ConcurrentLinkedQueue<TextureAtlasSprite.Info> queue = new ConcurrentLinkedQueue<TextureAtlasSprite.Info>();
-        for (ResourceLocation resourceLocation : set) {
-            if (MissingTextureAtlasSprite.getLocation().equals(resourceLocation)) continue;
-            list.add(CompletableFuture.runAsync(() -> {
-                TextureAtlasSprite.Info info;
-                ResourceLocation resourceLocation2 = this.getResourceLocation(resourceLocation);
-                try (Resource resource = resourceManager.getResource(resourceLocation2);){
-                    PngInfo pngInfo = new PngInfo(resource.toString(), resource.getInputStream());
-                    AnimationMetadataSection animationMetadataSection = resource.getMetadata(AnimationMetadataSection.SERIALIZER);
-                    if (animationMetadataSection == null) {
-                        animationMetadataSection = AnimationMetadataSection.EMPTY;
+        List<CompletableFuture<?>> list = Lists.newArrayList();
+        Queue<TextureAtlasSprite.Info> queue = new ConcurrentLinkedQueue();
+        Iterator var5 = set.iterator();
+
+        while(var5.hasNext()) {
+            ResourceLocation resourceLocation = (ResourceLocation)var5.next();
+            if (!MissingTextureAtlasSprite.getLocation().equals(resourceLocation)) {
+                list.add(CompletableFuture.runAsync(() -> {
+                    ResourceLocation resourceLocation2 = this.getResourceLocation(resourceLocation);
+                    Optional<Resource> optional = resourceManager.getResource(resourceLocation2);
+                    if (optional.isEmpty()) {
+                        LOGGER.error("Using missing texture, file {} not found", resourceLocation2);
+                    } else {
+                        Resource resource = (Resource)optional.get();
+
+                        PngInfo pngInfo;
+                        try {
+                            InputStream inputStream = resource.open();
+
+                            try {
+                                Objects.requireNonNull(resourceLocation2);
+                                pngInfo = new PngInfo(resourceLocation2::toString, inputStream);
+                            } catch (Throwable var14) {
+                                if (inputStream != null) {
+                                    try {
+                                        inputStream.close();
+                                    } catch (Throwable var12) {
+                                        var14.addSuppressed(var12);
+                                    }
+                                }
+
+                                throw var14;
+                            }
+
+                            if (inputStream != null) {
+                                inputStream.close();
+                            }
+                        } catch (IOException var15) {
+                            LOGGER.error("Using missing texture, unable to load {} : {}", resourceLocation2, var15);
+                            return;
+                        }
+
+                        AnimationMetadataSection animationMetadataSection;
+                        try {
+                            animationMetadataSection = (AnimationMetadataSection)resource.metadata().getSection(AnimationMetadataSection.SERIALIZER).orElse(AnimationMetadataSection.EMPTY);
+                        } catch (Exception var13) {
+                            LOGGER.error("Unable to parse metadata from {} : {}", resourceLocation2, var13);
+                            return;
+                        }
+
+                        Pair<Integer, Integer> pair = animationMetadataSection.getFrameSize(pngInfo.width, pngInfo.height);
+                        TextureAtlasSprite.Info info = new TextureAtlasSprite.Info(resourceLocation, (Integer)pair.getFirst(), (Integer)pair.getSecond(), animationMetadataSection);
+                        queue.add(info);
                     }
-                    Pair<Integer, Integer> pair = animationMetadataSection.getFrameSize(pngInfo.width, pngInfo.height);
-                    info = new TextureAtlasSprite.Info(resourceLocation, pair.getFirst(), pair.getSecond(), animationMetadataSection);
-                } catch (RuntimeException runtimeException) {
-                    LOGGER.error("Unable to parse metadata from {} : {}", (Object)resourceLocation2, (Object)runtimeException);
-                    return;
-                } catch (IOException iOException) {
-                    LOGGER.error("Using missing texture, unable to load {} : {}", (Object)resourceLocation2, (Object)iOException);
-                    return;
-                }
-                queue.add(info);
-            }, Util.backgroundExecutor()));
+                }, Util.backgroundExecutor()));
+            }
         }
-        CompletableFuture.allOf(list.toArray(new CompletableFuture[0])).join();
+
+        CompletableFuture.allOf((CompletableFuture[])list.toArray(new CompletableFuture[0])).join();
         return queue;
     }
 
-    private List<TextureAtlasSprite> getLoadedSprites(ResourceManager resourceManager, FairyBedTextureStitcher stitcher, int i) {
-        ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
-        ArrayList list = Lists.newArrayList();
-        stitcher.gatherSprites((info, j, k, l, m) -> {
-            if (info == MissingTextureAtlasSprite.info()) {
-                MissingTextureAtlasSprite missingTextureAtlasSprite = MissingTextureAtlasSprite.newInstance(this, i, j, k, l, m);
-                queue.add(missingTextureAtlasSprite);
-            } else {
+//    private List<TextureAtlasSprite> getLoadedSprites(ResourceManager resourceManager, FairyBedTextureStitcher stitcher, int i) {
+//        ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
+//        ArrayList list = Lists.newArrayList();
+//        stitcher.gatherSprites((info, j, k, l, m) -> {
+//            if (info == MissingTextureAtlasSprite.info()) {
+//                MissingTextureAtlasSprite missingTextureAtlasSprite = MissingTextureAtlasSprite.newInstance(this, i, j, k, l, m);
+//                queue.add(missingTextureAtlasSprite);
+//            } else {
+////                list.add(CompletableFuture.runAsync(() -> {
+////                    TextureAtlasSprite textureAtlasSprite = null;
+////                    try
+////                    {
+////                        textureAtlasSprite = this.load(resourceManager, info, j, k, i, l, m);
+////                    }
+////                    catch (IOException e)
+////                    {
+////                        throw new RuntimeException(e);
+////                    }
+////                    if (textureAtlasSprite != null) {
+////                        queue.add(textureAtlasSprite);
+////                    }
+////                }, Util.backgroundExecutor()));
+//
 //                list.add(CompletableFuture.runAsync(() -> {
-//                    TextureAtlasSprite textureAtlasSprite = null;
+//                    TextureAtlasSprite textureatlassprite = null;
 //                    try
 //                    {
-//                        textureAtlasSprite = this.load(resourceManager, info, j, k, i, l, m);
+//                        textureatlassprite = this.load(resourceManager, info, j, k, i, l, m);
 //                    }
 //                    catch (IOException e)
 //                    {
 //                        throw new RuntimeException(e);
 //                    }
-//                    if (textureAtlasSprite != null) {
-//                        queue.add(textureAtlasSprite);
+//                    if (textureatlassprite != null) {
+//                        queue.add(textureatlassprite);
 //                    }
+//
 //                }, Util.backgroundExecutor()));
+//            }
+//        });
+//        //CompletableFuture.allOf(list.toArray(new CompletableFuture[0])).join();
+//        CompletableFuture.allOf((CompletableFuture[])list.toArray(new CompletableFuture[0])).join();
+//        return Lists.newArrayList(queue);
+//    }
 
+    private List<TextureAtlasSprite> getLoadedSprites(ResourceManager resourceManager, FairyBedTextureStitcher stitcher, int i) {
+        Queue<TextureAtlasSprite> queue = new ConcurrentLinkedQueue();
+        List<CompletableFuture<?>> list = Lists.newArrayList();
+        stitcher.gatherSprites((info, j, k, l, m) -> {
+            if (info == MissingTextureAtlasSprite.info()) {
+                MissingTextureAtlasSprite missingTextureAtlasSprite = MissingTextureAtlasSprite.newInstance(this, i, j, k, l, m);
+                queue.add(missingTextureAtlasSprite);
+            } else {
                 list.add(CompletableFuture.runAsync(() -> {
-                    TextureAtlasSprite textureatlassprite = null;
-                    try
-                    {
-                        textureatlassprite = this.load(resourceManager, info, j, k, i, l, m);
-                    }
-                    catch (IOException e)
-                    {
-                        throw new RuntimeException(e);
-                    }
-                    if (textureatlassprite != null) {
-                        queue.add(textureatlassprite);
+                    TextureAtlasSprite textureAtlasSprite = this.load(resourceManager, info, j, k, i, l, m);
+                    if (textureAtlasSprite != null) {
+                        queue.add(textureAtlasSprite);
                     }
 
                 }, Util.backgroundExecutor()));
             }
+
         });
-        //CompletableFuture.allOf(list.toArray(new CompletableFuture[0])).join();
         CompletableFuture.allOf((CompletableFuture[])list.toArray(new CompletableFuture[0])).join();
         return Lists.newArrayList(queue);
     }
 
+//    @Nullable
+//    private TextureAtlasSprite load(ResourceManager resourceManager, TextureAtlasSprite.Info info, int i, int j, int k, int l, int m) throws IOException
+//    {
+//        TextureAtlasSprite textureAtlasSprite;
+//        block9: {
+//            ResourceLocation resourceLocation = this.getResourceLocation(info.name());
+//            Resource resource = resourceManager.getResource(resourceLocation);
+//            try {
+//                NativeImage nativeImage = NativeImage.read(resource.getInputStream());
+//                textureAtlasSprite = new TextureAtlasSprite(this, info, k, i, j, l, m, nativeImage);
+//                if (resource == null) break block9;
+//            } catch (Throwable throwable) {
+//                try {
+//                    if (resource != null) {
+//                        try {
+//                            resource.close();
+//                        } catch (Throwable throwable2) {
+//                            throwable.addSuppressed(throwable2);
+//                        }
+//                    }
+//                    throw throwable;
+//                } catch (RuntimeException runtimeException) {
+//                    LOGGER.error("Unable to parse metadata from {}", (Object)resourceLocation, (Object)runtimeException);
+//                    return null;
+//                } catch (IOException iOException) {
+//                    LOGGER.error("Using missing texture, unable to load {}", (Object)resourceLocation, (Object)iOException);
+//                    return null;
+//                }
+//            }
+//            resource.close();
+//        }
+//        return textureAtlasSprite;
+//    }
+
     @Nullable
-    private TextureAtlasSprite load(ResourceManager resourceManager, TextureAtlasSprite.Info info, int i, int j, int k, int l, int m) throws IOException
-    {
-        TextureAtlasSprite textureAtlasSprite;
-        block9: {
-            ResourceLocation resourceLocation = this.getResourceLocation(info.name());
-            Resource resource = resourceManager.getResource(resourceLocation);
+    private TextureAtlasSprite load(ResourceManager resourceManager, TextureAtlasSprite.Info info, int i, int j, int k, int l, int m) {
+        ResourceLocation resourceLocation = this.getResourceLocation(info.name());
+
+        try {
+            InputStream inputStream = resourceManager.open(resourceLocation);
+
+            TextureAtlasSprite var11;
             try {
-                NativeImage nativeImage = NativeImage.read(resource.getInputStream());
-                textureAtlasSprite = new TextureAtlasSprite(this, info, k, i, j, l, m, nativeImage);
-                if (resource == null) break block9;
-            } catch (Throwable throwable) {
-                try {
-                    if (resource != null) {
-                        try {
-                            resource.close();
-                        } catch (Throwable throwable2) {
-                            throwable.addSuppressed(throwable2);
-                        }
+                NativeImage nativeImage = NativeImage.read(inputStream);
+                var11 = new TextureAtlasSprite(this, info, k, i, j, l, m, nativeImage);
+            } catch (Throwable var13) {
+                if (inputStream != null) {
+                    try {
+                        inputStream.close();
+                    } catch (Throwable var12) {
+                        var13.addSuppressed(var12);
                     }
-                    throw throwable;
-                } catch (RuntimeException runtimeException) {
-                    LOGGER.error("Unable to parse metadata from {}", (Object)resourceLocation, (Object)runtimeException);
-                    return null;
-                } catch (IOException iOException) {
-                    LOGGER.error("Using missing texture, unable to load {}", (Object)resourceLocation, (Object)iOException);
-                    return null;
                 }
+
+                throw var13;
             }
-            resource.close();
+
+            if (inputStream != null) {
+                inputStream.close();
+            }
+
+            return var11;
+        } catch (RuntimeException var14) {
+            LOGGER.error("Unable to parse metadata from {}", resourceLocation, var14);
+            return null;
+        } catch (IOException var15) {
+            LOGGER.error("Using missing texture, unable to load {}", resourceLocation, var15);
+            return null;
         }
-        return textureAtlasSprite;
     }
 
     private ResourceLocation getResourceLocation(ResourceLocation resourceLocation) {
