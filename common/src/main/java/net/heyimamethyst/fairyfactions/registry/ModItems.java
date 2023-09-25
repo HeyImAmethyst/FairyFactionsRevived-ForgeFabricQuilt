@@ -4,11 +4,10 @@ import com.mojang.datafixers.util.Pair;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.heyimamethyst.fairyfactions.FairyFactions;
-import net.heyimamethyst.fairyfactions.client.model.ModModelLayers;
 import net.heyimamethyst.fairyfactions.entities.FairyBedEntity;
 import net.heyimamethyst.fairyfactions.items.FairyBedItem;
+import net.heyimamethyst.fairyfactions.items.FairyWandItem;
 import net.heyimamethyst.fairyfactions.items.ModSpawnEggItem;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.CreativeModeTab;
@@ -32,6 +31,9 @@ public class ModItems
 
     public static final RegistrySupplier<Item> FAIRY_SPAWN_EGG = ITEMS.register("fairy_spawn_egg", () ->
             new ModSpawnEggItem(ModEntities.FAIRY_ENTITY, 0xea8fde, 0x8658bf, new Item.Properties()));
+
+    public static final RegistrySupplier<FairyWandItem> FAIRY_WAND = ITEMS.register("fairy_wand", () ->
+            new FairyWandItem(new Item.Properties()));
 
 //    public static final Map<FairyBedEntity.Type, RegistrySupplier<Item>> FAIRY_BED_ITEMS = creatFairyBedItemMap();
 //
@@ -57,11 +59,11 @@ public class ModItems
 //        return new FairyBedItem(bedType, new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_DECORATIONS));
 //    }
 
-    public static final Map<Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType>, RegistrySupplier<Item>> FAIRY_BED_ITEMS = creatFairyBedItemMap();
+    public static final Map<Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType>, RegistrySupplier<FairyBedItem>> FAIRY_BED_ITEMS = creatFairyBedItemMap();
 
-    private static Map<Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType>, RegistrySupplier<Item>> creatFairyBedItemMap()
+    private static Map<Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType>, RegistrySupplier<FairyBedItem>> creatFairyBedItemMap()
     {
-        Map<Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType>, RegistrySupplier<Item>> map = new HashMap<>();
+        Map<Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType>, RegistrySupplier<FairyBedItem>> map = new HashMap<>();
 
         for (FairyBedEntity.LogType logType : FairyBedEntity.LogType.values())
         {
@@ -75,12 +77,12 @@ public class ModItems
         return map;
     }
 
-    public static RegistrySupplier<Item> createFairyBedName(FairyBedEntity.LogType logType, FairyBedEntity.WoolType woolType)
+    public static RegistrySupplier<FairyBedItem> createFairyBedName(FairyBedEntity.LogType logType, FairyBedEntity.WoolType woolType)
     {
         return ITEMS.register(logType.getName() + "_" + woolType.getName() + "_fairy_bed", () -> createFairyBed(logType, woolType));
     }
 
-    private static Item createFairyBed(FairyBedEntity.LogType logType, FairyBedEntity.WoolType woolType)
+    private static FairyBedItem createFairyBed(FairyBedEntity.LogType logType, FairyBedEntity.WoolType woolType)
     {
         return new FairyBedItem(logType, woolType, new Item.Properties().stacksTo(1));
     }

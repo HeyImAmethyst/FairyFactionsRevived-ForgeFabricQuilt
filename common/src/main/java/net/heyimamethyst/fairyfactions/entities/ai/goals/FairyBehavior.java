@@ -17,6 +17,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.pathfinder.Path;
 
@@ -27,13 +28,13 @@ public class FairyBehavior
     private FairyEntity theFairy;
     protected double speedModifier;
 
-    public FairyJobManager fairyJobManager;
+    //public FairyJobManager fairyJobManager;
 
     public FairyBehavior(FairyEntity theFairy, double speedModifier)
     {
         this.theFairy = theFairy;
         this.speedModifier = speedModifier;
-        fairyJobManager = new FairyJobManager(theFairy);
+        //fairyJobManager = new FairyJobManager(theFairy);
     }
 
     public void handleAnger()
@@ -824,6 +825,7 @@ public class FairyBehavior
                     && theFairy.getVehicle() == theFairy.getRuler())
             {
                 theFairy.abandonPost();
+
                 return; // When a the player takes a tamed fairy away, it
                 // automatically cancels the post.
             }
@@ -945,13 +947,13 @@ public class FairyBehavior
             }
             else if (theFairy.getRandom().nextInt(2) == 0)
             {
-                fairyJobManager.sittingFishing(level);
+                new FairyJobManager(theFairy).sittingFishing(level);
             }
 
             return;
         }
 
-        if (theFairy.posted() && !theFairy.angry() && !theFairy.crying())
+        if (theFairy.posted() && (theFairy.getHeldItem() == null || theFairy.getHeldItem().isEmpty()) && !theFairy.angry() && !theFairy.crying())
         {
             double aa = (double) theFairy.postX + 0.5D;
             double bb = (double) theFairy.postY + 0.5D;
@@ -971,9 +973,9 @@ public class FairyBehavior
             }
         }
 
-        if (theFairy.posted())
+        if (theFairy.posted() && !theFairy.isSleeping())
         {
-            fairyJobManager.discover(level);
+            new FairyJobManager(theFairy).discover(level);
         }
     }
 
