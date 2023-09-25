@@ -40,11 +40,4 @@ public class ModEvents
 	{
 		event.register(ModEntities.FAIRY_ENTITY.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FairyEntity::checkFairySpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
 	}
-
-	@SubscribeEvent
-	//@OnlyIn(Dist.CLIENT)
-	public static void registerParticleFactories(RegisterParticleProvidersEvent event)
-	{
-		((ReloadableResourceManager)Minecraft.getInstance().getResourceManager()).registerReloadListener(FairyBedTextureGenerator.INSTANCE);
-	}
 }

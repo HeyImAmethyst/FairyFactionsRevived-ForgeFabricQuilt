@@ -4,12 +4,14 @@ import dev.architectury.registry.registries.RegistrySupplier;
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.entities.FairyBedEntity;
 import net.heyimamethyst.fairyfactions.items.FairyBedItem;
+import net.heyimamethyst.fairyfactions.items.ModSpawnEggItem;
 import net.heyimamethyst.fairyfactions.registry.ModItems;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
@@ -28,29 +30,29 @@ public class ModItemModelProvider extends ItemModelProvider
 	{
 		//simpleItem(ModItems.VOID_STICK.get());
 
-		handheldItem(ModItems.FAIRY_WAND.get());
+		handheldItem(ModItems.FAIRY_WAND);
 
 		for (RegistrySupplier<FairyBedItem> supplier:ModItems.FAIRY_BED_ITEMS.values())
 		{
-			fairyBedItem(supplier.get(), supplier.get().getLogType(), supplier.get().getWoolType());
+			fairyBedItem(supplier, supplier.get().getLogType(), supplier.get().getWoolType());
 		}
 
-		spawnEggItem(ModItems.FAIRY_SPAWN_EGG.get());
+		spawnEggItem(ModItems.FAIRY_SPAWN_EGG);
 		
 	}
 
-	private ItemModelBuilder simpleItem(Item item)
+	private <T extends Item> ItemModelBuilder simpleItem(RegistrySupplier<T> item)
 	{
-		return withExistingParent(item.getRegistryName().getPath(),
+		return withExistingParent(item.getId().getPath(),
 						new ResourceLocation("item/generated")).texture("layer0",
-										new ResourceLocation(FairyFactions.MOD_ID, "item/" + item.getRegistryName().getPath()));
+										new ResourceLocation(FairyFactions.MOD_ID, "item/" + item.getId().getPath()));
 	}
 
-	private ItemModelBuilder handheldItem(Item item)
+	private <T extends Item> ItemModelBuilder handheldItem(RegistrySupplier<T> item)
 	{
-		return withExistingParent(item.getRegistryName().getPath(),
+		return withExistingParent(item.getId().getPath(),
 						new ResourceLocation("item/handheld")).texture("layer0",
-										new ResourceLocation(FairyFactions.MOD_ID, "item/" + item.getRegistryName().getPath()));
+										new ResourceLocation(FairyFactions.MOD_ID, "item/" + item.getId().getPath()));
 	}
 
 //	private ItemModelBuilder transformationGemItem(Item item)
@@ -60,9 +62,9 @@ public class ModItemModelProvider extends ItemModelProvider
 //										new ResourceLocation(MagiThings.MOD_ID, "item/transformation_gems/" + item.getRegistryName().getPath()));
 //	}
 
-	private ItemModelBuilder fairyBedItem(Item item, FairyBedEntity.LogType logType, FairyBedEntity.WoolType woolType)
+	private <T extends Item> ItemModelBuilder fairyBedItem(RegistrySupplier<T> item, FairyBedEntity.LogType logType, FairyBedEntity.WoolType woolType)
 	{
-		return withExistingParent(item.getRegistryName().getPath(),
+		return withExistingParent(item.getId().getPath(),
 				new ResourceLocation("fairyfactions:item/fairy_bed"))
 				.texture("0",new ResourceLocation("block/" + logType.getName() + "_log_top"))
 				.texture("1",new ResourceLocation("block/" + logType.getName() + "_log"))
@@ -73,9 +75,9 @@ public class ModItemModelProvider extends ItemModelProvider
 				.texture("6",new ResourceLocation("minecraft:block/glowstone"));
 	}
 	
-	private ItemModelBuilder spawnEggItem(Item item)
+	private <T extends Item> ItemModelBuilder spawnEggItem(RegistrySupplier<T> item)
 	{
-		return withExistingParent(item.getRegistryName().getPath(),
+		return withExistingParent(item.getId().getPath(),
 						new ResourceLocation("item/template_spawn_egg"));
 	}
 
@@ -85,9 +87,9 @@ public class ModItemModelProvider extends ItemModelProvider
 	 * @param item   The item to generate the model for.
 	 * @param parent The parent model to use.
 	 */
-	private ItemModelBuilder withExistingParent(BlockItem item, ResourceLocation parent)
+	private ItemModelBuilder withExistingParent(RegistrySupplier<BlockItem> item, ResourceLocation parent)
 	{
-		return withExistingParent(item.getRegistryName().getPath() + "_item", parent);
+		return withExistingParent(item.getId().getPath() + "_item", parent);
 	}
 
 //	/**
@@ -95,11 +97,11 @@ public class ModItemModelProvider extends ItemModelProvider
 //	 *
 //	 * @param item The item to generate the model for.
 //	 */
-	private ItemModelBuilder blockItem(String blockItem, Block block)
+	private ItemModelBuilder blockItem(String blockItem, RegistrySupplier<Block> block)
 	{
 		return withExistingParent(blockItem, new ResourceLocation(
 						"magithings",
-						"block/" + block.getRegistryName().getPath()));
+						"block/" + block.getId().getPath()));
 
 //		return withExistingParent(
 //				item,

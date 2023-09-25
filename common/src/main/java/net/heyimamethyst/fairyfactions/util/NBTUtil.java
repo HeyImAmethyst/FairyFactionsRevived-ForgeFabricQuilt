@@ -1,8 +1,13 @@
 package net.heyimamethyst.fairyfactions.util;
 
+import dev.architectury.registry.registries.Registries;
+import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,7 +16,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static dev.architectury.registry.registries.Registries.getRegistryName;
 
 //Class from : https://github.com/baileyholl/Ars-Nouveau/blob/main/src/main/java/com/hollingsworth/arsnouveau/api/util/NBTUtil.java
 
@@ -109,7 +113,8 @@ public class NBTUtil {
         return readStrings(tag, prefix).stream().map(ResourceLocation::new).collect(Collectors.toList());
     }
 
-    public static String getItemKey(ItemStack stack, String prefix) {
-        return prefix + getRegistryName(stack.getItem()).toString();
+    public static String getItemKey(ItemStack stack, String prefix)
+    {
+        return prefix + Registries.getId(stack.getItem(), (ResourceKey<Registry<Item>>) null).toString();
     }
 }
