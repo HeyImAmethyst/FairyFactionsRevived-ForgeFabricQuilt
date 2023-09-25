@@ -416,7 +416,8 @@ public class FairyBedEntity extends Entity implements IWandable
         BIRCH(WoodType.BIRCH),
         JUNGLE(WoodType.JUNGLE),
         ACACIA(WoodType.ACACIA),
-        DARK_OAK(WoodType.DARK_OAK);
+        DARK_OAK(WoodType.DARK_OAK),
+        MANGROVE(WoodType.MANGROVE);
 
         private final String name;
         private final WoodType log;
