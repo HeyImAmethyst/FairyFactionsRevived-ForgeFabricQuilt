@@ -1,22 +1,22 @@
 {
   "type": "minecraft:crafting_shaped",
   "group": "fairy_bed",
+  "key": {
+    "#": {
+      "item": "minecraft:birch_log"
+    },
+    "G": {
+      "item": "minecraft:glowstone"
+    },
+    "W": {
+      "item": "minecraft:brown_wool"
+    }
+  },
   "pattern": [
     "###",
     "#G#",
     "#W#"
   ],
-  "key": {
-    "#": {
-      "item": "minecraft:birch_log"
-    },
-    "W": {
-      "item": "minecraft:brown_wool"
-    },
-    "G": {
-      "item": "minecraft:glowstone"
-    }
-  },
   "result": {
     "item": "fairyfactions:birch_brown_fairy_bed"
   }

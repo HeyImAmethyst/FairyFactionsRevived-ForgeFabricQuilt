@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "fairy_bed",
+  "key": {
+    "#": {
+      "item": "minecraft:mangrove_log"
+    },
+    "G": {
+      "item": "minecraft:glowstone"
+    },
+    "W": {
+      "item": "minecraft:green_wool"
+    }
+  },
+  "pattern": [
+    "###",
+    "#G#",
+    "#W#"
+  ],
+  "result": {
+    "item": "fairyfactions:mangrove_green_fairy_bed"
+  }
+}

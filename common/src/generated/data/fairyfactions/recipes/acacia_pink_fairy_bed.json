@@ -1,22 +1,22 @@
 {
   "type": "minecraft:crafting_shaped",
   "group": "fairy_bed",
+  "key": {
+    "#": {
+      "item": "minecraft:acacia_log"
+    },
+    "G": {
+      "item": "minecraft:glowstone"
+    },
+    "W": {
+      "item": "minecraft:pink_wool"
+    }
+  },
   "pattern": [
     "###",
     "#G#",
     "#W#"
   ],
-  "key": {
-    "#": {
-      "item": "minecraft:acacia_log"
-    },
-    "W": {
-      "item": "minecraft:pink_wool"
-    },
-    "G": {
-      "item": "minecraft:glowstone"
-    }
-  },
   "result": {
     "item": "fairyfactions:acacia_pink_fairy_bed"
   }
