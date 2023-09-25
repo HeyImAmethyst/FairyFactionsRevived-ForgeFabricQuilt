@@ -37,6 +37,8 @@ public class FairyBedEntity extends Entity implements IWandable
     private static final EntityDataAccessor<Integer> DATA_ID_TYPE = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ID_LOG_TYPE = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ID_WOOL_TYPE = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.INT);
+
+    private static final EntityDataAccessor<String> FAIRY_OWNER = SynchedEntityData.defineId(FairyEntity.class, EntityDataSerializers.STRING);
     private double lastYd;
 
     public FairyBedEntity(EntityType<?> entityType, Level level)
@@ -74,6 +76,7 @@ public class FairyBedEntity extends Entity implements IWandable
         //this.entityData.define(DATA_ID_TYPE, Type.OAK_WHITE.ordinal());
         this.entityData.define(DATA_ID_LOG_TYPE, LogType.OAK.ordinal());
         this.entityData.define(DATA_ID_WOOL_TYPE, WoolType.WHITE.ordinal());
+        this.entityData.define(FAIRY_OWNER, "");
     }
 
     @Override
@@ -280,6 +283,8 @@ public class FairyBedEntity extends Entity implements IWandable
 
         this.setLogType(FairyBedEntity.LogType.byName(compoundTag.getString("LogType")));
         this.setWoolType(FairyBedEntity.WoolType.byName(compoundTag.getString("WoolType")));
+
+        this.setFairyOwner(compoundTag.getString("fairy_owner"));
     }
 
     @Override
@@ -289,6 +294,8 @@ public class FairyBedEntity extends Entity implements IWandable
 
         compoundTag.putString("LogType", this.getFairyBedLogType().getName());
         compoundTag.putString("WoolType", this.getFairyBedWoolType().getName());
+
+        compoundTag.putString("fairy_owner", getFairyOwner());
     }
 
     public void setDamage(float f)
@@ -349,6 +356,16 @@ public class FairyBedEntity extends Entity implements IWandable
     public FairyBedEntity.WoolType getFairyBedWoolType()
     {
         return FairyBedEntity.WoolType.byId(this.entityData.get(DATA_ID_WOOL_TYPE));
+    }
+
+    public void setFairyOwner(String fairyOwner)
+    {
+        this.entityData.set(FAIRY_OWNER, fairyOwner);
+    }
+
+    public String getFairyOwner()
+    {
+        return this.entityData.get(FAIRY_OWNER);
     }
 
     @Override
