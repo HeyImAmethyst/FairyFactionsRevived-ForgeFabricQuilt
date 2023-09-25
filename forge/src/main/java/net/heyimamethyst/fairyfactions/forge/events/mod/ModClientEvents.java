@@ -1,6 +1,7 @@
 package net.heyimamethyst.fairyfactions.forge.events.mod;
 
 
+import dev.architectury.registry.registries.RegistrySupplier;
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.client.model.ModModelLayers;
 import net.heyimamethyst.fairyfactions.client.model.entity.fairy.FairyEyesModel;
@@ -12,6 +13,7 @@ import net.heyimamethyst.fairyfactions.client.render.entity.FairyBedRenderer;
 import net.heyimamethyst.fairyfactions.client.render.entity.FairyFishHookEntityRenderer;
 import net.heyimamethyst.fairyfactions.client.render.entity.FairyRenderer;
 import net.heyimamethyst.fairyfactions.client.texture.fairy_bed_texture.FairyBedTextureGenerator;
+import net.heyimamethyst.fairyfactions.items.FairyBedItem;
 import net.heyimamethyst.fairyfactions.items.ModSpawnEggItem;
 import net.heyimamethyst.fairyfactions.registry.ModEntities;
 import net.heyimamethyst.fairyfactions.registry.ModItems;
@@ -23,9 +25,8 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.common.ForgeSpawnEggItem;
-import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
