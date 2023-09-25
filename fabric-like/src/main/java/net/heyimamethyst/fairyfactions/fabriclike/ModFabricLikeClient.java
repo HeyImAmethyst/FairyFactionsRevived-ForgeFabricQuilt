@@ -2,9 +2,9 @@ package net.heyimamethyst.fairyfactions.fabriclike;
 
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
+import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.heyimamethyst.fairyfactions.client.model.ModModelLayers;
-import net.heyimamethyst.fairyfactions.client.model.entity.*;
 import net.heyimamethyst.fairyfactions.client.model.entity.fairy.FairyEyesModel;
 import net.heyimamethyst.fairyfactions.client.model.entity.fairy.FairyModel;
 import net.heyimamethyst.fairyfactions.client.model.entity.fairy.FairyProps2Model;
@@ -17,6 +17,7 @@ import net.heyimamethyst.fairyfactions.client.texture.fairy_bed_texture.FairyBed
 import net.heyimamethyst.fairyfactions.fabriclike.registry.KeyInputHandler;
 import net.heyimamethyst.fairyfactions.registry.ModEntities;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 
@@ -24,11 +25,11 @@ public class ModFabricLikeClient
 {
     public static void init()
     {
-        ResourceManagerHelper resourceManagerHelper = ResourceManagerHelper.get(PackType.CLIENT_RESOURCES);
-        resourceManagerHelper.registerReloadListener(new ReloadListenerWrapper<>(
-                new ResourceLocation("fairyfactions", "fairy_bed_texture_generator"),
-                new FairyBedTextureGenerator(Minecraft.getInstance().getTextureManager())
-        ));
+//        ResourceManagerHelper resourceManagerHelper = ResourceManagerHelper.get(PackType.CLIENT_RESOURCES);
+//        resourceManagerHelper.registerReloadListener(new ReloadListenerWrapper<>(
+//                new ResourceLocation("fairyfactions", "fairy_bed_texture_generator"),
+//                FairyBedTextureGenerator.INSTANCE
+//        ));
 
         EntityModelLayerRegistry.register(ModModelLayers.FAIRY_LAYER_LOCATION, FairyModel::createBodyLayer);
         EntityModelLayerRegistry.register(ModModelLayers.FAIRY_EYES_LAYER_LOCATION, FairyEyesModel::createBodyLayer);

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "fairy_bed",
+  "pattern": [
+    "###",
+    "#G#",
+    "#W#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:jungle_log"
+    },
+    "W": {
+      "item": "minecraft:light_blue_wool"
+    },
+    "G": {
+      "item": "minecraft:glowstone"
+    }
+  },
+  "result": {
+    "item": "fairyfactions:jungle_light_blue_fairy_bed"
+  }
+}
