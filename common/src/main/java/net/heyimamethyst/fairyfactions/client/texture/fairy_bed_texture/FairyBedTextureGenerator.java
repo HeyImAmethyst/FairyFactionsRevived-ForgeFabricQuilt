@@ -82,13 +82,13 @@ public class FairyBedTextureGenerator extends SimplePreparableReloadListener<Map
 
         ArrayList<ResourceLocation> textures = new ArrayList<>();
 
-        textures.add(new ResourceLocation("block/" + logType.getName() + "_log"));
-        textures.add(new ResourceLocation("block/" + logType.getName() + "_log_top"));
+        textures.add(new ResourceLocation(FairyFactions.MOD_ID,"block/" + logType.getName() + "_log"));
+        textures.add(new ResourceLocation(FairyFactions.MOD_ID,"block/" + logType.getName() + "_log_top"));
         textures.add(new ResourceLocation(FairyFactions.MOD_ID,"block/framed_white_wool"));
-        textures.add(new ResourceLocation("block/" + woolType.getName() + "_wool"));
-        textures.add(new ResourceLocation("block/chain"));
-        textures.add(new ResourceLocation("block/glowstone"));
-        textures.add(new ResourceLocation("block/iron_block"));
+        textures.add(new ResourceLocation(FairyFactions.MOD_ID,"block/" + woolType.getName() + "_wool"));
+        textures.add(new ResourceLocation(FairyFactions.MOD_ID,"block/chain"));
+        textures.add(new ResourceLocation(FairyFactions.MOD_ID,"block/glowstone"));
+        textures.add(new ResourceLocation(FairyFactions.MOD_ID,"block/iron_block"));
         textures.add(new ResourceLocation("block/gold_block"));
 
         return textures.stream();
