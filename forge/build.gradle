@@ -1,7 +1,10 @@
+
 plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
     id "me.shedaniel.unified-publishing"
 }
+
+def generatedResources = project(':common').file("src/generated")
 
 archivesBaseName = "[Forge] ${rootProject.archives_base_name}"
 
@@ -19,6 +22,23 @@ loom {
 
         mixinConfig "fairyfactions-common.mixins.json"
         //mixinConfig "fairyfactions.mixins.json"
+    }
+
+    runs {
+        data {
+            data()
+            programArgs "--all", "--mod", "fairyfactions"
+            programArgs "--output", generatedResources.absolutePath
+            programArgs "--existing", project(':common').file("src/main/resources").absolutePath
+            programArgs "--existing", file("src/main/resources").absolutePath
+
+            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+            //args '--mod', 'fairyfactions', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+
+            //programArgs("--all", "--mod", "fairyfactions")
+            //programArgs("--output", project(':common').file("src/generated/resources").absolutePath)
+            //programArgs("--existing", project(':common').file("src/main/resources").absolutePath)
+        }
     }
 }
 
