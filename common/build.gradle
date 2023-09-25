@@ -6,6 +6,19 @@ loom {
     accessWidenerPath = file("src/main/resources/fairyfactions.accesswidener")
 }
 
+sourceSets {
+    main {
+        resources.srcDir file("src/generated")
+    }
+
+    datagen {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+        compileClasspath += main.compileClasspath
+        runtimeClasspath += main.runtimeClasspath
+    }
+}
+
 dependencies {
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
     // Do NOT use other classes from fabric loader
