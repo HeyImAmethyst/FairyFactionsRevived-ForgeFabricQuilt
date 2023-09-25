@@ -2,6 +2,7 @@ package net.heyimamethyst.fairyfactions.entities.ai.fairy_job;
 
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.registry.ModItemTags;
+import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -117,7 +118,7 @@ public class JobCook extends FairyJob
     private boolean populateInput(Level world, SmokerBlockEntity smoker, ItemStack stack)
     {
 
-        if(stack.is(ModItemTags.ITEM_TO_COOK))
+        if(/*stack.is(ModItemTags.ITEM_TO_COOK) || */FairyUtils.doesItemMatchItemInFrameOnChest(fairy, smoker, stack))
         {
             ItemStack furnaceStack = smoker.getItem(0);
             ItemStack itemStackForFurnace = new ItemStack(stack.getItem());

@@ -13,13 +13,16 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.animal.*;
+import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -430,4 +433,43 @@ public class FairyUtils
                 //|| block == Blocks.POPPY
                 || block == Blocks.SNOW;
     }
+
+    // ---------- Code from https://github.com/baileyholl/Ars-Nouveau/blob/main/src/main/java/com/hollingsworth/arsnouveau/common/entity/goal/carbuncle/StarbyTransportBehavior.java ----------
+
+    public static boolean doesItemMatchItemInFrameOnChest(FairyEntity fairy, BlockEntity tile, ItemStack stack)
+    {
+        List<ItemFrame> list = fairy.level.getEntitiesOfClass(ItemFrame.class, new AABB(tile.getBlockPos()).inflate(1));
+
+        if(list == null || list.size() == 0)
+        {
+            return true;
+        }
+        else
+        {
+            for (ItemFrame i : list)
+            {
+                // Check if these frames are attached to the tile
+                BlockEntity adjTile = fairy.level.getBlockEntity(i.blockPosition().relative(i.getDirection().getOpposite()));
+
+                if (adjTile == null || !adjTile.equals(tile))
+                    continue;
+
+                if (i.getItem().isEmpty())
+                    continue;
+
+                if (i.getItem().getItem() != stack.getItem())
+                {
+                    return false;
+                }
+                else if (i.getItem().getItem() == stack.getItem())
+                {
+                    return true;
+                }
+            }
+
+            return true;
+        }
+    }
+
+    // --------------------
 }

@@ -191,6 +191,12 @@ public class JobButcher extends FairyJob
             //fairy.doAttack(animalToBeKilled);
             fairy.armSwing( !fairy.didSwing );
             fairy.setTempItem(stack.getItem());
+
+            stack.hurtAndBreak(1, fairy, (p_29822_) ->
+            {
+                p_29822_.broadcastBreakEvent(InteractionHand.MAIN_HAND);
+            });
+
             animalToBeKilled.kill();
         }
     }

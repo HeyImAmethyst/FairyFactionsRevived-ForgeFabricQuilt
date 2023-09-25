@@ -3,23 +3,22 @@ package net.heyimamethyst.fairyfactions.entities;
 import net.heyimamethyst.fairyfactions.FairyConfigValues;
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.Loc;
-import net.heyimamethyst.fairyfactions.ModExpectPlatform;
 import net.heyimamethyst.fairyfactions.entities.ai.*;
 import net.heyimamethyst.fairyfactions.entities.ai.goals.*;
+import net.heyimamethyst.fairyfactions.items.FairyWandItem;
 import net.heyimamethyst.fairyfactions.proxy.ClientMethods;
 import net.heyimamethyst.fairyfactions.proxy.CommonMethods;
-import net.heyimamethyst.fairyfactions.registry.ModItemTags;
+import net.heyimamethyst.fairyfactions.registry.ModItems;
 import net.heyimamethyst.fairyfactions.registry.ModSounds;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
+import net.heyimamethyst.fairyfactions.util.NBTUtil;
 import net.heyimamethyst.fairyfactions.world.FairyGroupGenerator;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.*;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -61,6 +60,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -71,9 +71,11 @@ import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+
+//Parts of chest storing code came from : https://github.com/baileyholl/Ars-Nouveau/blob/1.18.x/src/main/java/com/hollingsworth/arsnouveau/common/entity/Starbuncle.java
 
 public class FairyEntity extends FairyEntityBase
 {
@@ -98,6 +100,9 @@ public class FairyEntity extends FairyEntityBase
     public int                 postedCount;	// flag for counting posted checks
     public int				   postX, postY, postZ;
 
+    public List<BlockPos> TO_LIST = new ArrayList<>();
+    public List<BlockPos> FROM_LIST = new ArrayList<>();
+
     public double motionX = 0;
     public double motionY = 0;
     public double motionZ = 0;
@@ -107,8 +112,6 @@ public class FairyEntity extends FairyEntityBase
     double vehicleMotionZ = 0;
 
     public double speedModifier = 0.3D;
-
-    public int itemRandom;
 
     private LivingEntity	    ruler;
     public LivingEntity	        entityHeal;
@@ -136,7 +139,7 @@ public class FairyEntity extends FairyEntityBase
 
     private boolean isLandNavigator;
 
-    FairyBedEntity myBed;
+    int foodTimerBaseValue = 800000;
 
     public FairyEntity(EntityType<? extends Animal> entityType, Level level)
     {
@@ -159,8 +162,9 @@ public class FairyEntity extends FairyEntityBase
 
         this.sinage = getRandom().nextFloat();
         this.flyTime = 400 + this.getRandom().nextInt(200);
-        this.requestFoodTime = 300 + this.getRandom().nextInt(500);
+        this.requestFoodTime = foodTimerBaseValue + this.getRandom().nextInt(501);
         this.cower = this.getRandom().nextBoolean();
+
         this.postX = this.postY = this.postZ = -1;
 
         fairyBehavior = new FairyBehavior(this, speedModifier);
@@ -235,6 +239,8 @@ public class FairyEntity extends FairyEntityBase
         this.entityData.define(EMOTIONAL, false);
         this.entityData.define(SLEEPING, false);
 
+        this.entityData.define(DELIVERY_MODE, false);
+
         this.entityData.define(B_FLAGS, (byte) 0);
         this.entityData.define(B_FLAGS2, (byte) 0);
         this.entityData.define(B_TYPE, (byte) 0);
@@ -246,6 +252,12 @@ public class FairyEntity extends FairyEntityBase
         this.entityData.define(WANTED_FOOD, 0);
         this.entityData.define(ITEM_INDEX, 0);
         this.entityData.define(BED_LOCATION, Optional.empty());
+        this.entityData.define(POST_CHEST_LOCATION, Optional.empty());
+
+        this.entityData.define(TO_POS_SIZE, 0);
+        this.entityData.define(FROM_POS_SIZE, 0);
+
+        this.entityData.define(HELD_STACK, ItemStack.EMPTY);
     }
 
     @Override
@@ -260,6 +272,7 @@ public class FairyEntity extends FairyEntityBase
 
         tag.putString("rulerName", rulerName());
         tag.putString("customName", getFairyCustomName());
+
         tag.putIntArray("post", new int[] { postX, postY, postZ });
 
         tag.putShort("flyTime", (short) flyTime);
@@ -285,11 +298,33 @@ public class FairyEntity extends FairyEntityBase
         tag.putInt("wanted_food", this.entityData.get(WANTED_FOOD));
         tag.putInt("item_index", this.entityData.get(ITEM_INDEX));
 
+        tag.putBoolean("delivery_mode", this.getDeliveryMode());
+
+        //tag.put("held_item", this.entityData.get(HELD_STACK));
+
+        int counter = 0;
+        for (BlockPos p : FROM_LIST) {
+            NBTUtil.storeBlockPos(tag, "from_" + counter, p);
+            counter++;
+        }
+        counter = 0;
+        for (BlockPos p : TO_LIST) {
+            NBTUtil.storeBlockPos(tag, "to_" + counter, p);
+            counter++;
+        }
+
         this.entityData.get(BED_LOCATION).ifPresent(blockPos ->
         {
             tag.putInt("bedPosX", blockPos.getX());
             tag.putInt("bedPosY", blockPos.getY());
             tag.putInt("bedPosZ", blockPos.getZ());
+        });
+
+        this.entityData.get(POST_CHEST_LOCATION).ifPresent(blockPos ->
+        {
+            tag.putInt("chestPosX", blockPos.getX());
+            tag.putInt("chestPosY", blockPos.getY());
+            tag.putInt("chestPosZ", blockPos.getZ());
         });
     }
 
@@ -302,6 +337,31 @@ public class FairyEntity extends FairyEntityBase
         this.entityData.set(B_FLAGS2, tag.getByte("flags2"));
         this.entityData.set(B_TYPE, tag.getByte("type"));
         this.entityData.set(B_NAME_ORIG, tag.getByte("nameOrig"));
+
+
+        FROM_LIST = new ArrayList<>();
+        TO_LIST = new ArrayList<>();
+        int counter = 0;
+
+        while (NBTUtil.hasBlockPos(tag, "from_" + counter))
+        {
+            BlockPos pos = NBTUtil.getBlockPos(tag, "from_" + counter);
+            if (!this.FROM_LIST.contains(pos))
+                this.FROM_LIST.add(pos);
+            counter++;
+        }
+
+        counter = 0;
+        while (NBTUtil.hasBlockPos(tag, "to_" + counter))
+        {
+            BlockPos pos = NBTUtil.getBlockPos(tag, "to_" + counter);
+            if (!this.TO_LIST.contains(pos))
+                this.TO_LIST.add(pos);
+            counter++;
+        }
+
+        this.entityData.set(TO_POS_SIZE, TO_LIST.size());
+        this.entityData.set(FROM_POS_SIZE, FROM_LIST.size());
 
         setRulerName(tag.getString("rulerName"));
         setFairyCustomName(tag.getString("customName"));
@@ -335,11 +395,27 @@ public class FairyEntity extends FairyEntityBase
         setWantedFoodItem(Item.byId(tag.getInt("wanted_food")));
         setItemIndex(tag.getInt("item_index"));
 
+        setDeliveryMode(tag.getBoolean("delivery_mode"));
+
         if (tag.contains("bedPosX") && tag.contains("bedPosY") && tag.contains("bedPosZ"))
         {
             BlockPos blockPos = new BlockPos(tag.getInt("bedPosX"), tag.getInt("bedPosY"), tag.getInt("bedPosZ"));
 
             this.setBedLocation(blockPos);
+
+//            this.entityData.set(DATA_POSE, Pose.SLEEPING);
+//
+//            if (!this.firstTick)
+//            {
+//                this.setPosToBed(blockPos);
+//            }
+        }
+
+        if (tag.contains("chestPosX") && tag.contains("chestPosY") && tag.contains("chestPosZ"))
+        {
+            BlockPos blockPos = new BlockPos(tag.getInt("chestPosX"), tag.getInt("chestPosY"), tag.getInt("chestPosZ"));
+
+            this.setPostChestLocation(blockPos);
 
 //            this.entityData.set(DATA_POSE, Pose.SLEEPING);
 //
@@ -489,11 +565,124 @@ public class FairyEntity extends FairyEntityBase
 //    }
 
     @Override
+    public void onWanded(Player playerEntity)
+    {
+        clearPostChestLocation();
+        this.FROM_LIST = new ArrayList<>();
+        this.TO_LIST = new ArrayList<>();
+        this.entityData.set(TO_POS_SIZE, 0);
+        this.entityData.set(FROM_POS_SIZE, 0);
+        //this.bedPos = null;
+        clearBedLocation();
+
+        setDeliveryMode(false);
+
+        spawnAtLocation(getHeldItem());
+        setHeldItem(ItemStack.EMPTY);
+
+        String n = getActualName(getNamePrefix(), getNameSuffix());
+
+        if (playerEntity.level.isClientSide)
+            playerEntity.displayClientMessage( new TextComponent(n).append(new TranslatableComponent(Loc.FAIRY_CLEARED.get())), false);
+
+        //CommonMethods.sendChat((ServerPlayer) playerEntity, new TranslatableComponent(Loc.FAIRY_CLEARED.get()));
+    }
+
+    @Override
+    public void onFinishedConnectionFirst(@Nullable BlockPos storedPos, @Nullable LivingEntity storedEntity, Player playerEntity)
+    {
+        if (storedPos == null)
+            return;
+
+        String n = getActualName(getNamePrefix(), getNameSuffix());
+
+        if(posted())
+        {
+            if (level.getBlockEntity(storedPos) != null && isChestContainer(storedPos, level))
+            {
+                if(getDeliveryMode())
+                {
+                    CommonMethods.sendChat((ServerPlayer) playerEntity, new TextComponent(n).append(new TranslatableComponent(Loc.FAIRY_STORE.get())));
+                    setToPos(storedPos);
+                }
+                else
+                {
+                    CommonMethods.sendChat((ServerPlayer) playerEntity, new TextComponent(n).append(new TranslatableComponent(Loc.FAIRY_STORE_AND_TAKE.get())));
+                    setPostChestLocation(storedPos);
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public void onFinishedConnectionFirst(@Nullable Entity storedEntityPos, @Nullable LivingEntity storedEntity, Player playerEntity)
+    {
+        if(posted())
+        {
+            if(storedEntityPos instanceof FairyBedEntity)
+            {
+
+                FairyBedEntity fairyBedEntity = (FairyBedEntity) storedEntityPos;
+
+                String n = getActualName(getNamePrefix(), getNameSuffix());
+
+                if (playerEntity.level.isClientSide)
+                    playerEntity.displayClientMessage( new TranslatableComponent(Loc.FAIRY_SET_BED.get()).append(new TextComponent(n)), false);
+
+                fairyBedEntity.setFairyOwner(n);
+                setBedLocation(storedEntityPos.blockPosition());
+            }
+        }
+    }
+
+    public boolean isChestContainer(@Nullable BlockPos storedPos, Level level)
+    {
+        return level.getBlockEntity(storedPos) instanceof ChestBlockEntity;
+    }
+
+    @Override
+    public void onFinishedConnectionLast(@Nullable BlockPos storedPos, @Nullable LivingEntity storedEntity, Player playerEntity)
+    {
+        if(posted())
+        {
+            if (storedPos == null)
+                return;
+
+            String n = getActualName(getNamePrefix(), getNameSuffix());
+
+            if (level.getBlockEntity(storedPos) != null && isChestContainer(storedPos, level))
+            {
+
+                if(getDeliveryMode())
+                {
+                    //CommonMethods.sendChat((ServerPlayer) playerEntity, new TranslatableComponent(Loc.FAIRY_TAKE.get()));
+
+                    if (playerEntity.level.isClientSide)
+                        playerEntity.displayClientMessage(new TextComponent(n).append(new TranslatableComponent(Loc.FAIRY_TAKE.get())), false);
+
+                    setFromPos(storedPos);
+                }
+                else
+                {
+                    //CommonMethods.sendChat((ServerPlayer) playerEntity, new TranslatableComponent(Loc.FAIRY_CANT_ASSIGN_TAKE_CHEST.get()));
+
+                    if (playerEntity.level.isClientSide)
+                        playerEntity.displayClientMessage(new TranslatableComponent(Loc.FAIRY_CANT_ASSIGN_TAKE_CHEST.get()), false);
+
+                    return;
+                }
+            }
+        }
+    }
+
+    @Override
     public void tick() {
         super.tick();
         //_dump_();
 
-        if (this.createGroup) {
+        if (this.createGroup)
+        {
 
             createGroup = false;
             int i = (int) Math.floor(position().x);
@@ -504,11 +693,15 @@ public class FairyEntity extends FairyEntityBase
                     FairyConfigValues.SPAWN_FACTION_MIN_SIZE,
                     FairyConfigValues.SPAWN_FACTION_MAX_SIZE,
                     getFaction());
-            if (group.generate(level, random, i, j, k)) {
+            if (group.generate(level, random, i, j, k))
+            {
                 // This is good.
-            } else {
+            }
+            else
+            {
                 // issue a kill
-                if (!level.isClientSide) {
+                if (!level.isClientSide)
+                {
                     //FairyFactions.proxy.sendFairyDespawn(this);
                     this.discard();
                 }
@@ -704,6 +897,11 @@ public class FairyEntity extends FairyEntityBase
                     //SmokeParticle s = new SmokeParticle(level, a, b, c,0D, 0D, 0D, 1.0F);
                     this.level.addParticle(ParticleTypes.SMOKE, a, b, c, 0D, 0D, 0D);
                 }
+
+                if(posted() && getDeliveryMode())
+                {
+                    this.level.addParticle(ParticleTypes.AMBIENT_ENTITY_EFFECT, this.getRandomX(0.5D), this.getRandomY() - 0.25D, this.getRandomZ(0.5D), (random.nextDouble() - 0.5D) * 2.0D, -random.nextDouble(), (random.nextDouble() - 0.5D) * 2.0D);
+                }
             }
 
             // NB: this was only on the client in the original
@@ -823,7 +1021,7 @@ public class FairyEntity extends FairyEntityBase
     public void aiStep()
     {
         super.aiStep();
-        setHeldItem(MAIN_FAIRY_HAND);
+        setHeldFairyItem(MAIN_FAIRY_HAND);
     }
 
     @Override
@@ -856,7 +1054,7 @@ public class FairyEntity extends FairyEntityBase
             this.flyTime--;
         }
 
-        if (this.requestFoodTime > 0)
+        if (posted() && this.requestFoodTime > 0)
         {
             this.requestFoodTime--;
         }
@@ -994,7 +1192,7 @@ public class FairyEntity extends FairyEntityBase
 
         //System.out.println(this + ": " + this.entityData.get(BED_LOCATION).toString());
 
-        if(tamed() && level.isNight() && this.getVehicle() == null)
+        if(tamed() && level.isNight() && this.getVehicle() == null && posted())
         {
             //System.out.println(this.toString() + ": myBed is null");
             setFlymode(false);
@@ -1014,16 +1212,8 @@ public class FairyEntity extends FairyEntityBase
                 return;
             }
 
-            final int m = x;
-            final int n = z;
+            moveToBed();
 
-            for ( int a = 0; a < 9; a++ )
-            {
-                x = m + ((a / 3) % 9) - 1;
-                z = n + (a % 3) - 1;
-
-                findBed( this.level, x, y, z);
-            }
         }
 
         if(tamed() && level.isDay() && getBedLocation().isPresent())
@@ -1050,8 +1240,21 @@ public class FairyEntity extends FairyEntityBase
                 setSitting(false);
                 setSleeping(false);
                 //myBed = null;
-                clearBedLocation();
+                //clearBedLocation();
             }
+        }
+
+        if(!posted() && isEmotional())
+        {
+            setEmotional(false);
+
+            if(queen())
+            {
+                setSitting(false);
+            }
+
+            setWantedFoodItem(Items.AIR);
+            setRequestFoodTime(foodTimerBaseValue + 500);
         }
 
         // fairies run away from players in peaceful
@@ -1076,6 +1279,12 @@ public class FairyEntity extends FairyEntityBase
 
         setCanHeal(this.healTime <= 0);
 
+        if(getHeldItem() != null && !posted())
+        {
+            spawnAtLocation(getHeldItem());
+            setHeldItem(ItemStack.EMPTY);
+        }
+
         //_dump_();
     }
 
@@ -1088,17 +1297,99 @@ public class FairyEntity extends FairyEntityBase
         return Mth.sqrt(f * f + g * g + h * h);
     }
 
-    private void findBed(final Level world, final int x, final int y, final int z )
+    private void moveToBed()
     {
-        setFlymode(false);
+//        if(getBedLocation().isPresent())
+//        {
+//            BlockPos bedPos = getBedLocation().get();
+//            getNavigation().moveTo(bedPos.getX(), bedPos.getY(), bedPos.getZ(), 0.3D);
+//
+//            final List<?> list = level.getEntitiesOfClass(FairyBedEntity.class, getBoundingBox().inflate(5D, 5D, 5D));
+//
+//            boolean foundBed = false;
+//
+//            if (list.size() >= 1)
+//            {
+//                int tries = 0;
+//
+//                for (int t = 0; t < 4; t++)
+//                {
+//                    for (int i = 0; i < list.size(); i++)
+//                    {
+//                        final FairyBedEntity entity1 = (FairyBedEntity) list.get(i);
+//
+//                        if (entity1.getPassengers().size() == 1)
+//                        {
+//                            continue;
+//                        }
+//
+//                        if (entity1.getPassengers().size() == 0)
+//                        {
+////                            if(entity1.distanceToSqr(bedPos.getX(),bedPos.getY(),bedPos.getZ()) <= 0.5)
+////                            {
+////                                //getNavigation().moveTo(bedPos.getX(), bedPos.getY(), bedPos.getZ(), 0.3D);
+////
+////                                if(this.distanceTo(entity1) < 2.1F)//if(myBed != null && this.distanceTo(myBed) < 1.1F)
+////                                {
+////                                    startRiding(entity1);
+////                                    setSitting(true);
+////                                    setSleeping(true);
+////
+////                                    foundBed = true;
+////                                }
+////                            }
+//
+////                            if(entity1.blockPosition() == bedPos)
+////                            {
+////                                //getNavigation().moveTo(bedPos.getX(), bedPos.getY(), bedPos.getZ(), 0.3D);
+////
+////                                if(this.distanceTo(entity1) < 2.1F)//if(myBed != null && this.distanceTo(myBed) < 1.1F)
+////                                {
+////                                    startRiding(entity1);
+////                                    setSitting(true);
+////                                    setSleeping(true);
+////
+////                                    foundBed = true;
+////                                }
+////                            }
+//
+//                            if(Objects.equals(entity1.getFairyOwner(), getActualName(getNamePrefix(), getNameSuffix())))
+//                            {
+//                                getNavigation().moveTo(entity1, 0.3D);
+//
+//                                if(this.distanceTo(entity1) < 2.1F)//if(myBed != null && this.distanceTo(myBed) < 1.1F)
+//                                {
+//                                    startRiding(entity1);
+//                                    setSitting(true);
+//                                    setSleeping(true);
+//
+//                                    foundBed = true;
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    tries++;
+//                }
+//
+//                if(tries == 3)
+//                {
+//                    //clearBedLocation();
+//
+//                    return;
+//                }
+//            }
+//        }
 
-        final BlockPos pos = new BlockPos(x,y,z);
+        final List<?> list = level.getEntitiesOfClass(FairyBedEntity.class, getBoundingBox().inflate(5D, 5D, 5D));
 
-        final List<?> list = world.getEntitiesOfClass(FairyBedEntity.class, getBoundingBox().inflate(5D, 5D, 5D));
+        boolean foundBed = false;
 
-        if(getBedLocation().isEmpty())
+        if (list.size() >= 1)
         {
-            if (list.size() >= 1)
+            int tries = 0;
+
+            for (int t = 0; t < 4; t++)
             {
                 for (int i = 0; i < list.size(); i++)
                 {
@@ -1111,67 +1402,121 @@ public class FairyEntity extends FairyEntityBase
 
                     if (entity1.getPassengers().size() == 0)
                     {
-                        //myBed = entity1;
-                        setBedLocation(entity1.blockPosition());
-                        //return true;
-                    }
-                }
-
-            }
-        }
-        else if(getBedLocation().isPresent())
-        {
-            BlockPos bedPos = getBedLocation().get();
-
-            boolean foundBed = false;
-
-            if (list.size() >= 1)
-            {
-                int tries = 0;
-
-                for (int t = 0; t < 4; t++)
-                {
-                    for (int i = 0; i < list.size(); i++)
-                    {
-                        final FairyBedEntity entity1 = (FairyBedEntity) list.get(i);
-
-                        if (entity1.getPassengers().size() == 1)
+                        if(Objects.equals(entity1.getFairyOwner(), getActualName(getNamePrefix(), getNameSuffix())))
                         {
-                            continue;
-                        }
+                            getNavigation().moveTo(entity1, 0.3D);
 
-                        if (entity1.getPassengers().size() == 0)
-                        {
-                            if(entity1.distanceToSqr(bedPos.getX(),bedPos.getY(),bedPos.getZ()) < 2)
+                            if(this.distanceTo(entity1) < 2.1F)//if(myBed != null && this.distanceTo(myBed) < 1.1F)
                             {
-                                getNavigation().moveTo(bedPos.getX(), bedPos.getY(), bedPos.getZ(), 0.3D);
+                                startRiding(entity1);
+                                setSitting(true);
+                                setSleeping(true);
 
-                                if(this.distanceTo(entity1) < 2.1F)//if(myBed != null && this.distanceTo(myBed) < 1.1F)
-                                {
-                                    startRiding(entity1);
-                                    setSitting(true);
-                                    setSleeping(true);
-
-                                    foundBed = true;
-                                }
+                                foundBed = true;
                             }
                         }
                     }
-
-                    tries++;
                 }
 
-                if(tries == 3)
-                {
-                    clearBedLocation();
-                }
+                tries++;
+            }
+
+            if(tries == 3)
+            {
+                //clearBedLocation();
+
+                return;
             }
         }
-        else
-        {
-            clearBedLocation();
-        }
+
     }
+
+//    private void findBed(final Level world, final int x, final int y, final int z )
+//    {
+//        setFlymode(false);
+//
+//        final BlockPos pos = new BlockPos(x,y,z);
+//
+//        final List<?> list = world.getEntitiesOfClass(FairyBedEntity.class, getBoundingBox().inflate(5D, 5D, 5D));
+//
+////        if(getBedLocation().isEmpty())
+////        {
+////            if (list.size() >= 1)
+////            {
+////                for (int i = 0; i < list.size(); i++)
+////                {
+////                    final FairyBedEntity entity1 = (FairyBedEntity) list.get(i);
+////
+////                    if (entity1.getPassengers().size() == 1)
+////                    {
+////                        continue;
+////                    }
+////
+////                    if (entity1.getPassengers().size() == 0)
+////                    {
+////                        //myBed = entity1;
+////                        setBedLocation(entity1.blockPosition());
+////                        //return true;
+////                    }
+////                }
+////
+////            }
+////        }
+//        if(getBedLocation().isPresent())
+//        {
+//            BlockPos bedPos = getBedLocation().get();
+//
+//            boolean foundBed = false;
+//
+//            if (list.size() >= 1)
+//            {
+//                int tries = 0;
+//
+//                for (int t = 0; t < 4; t++)
+//                {
+//                    for (int i = 0; i < list.size(); i++)
+//                    {
+//                        final FairyBedEntity entity1 = (FairyBedEntity) list.get(i);
+//
+//                        if (entity1.getPassengers().size() == 1)
+//                        {
+//                            continue;
+//                        }
+//
+//                        if (entity1.getPassengers().size() == 0 && entity1.blockPosition() == bedPos)
+//                        {
+//                            if(entity1.distanceToSqr(bedPos.getX(),bedPos.getY(),bedPos.getZ()) < 2)
+//                            {
+//                                //getNavigation().moveTo(bedPos.getX(), bedPos.getY(), bedPos.getZ(), 0.3D);
+//
+//                                if(this.distanceTo(entity1) < 2.1F)//if(myBed != null && this.distanceTo(myBed) < 1.1F)
+//                                {
+//                                    startRiding(entity1);
+//                                    setSitting(true);
+//                                    setSleeping(true);
+//
+//                                    foundBed = true;
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    tries++;
+//                }
+//
+//                if(tries == 3)
+//                {
+//                    //clearBedLocation();
+//
+//                    return;
+//                }
+//            }
+//        }
+////        else
+////        {
+////            clearBedLocation();
+////        }
+//    }
 
     private void setPosToBed(BlockPos blockPos)
     {
@@ -1265,6 +1610,15 @@ public class FairyEntity extends FairyEntityBase
         {
             return new ItemStack(Items.STICK);
         }
+//        else if(getHeldItem() != null || !getHeldItem().isEmpty())
+//        {
+//            return getHeldItem();
+//        }
+
+//        if(getHeldItem() != null || !getHeldItem().isEmpty())
+//        {
+//            return getHeldItem();
+//        }
 
         if (queen()) // Queens always carry the gold/iron sword, guards
                      // always have the wooden sword.
@@ -1293,13 +1647,25 @@ public class FairyEntity extends FairyEntityBase
         }
 
         //return super.getItemInHand(hand);
-        return  ItemStack.EMPTY;
+        //return  ItemStack.EMPTY;
+
+        return getHeldItem();
     }
 
-    public void setHeldItem(InteractionHand hand)
+    public void setHeldFairyItem(InteractionHand hand)
     {
         setItemInHand(hand, getItemInHand(hand));
     }
+
+//    public void setHeldStack(ItemStack stack)
+//    {
+//        this.setItemSlot(EquipmentSlot.MAINHAND, stack == null ? ItemStack.EMPTY : stack);
+//    }
+
+//    public ItemStack getHeldStack()
+//    {
+//        return this.getMainHandItem();
+//    }
 
     //endregion
 
@@ -1410,10 +1776,77 @@ public class FairyEntity extends FairyEntityBase
         return signContains(sign, actualName);
     }
 
+    public boolean mySecondSign(SignBlockEntity sign)
+    {
+        // Converts actual name
+        final String actualName = getActualName(getNamePrefix(), getNameSuffix());
+
+        if( signContains(sign, actualName))
+        {
+            // loops through for all sign lines
+            for (int i = 0; i < 4; i++)
+            {
+                // If the sign's text is messed up or something
+                if (sign.getMessage(i, false) == null)
+                {
+                    return false;
+                }
+
+                // name just has to be included in full on one of the lines.
+                Component text = sign.getMessage(i, true);
+
+//            if(text.getString() != null)
+//                FairyFactions.LOGGER.debug(this.toString()+": " + text.getString());
+
+                if(text.getString().equalsIgnoreCase("Second Post"))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
     public void abandonPost()
     {
+
+        clearPostChestLocation();
+        this.FROM_LIST = new ArrayList<>();
+        this.TO_LIST = new ArrayList<>();
+        this.entityData.set(TO_POS_SIZE, 0);
+        this.entityData.set(FROM_POS_SIZE, 0);
+        //this.bedPos = null;
+        clearBedLocation();
+
+        spawnAtLocation(getHeldItem());
+        setDeliveryMode(false);
+        setHeldItem(ItemStack.EMPTY);
+
         postX = postY = postZ = -1;
+
         setPosted(false);
+
+        String n = getActualName(getNamePrefix(), getNameSuffix());
+        CommonMethods.sendChat((ServerPlayer) ruler, new TextComponent(n).append( new TranslatableComponent(Loc.FAIRY_ABANDON_POST.get())));
+    }
+
+    public void setFromPos(BlockPos fromPos)
+    {
+        if (!this.FROM_LIST.contains(fromPos))
+            this.FROM_LIST.add(fromPos.immutable());
+
+        this.entityData.set(FROM_POS_SIZE, FROM_LIST.size());
+    }
+
+    public void setToPos(BlockPos toPos)
+    {
+        if (!this.TO_LIST.contains(toPos))
+            this.TO_LIST.add(toPos.immutable());
+
+        this.entityData.set(TO_POS_SIZE, TO_LIST.size());
     }
 
     //endregion
@@ -1481,6 +1914,14 @@ public class FairyEntity extends FairyEntityBase
         return FairyUtils.faction_colors[faction] + "<" + FairyUtils.faction_names[faction] + ">";
     }
 
+    public MutableComponent getFactionNameComponent(int faction)
+    {
+        if (getFaction() < 0 || getFaction() > MAX_FACTION)
+            return new TextComponent("Error-faction");
+
+        return new TextComponent(FairyUtils.faction_colors[faction]).withStyle(FairyUtils.faction_colors_formatting[getFaction()]).append("<").append(new TranslatableComponent(FairyUtils.faction_names[faction]).append(">"));
+    }
+
     @Override
     public Component getDisplayName()
     {
@@ -1497,9 +1938,11 @@ public class FairyEntity extends FairyEntityBase
             }
             else
             {
+
                 Component factionName = new TextComponent(getFactionName(getFaction()));
 
-                return factionName;
+                //return factionName;
+                return getFactionNameComponent(getFaction());
             }
         }
         else if (tamed())
@@ -1517,7 +1960,7 @@ public class FairyEntity extends FairyEntityBase
 
             if (isRuler(ClientMethods.getCurrentPlayer()))
             {
-                name = new TextComponent(( posted() ? "§a" : "§c") + "@§f").append(new TranslatableComponent(q)).append(woosh).append(( posted() ? "§a" : "§c") + "@");
+                name = new TextComponent(( posted() ? "§a" : "§c") + "@").append(getDeliveryMode() ? "§b§l§o * §f" : "").append(new TranslatableComponent(q)).append(woosh).append(( posted() ? "§a" : "§c") + "@");
             }
             else
             {
@@ -1847,6 +2290,13 @@ public class FairyEntity extends FairyEntityBase
         super.setTarget(entity);
     }
 
+    public void clear(ItemStack stack, Player player)
+    {
+        FairyWandItem.FairyWandData data = new FairyWandItem.FairyWandData(stack);
+        data.setStoredPos(null);
+        data.setStoredEntityID(-1);
+    }
+
     /* TAMEABLE */
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand)
@@ -1864,189 +2314,22 @@ public class FairyEntity extends FairyEntityBase
 
             if (isRuler(player))
             {
-                if (stack != null && getHealth() < getMaxHealth()
-                        && FairyUtils.acceptableFoods(this, stack)
-                        && stack.getCount() > 0)
+                if(stack.getItem() == ModItems.FAIRY_WAND.get())
                 {
-
-                    // right-clicking sugar or glistering melons will heal
-                    stack.shrink(1);
-
-                    setHearts(!hearts());
-
-                    if (stack.getItem() == Items.SUGAR)
-                    {
-                        heal(5);
-                    }
-                    else
-                    {
-                        heal(99);
-
-                        if (stack.getItem() == Items.GLISTERING_MELON_SLICE)
-                        {
-                            setWithered(false);
-                            witherTime = 0;
-                        }
-                    }
-
-                    return InteractionResult.SUCCESS;
+                    return ModItems.FAIRY_WAND.get().interactLivingWithEntity(stack, player, this, hand);
                 }
-                else if(stack != null && stack.is(getWantedFoodItem()) && stack.getCount() > 0)
+                else if(stack.is(Items.FEATHER))
                 {
                     stack.shrink(1);
-
-                    setHearts(!hearts());
-                    setEmotional(false);
-
-                    if(queen())
-                    {
-                        setSitting(false);
-                    }
-
-                    if(getHealth() < getMaxHealth())
-                    {
-                        if (stack.getItem() == Items.SUGAR)
-                        {
-                            heal(5);
-                        }
-                        else
-                        {
-                            heal(99);
-
-                            if (stack.getItem() == Items.GLISTERING_MELON_SLICE)
-                            {
-                                setWithered(false);
-                                witherTime = 0;
-                            }
-                        }
-                    }
-
-                    setWantedFoodItem(Items.AIR);
-                    setRequestFoodTime(300);
+                    toggleDeliveryMode(player);
 
                     return InteractionResult.SUCCESS;
-                }
-                else if (stack != null && FairyUtils.haircutItem(stack)
-                        && stack.getCount() > 0 && !rogue())
-                {
-                    // right-clicking with shears will toggle haircut on non-rogues
-
-                    setHairType(!hairType());
-                    return InteractionResult.SUCCESS;
-                }
-                else if (stack != null && getVehicle() == null && !isSitting()
-                        && FairyUtils.vileSubstance(stack.getItem())
-                        && stack.getCount() > 0)
-                {
-                    // right-clicking with something nasty will untame
-
-                    this.spawnAtLocation(stack.getItem());
-
-                    stack.shrink(1);
-
-                    disband("(ruler gave vile substance)");
-
-                    return InteractionResult.SUCCESS;
-                }
-                else if (onGround && stack != null
-                        && FairyUtils.namingItem(stack.getItem()) && stack.getCount() > 0)
-                {
-
-                    FairyFactions.LOGGER.info("EntityFairy.interract: consuming paper and setting name enabled");
-
-                    // right-clicking with paper will open the rename gui
-
-                    stack.shrink(1);
-
-                    setSitting(true);
-                    setNameEnabled(true);
-
-                    this.jumping = false;
-                    //this.navigation.stop();
-                    this.getNavigation().moveTo((Path) null, speedModifier);
-                    setTarget(null);
-                    entityFear = null;
-
-                    if(player.level.isClientSide )
-                    {
-                        if (nameEnabled() && tamed())
-                        {
-                            if (!rulerName().equals(""))
-                            {
-                                FairyFactions.LOGGER.info("FairyEntity.tick: calling proxy.openRenameGUI");
-                                ClientMethods.openRenameGUI(this);
-                            }
-                            else
-                            {
-                                FairyFactions.LOGGER.info("FairyEntity.tick: tame but no ruler...");
-                            }
-                        }
-                    }
-
-                    return InteractionResult.sidedSuccess(player.level.isClientSide);
                 }
                 else
                 {
-                    if (isSitting() && !isEmotional())
-                    {
-                        if (stack != null
-                                && FairyUtils.realFreshOysterBars(stack.getItem())
-                                && stack.getCount() > 0)
-                        {
-                            // right-clicking magma cream on seated fairy invokes "hydra"
-                            //hydraFairy();
-                        }
-                        else
-                        {
-                            // right-clicking a seated fairy makes it stand up
-                            setSitting(false);
-                        }
-
-                        return InteractionResult.SUCCESS;
-                    }
-                    else if (player.isShiftKeyDown() && !isEmotional())
-                    {
-
-                        if (flymode() || !onGround)
-                        {
-                            // shift-right-clicking while flying aborts flight
-                            this.flyTime = 0;
-                        }
-                        else
-                        {
-                            // shift-right-clicking otherwise makes fairy sit down
-                            setSitting(true);
-                            jumping = false;
-
-                            this.getNavigation().moveTo((Path) null, speedModifier);
-                            setTarget(null);
-                            entityFear = null;
-                        }
-
-                        return InteractionResult.SUCCESS;
-                    }
-                    else if (stack.isEmpty()
-                            /*(stack == null || !FairyUtils.snowballItem(stack.getItem()))*/
-                            && !player.isShiftKeyDown())
-                    {
-                        // otherwise, right-clicking wears a fairy hat
-
-                        if(isEmotional())
-                        {
-                            return InteractionResult.PASS;
-                        }
-                        else
-                        {
-                            CommonMethods.sendFairyMount(this, player);
-
-                            setFlymode(true);
-                            flyTime = 200;
-                            setCanFlap(true);
-
-                            return InteractionResult.SUCCESS;
-                        }
-                    }
+                    return handleFairyInteractions(player, stack);
                 }
+
             }
             else
             {
@@ -2094,6 +2377,248 @@ public class FairyEntity extends FairyEntityBase
         }
 
         return super.mobInteract(player, hand);
+    }
+
+    private InteractionResult handleFairyInteractions(Player player, ItemStack stack)
+    {
+        if (stack != null && getHealth() < getMaxHealth()
+                && FairyUtils.acceptableFoods(this, stack)
+                && stack.getCount() > 0)
+        {
+
+            // right-clicking sugar or glistering melons will heal
+            stack.shrink(1);
+
+            setHearts(!hearts());
+
+            if (stack.getItem() == Items.SUGAR)
+            {
+                heal(5);
+            }
+            else
+            {
+                heal(99);
+
+                if (stack.getItem() == Items.GLISTERING_MELON_SLICE)
+                {
+                    setWithered(false);
+                    witherTime = 0;
+                }
+            }
+
+            return InteractionResult.PASS;
+        }
+        else if(stack != null && stack.is(getWantedFoodItem()) && stack.getCount() > 0)
+        {
+            stack.shrink(1);
+
+            setHearts(!hearts());
+            setEmotional(false);
+
+            if(queen())
+            {
+                setSitting(false);
+            }
+
+            if(getHealth() < getMaxHealth())
+            {
+                if (stack.getItem() == Items.SUGAR)
+                {
+                    heal(5);
+                }
+                else
+                {
+                    heal(99);
+
+                    if (stack.getItem() == Items.GLISTERING_MELON_SLICE)
+                    {
+                        setWithered(false);
+                        witherTime = 0;
+                    }
+                }
+            }
+
+            setWantedFoodItem(Items.AIR);
+            setRequestFoodTime(foodTimerBaseValue + 500);
+
+            return InteractionResult.SUCCESS;
+        }
+        else if (stack != null && FairyUtils.haircutItem(stack)
+                && stack.getCount() > 0 && !rogue())
+        {
+            // right-clicking with shears will toggle haircut on non-rogues
+
+            setHairType(!hairType());
+            return InteractionResult.SUCCESS;
+        }
+        else if (stack != null && getVehicle() == null && !isSitting()
+                && FairyUtils.vileSubstance(stack.getItem())
+                && stack.getCount() > 0)
+        {
+            // right-clicking with something nasty will untame
+
+            this.spawnAtLocation(stack.getItem());
+
+            stack.shrink(1);
+
+            disband("(ruler gave vile substance)");
+
+            return InteractionResult.SUCCESS;
+        }
+        else if (onGround && stack != null
+                && FairyUtils.namingItem(stack.getItem()) && stack.getCount() > 0)
+        {
+
+            FairyFactions.LOGGER.info("EntityFairy.interract: consuming paper and setting name enabled");
+
+            // right-clicking with paper will open the rename gui
+
+            stack.shrink(1);
+
+            setSitting(true);
+            setNameEnabled(true);
+
+            this.jumping = false;
+            //this.navigation.stop();
+            this.getNavigation().moveTo((Path) null, speedModifier);
+            setTarget(null);
+            entityFear = null;
+
+            if(player.level.isClientSide )
+            {
+                if (nameEnabled() && tamed())
+                {
+                    if (!rulerName().equals(""))
+                    {
+                        FairyFactions.LOGGER.info("FairyEntity.tick: calling proxy.openRenameGUI");
+                        ClientMethods.openRenameGUI(this);
+                    }
+                    else
+                    {
+                        FairyFactions.LOGGER.info("FairyEntity.tick: tame but no ruler...");
+                    }
+                }
+            }
+
+            return InteractionResult.sidedSuccess(player.level.isClientSide);
+        }
+        else
+        {
+            if (isSitting() && !isEmotional())
+            {
+                if (FairyUtils.realFreshOysterBars(stack.getItem()) && stack.getCount() > 0)
+                {
+                    // right-clicking magma cream on seated fairy invokes "hydra"
+                    //hydraFairy();
+                }
+                else
+                {
+                    // right-clicking a seated fairy makes it stand up
+                    setSitting(false);
+                }
+
+                return InteractionResult.SUCCESS;
+            }
+            else if (player.isShiftKeyDown() && !isEmotional() && stack.isEmpty())
+            {
+
+                if (flymode() || !onGround)
+                {
+                    // shift-right-clicking while flying aborts flight
+                    this.flyTime = 0;
+                }
+                else
+                {
+                    // shift-right-clicking otherwise makes fairy sit down
+                    setSitting(true);
+                    jumping = false;
+
+                    this.getNavigation().moveTo((Path) null, speedModifier);
+                    setTarget(null);
+                    entityFear = null;
+                }
+
+                return InteractionResult.SUCCESS;
+            }
+            else if (stack.isEmpty()
+                    /*(stack == null || !FairyUtils.snowballItem(stack.getItem()))*/
+                    && !player.isShiftKeyDown())
+            {
+                // otherwise, right-clicking wears a fairy hat
+
+                if (isEmotional())
+                {
+                    return InteractionResult.PASS;
+                }
+                else
+                {
+                    CommonMethods.sendFairyMount(this, player);
+
+                    setFlymode(true);
+                    flyTime = 200;
+                    setCanFlap(true);
+
+                    return InteractionResult.SUCCESS;
+                }
+            }
+        }
+        return InteractionResult.SUCCESS;
+    }
+
+    public void toggleDeliveryMode(Player player)
+    {
+        //name = new TextComponent(( posted() ? "§a" : "§c") + "@§f").append(new TranslatableComponent(q)).append(woosh).append(( posted() ? "§a" : "§c") + "@");
+        String n = getActualName(getNamePrefix(), getNameSuffix());
+
+        if(posted())
+        {
+            setDeliveryMode(!getDeliveryMode());
+
+            if(getDeliveryMode())
+            {
+
+                if( getPostChestLocation().isPresent())
+                {
+                    clearPostChestLocation();
+
+                    //CommonMethods.sendChat((ServerPlayer) ruler, new TextComponent("Delivery mode toggled on. ").append(new TextComponent(n).append(new TranslatableComponent(Loc.FAIRY_CLEARED.get()))));
+                    //player.displayClientMessage( new TextComponent("Delivery mode toggled on. ").append(new TextComponent(n).append(new TranslatableComponent(Loc.FAIRY_CLEARED.get()))), false);
+                }
+                else
+                {
+                    //.sendChat((ServerPlayer) ruler, new TextComponent("Delivery mode toggled on"));
+                    //player.displayClientMessage( new TextComponent("Delivery mode toggled on"), false);
+                }
+
+            }
+
+            if(!getDeliveryMode())
+            {
+                if((TO_LIST.size() > 0 || FROM_LIST.size() > 0))
+                {
+                    this.FROM_LIST = new ArrayList<>();
+                    this.TO_LIST = new ArrayList<>();
+                    this.entityData.set(TO_POS_SIZE, 0);
+                    this.entityData.set(FROM_POS_SIZE, 0);
+
+                    spawnAtLocation(getHeldItem());
+                    setHeldItem(ItemStack.EMPTY);
+
+                    //CommonMethods.sendChat((ServerPlayer) ruler, new TextComponent("Delivery mode toggled off. ").append(new TextComponent(n).append(new TranslatableComponent(Loc.FAIRY_CLEARED.get()))));
+                    //player.displayClientMessage(new TextComponent("Delivery mode toggled off. ").append(new TextComponent(n).append(new TranslatableComponent(Loc.FAIRY_CLEARED.get()))), false);
+                }
+                else
+                {
+                    //CommonMethods.sendChat((ServerPlayer) ruler, new TextComponent("Delivery mode toggled off"));
+                    //player.displayClientMessage(new TextComponent("Delivery mode toggled off"), false);
+                }
+            }
+        }
+//        else
+//        {
+//            player.displayClientMessage(new TextComponent(n + " is not posted. Assign her a post before toggling delivery mode"), false);
+//        }
+
     }
 
     //region Faction Logic

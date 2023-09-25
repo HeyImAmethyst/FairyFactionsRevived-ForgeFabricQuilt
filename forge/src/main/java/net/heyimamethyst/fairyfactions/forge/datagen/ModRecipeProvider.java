@@ -44,6 +44,13 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
 
 		AddFairyBedRecipies(finishedRecipeConsumer);
 
+		ShapedRecipeBuilder.shaped(ModItems.FAIRY_WAND.get(), 1)
+				.define('#', Items.STICK)
+				.define('W', Items.PINK_STAINED_GLASS)
+				.define('G', Items.GLOWSTONE)
+				.pattern(" WG")
+				.pattern(" #W")
+				.pattern("#  ").unlockedBy("has_stick", has(Items.STICK)).save(finishedRecipeConsumer);
 	}
 
 	private static void AddFairyBedRecipies(Consumer<FinishedRecipe> finishedRecipeConsumer)
