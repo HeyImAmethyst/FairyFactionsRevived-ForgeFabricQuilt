@@ -591,7 +591,7 @@ public class FairyEntity extends FairyEntityBase
         String n = getActualName(getNamePrefix(), getNameSuffix());
 
         if (playerEntity.level.isClientSide)
-            playerEntity.displayClientMessage( new TextComponent(n).append(new TranslatableComponent(Loc.FAIRY_CLEARED.get())), false);
+            playerEntity.displayClientMessage( Component.literal(n).append(Component.translatable(Loc.FAIRY_CLEARED.get())), false);
 
         //CommonMethods.sendChat((ServerPlayer) playerEntity, new TranslatableComponent(Loc.FAIRY_CLEARED.get()));
     }
@@ -610,12 +610,12 @@ public class FairyEntity extends FairyEntityBase
             {
                 if(getDeliveryMode())
                 {
-                    CommonMethods.sendChat((ServerPlayer) playerEntity, new TextComponent(n).append(new TranslatableComponent(Loc.FAIRY_STORE.get())));
+                    CommonMethods.sendChat((ServerPlayer) playerEntity, Component.literal(n).append(Component.translatable(Loc.FAIRY_STORE.get())));
                     setToPos(storedPos);
                 }
                 else
                 {
-                    CommonMethods.sendChat((ServerPlayer) playerEntity, new TextComponent(n).append(new TranslatableComponent(Loc.FAIRY_STORE_AND_TAKE.get())));
+                    CommonMethods.sendChat((ServerPlayer) playerEntity, Component.literal(n).append(Component.translatable(Loc.FAIRY_STORE_AND_TAKE.get())));
                     setPostChestLocation(storedPos);
                 }
             }
@@ -636,7 +636,7 @@ public class FairyEntity extends FairyEntityBase
                 String n = getActualName(getNamePrefix(), getNameSuffix());
 
                 if (playerEntity.level.isClientSide)
-                    playerEntity.displayClientMessage( new TranslatableComponent(Loc.FAIRY_SET_BED.get()).append(new TextComponent(n)), false);
+                    playerEntity.displayClientMessage( Component.translatable(Loc.FAIRY_SET_BED.get()).append(Component.literal(n)), false);
 
                 fairyBedEntity.setFairyOwner(n);
                 setBedLocation(storedEntityPos.blockPosition());
@@ -667,7 +667,7 @@ public class FairyEntity extends FairyEntityBase
                     //CommonMethods.sendChat((ServerPlayer) playerEntity, new TranslatableComponent(Loc.FAIRY_TAKE.get()));
 
                     if (playerEntity.level.isClientSide)
-                        playerEntity.displayClientMessage(new TextComponent(n).append(new TranslatableComponent(Loc.FAIRY_TAKE.get())), false);
+                        playerEntity.displayClientMessage(Component.literal(n).append(Component.translatable(Loc.FAIRY_TAKE.get())), false);
 
                     setFromPos(storedPos);
                 }
@@ -676,7 +676,7 @@ public class FairyEntity extends FairyEntityBase
                     //CommonMethods.sendChat((ServerPlayer) playerEntity, new TranslatableComponent(Loc.FAIRY_CANT_ASSIGN_TAKE_CHEST.get()));
 
                     if (playerEntity.level.isClientSide)
-                        playerEntity.displayClientMessage(new TranslatableComponent(Loc.FAIRY_CANT_ASSIGN_TAKE_CHEST.get()), false);
+                        playerEntity.displayClientMessage(Component.translatable(Loc.FAIRY_CANT_ASSIGN_TAKE_CHEST.get()), false);
 
                     return;
                 }
@@ -1837,7 +1837,7 @@ public class FairyEntity extends FairyEntityBase
         setPosted(false);
 
         String n = getActualName(getNamePrefix(), getNameSuffix());
-        CommonMethods.sendChat((ServerPlayer) ruler, new TextComponent(n).append( new TranslatableComponent(Loc.FAIRY_ABANDON_POST.get())));
+        CommonMethods.sendChat((ServerPlayer) ruler, Component.literal(n).append( Component.translatable(Loc.FAIRY_ABANDON_POST.get())));
     }
 
     public void setFromPos(BlockPos fromPos)
@@ -1924,9 +1924,9 @@ public class FairyEntity extends FairyEntityBase
     public MutableComponent getFactionNameComponent(int faction)
     {
         if (getFaction() < 0 || getFaction() > MAX_FACTION)
-            return new TextComponent("Error-faction");
+            return Component.literal("Error-faction");
 
-        return new TextComponent(FairyUtils.faction_colors[faction]).withStyle(FairyUtils.faction_colors_formatting[getFaction()]).append("<").append(new TranslatableComponent(FairyUtils.faction_names[faction]).append(">"));
+        return Component.literal(FairyUtils.faction_colors[faction]).withStyle(FairyUtils.faction_colors_formatting[getFaction()]).append("<").append(Component.translatable(FairyUtils.faction_names[faction]).append(">"));
     }
 
     @Override
