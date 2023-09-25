@@ -12,21 +12,24 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.animal.*;
+import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.entity.BlastFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+//Parts of chest storing code came from : https://github.com/baileyholl/Ars-Nouveau/blob/main/src/main/java/com/hollingsworth/arsnouveau/common/entity/goal/carbuncle/StarbyTransportBehavior.java
+
 public class FairyJobManager
 {
-
     public static FairyJobManager INSTANCE;
 
     // Will be referenced a lot. It's the fairy who's doing the job
@@ -48,6 +51,8 @@ public class FairyJobManager
 
     public List<FairyJob> fairyJobs = new ArrayList<>();
     public List<FairyMiscAction> fairyMiscActions = new ArrayList<>();
+
+    public List<FairyMiscAction> fairyBasicMiscActions = new ArrayList<>();
 
     public FairyJobManager(final FairyEntity entityfairy )
     {
@@ -83,7 +88,8 @@ public class FairyJobManager
         fairyMiscActions.add(new MiscActionGatherProductFromFurnace(fairy));
         fairyMiscActions.add(new MiscActionGatherProductFromBrewingStand(fairy));
         fairyMiscActions.add(new MiscActionTrimExcessLeaves(fairy));
-        fairyMiscActions.add(new MiscActionBecomeEmotional(fairy));
+
+        fairyBasicMiscActions.add(new MiscActionBecomeEmotional(fairy));
     }
 
     public void discover( final Level world )
@@ -110,7 +116,18 @@ public class FairyJobManager
         }
 
         goodies = getGoodies( world );
-        getNearbyChest2( x, y, z, world );
+
+        //getNearbyChest( x, y, z, world );
+
+        if(fairy.getDeliveryMode())
+        {
+            prepareToDeliver(world);
+        }
+        else if (!fairy.getDeliveryMode())
+        {
+            if(fairy.getPostChestLocation().isPresent())
+                prepareToWork( x, y, z, world );
+        }
     }
 
     public void sittingFishing( final Level world )
@@ -136,55 +153,225 @@ public class FairyJobManager
             return;
         }
 
-        getNearbyChest3( x, y, z, world );
+        //getNearbyChest3( x, y, z, world );
+
+        //getNearbyChest( x, y, z, world );
+
+        if(fairy.getPostChestLocation().isPresent())
+            prepareToFish(x, y, z, world);
     }
 
     public static final int radius = 5;
 
-    private void getNearbyChest2( final int x, final int y, final int z, final Level world )
+//    private void getNearbyChest(final int x, final int y, final int z, final Level world)
+//    {
+//        int i, j, k;
+//
+//        if(fairy.getPostChestLocation().isEmpty())
+//        {
+//            for ( int a = -radius; a <= radius; a++ )
+//            {
+//                for ( int b = -2; b <= 2; b++ )
+//                {
+//                    for ( int c = -radius; c <= radius; c++ )
+//                    {
+//                        i = x + a;
+//                        j = y + b;
+//                        k = z + c;
+//
+//                        final BlockPos pos = new BlockPos(i, j, k);
+//
+//                        if ( world.getBlockState(pos).getBlock() instanceof ChestBlock )
+//                        {
+//                            final BlockEntity blockEntity = world.getBlockEntity(pos);
+//
+//                            if ( blockEntity != null && blockEntity instanceof ChestBlockEntity)
+//                            {
+//                                fairy.setPostChestLocation(pos);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        else if(fairy.getPostChestLocation().isPresent())
+//        {
+//            BlockPos pos = fairy.getPostChestLocation().get();
+//
+//            if ( !(world.getBlockState(pos).getBlock() instanceof ChestBlock) )
+//            {
+//                fairy.clearPostChestLocation();
+//            }
+//            else
+//            {
+//                return;
+//            }
+//
+//        }
+//
+//    }
+
+    private void prepareToWork(final int x, final int y, final int z, final Level world)
     {
-        int i, j, k;
-
-        for ( int a = -radius; a <= radius; a++ )
+        if(fairy.getPostChestLocation().isPresent())
         {
-            for ( int b = -2; b <= 2; b++ )
+            BlockPos pos = fairy.getPostChestLocation().get();
+
+            if ( world.getBlockState(pos).getBlock() instanceof ChestBlock )
             {
-                for ( int c = -radius; c <= radius; c++ )
+                final BlockEntity blockEntity = world.getBlockEntity(pos);
+
+                if ( blockEntity != null && blockEntity instanceof ChestBlockEntity)
                 {
-                    i = x + a;
-                    j = y + b;
-                    k = z + c;
+                    ChestBlockEntity chest = (ChestBlockEntity) blockEntity;
 
-                    final BlockPos pos = new BlockPos(i, j, k);
-
-                    if ( world.getBlockState(pos).getBlock() instanceof ChestBlock )
+                    if ( goodies != null && collectGoodies( chest, world ) )
                     {
-                        final BlockEntity blockEntity = world.getBlockEntity(pos);
+                        fairy.postedCount = 2;
+                        return;
+                    }
 
-                        if ( blockEntity != null && blockEntity instanceof ChestBlockEntity)
+                    for ( int p = 0; p < chest.getContainerSize(); p++ )
+                    {
+                        if ( checkChestItem(chest, p, x, y, z, world ) )
                         {
-                            ChestBlockEntity chest = (ChestBlockEntity) blockEntity;
+                            cleanSlotInChest(chest, p );
+                            fairy.postedCount = 2;
+                            return;
+                        }
+                    }
 
-                            if ( goodies != null && collectGoodies( chest, world ) )
+                    if ( miscActions(chest, x, y, z, world ) )
+                    {
+                        fairy.postedCount = 2;
+                        return;
+                    }
+
+                    if ( basicMiscActions(chest, x, y, z, world ) )
+                    {
+                        fairy.postedCount = 2;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    private void prepareToFish(final int x, final int y, final int z, final Level world)
+    {
+        if(fairy.getPostChestLocation().isPresent())
+        {
+            BlockPos pos = fairy.getPostChestLocation().get();
+
+            if ( world.getBlockState(pos).getBlock() instanceof ChestBlock )
+            {
+                final BlockEntity tent = world.getBlockEntity(pos);
+
+                if ( tent != null && tent instanceof ChestBlockEntity )
+                {
+                    triedBreeding = false;
+                    triedShearing = false;
+                    final ChestBlockEntity chest = (ChestBlockEntity) tent;
+
+                    for ( int p = 0; p < chest.getContainerSize(); p++ )
+                    {
+                        final ItemStack stack = chest.getItem( p );
+
+                        JobFishing fishingJob = (JobFishing) fairyJobs.get(9);
+
+                        if ( stack != null && FairyUtils.isFishingItem( stack )
+                                &&  fishingJob.canRun( stack, x, y, z, world ) )
+                        {
+                            cleanSlotInChest( chest, p );
+                            fairy.postedCount = 2;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    private void prepareToDeliver(final Level world)
+    {
+        boolean chance = FairyUtils.percentChance(fairy, fairy.isEmotional() ? 0.75 : 1.0);
+
+        if(chance)
+        {
+            if(fairy.getHeldItem() == null || fairy.getHeldItem().isEmpty())
+            {
+                BlockPos takeChestDestination = getTakeChestDestination();
+
+                if(takeChestDestination == null)
+                {
+                    return;
+                }
+
+                takeItemFromTakeChest(takeChestDestination, world);
+            }
+
+            if (fairy.getHeldItem() != null || !fairy.getHeldItem().isEmpty())
+            {
+                BlockPos storeChestDestination = getStoreChestDestination(fairy.getHeldItem());
+
+                if(storeChestDestination == null)
+                {
+                    return;
+                }
+
+                storeItemInStoreChest(storeChestDestination, fairy.getHeldItem(), world);
+            }
+        }
+        else
+        {
+            return;
+        }
+    }
+
+    private void takeItemFromTakeChest(BlockPos takeChestDestination, Level world)
+    {
+        ItemStack stackToDeliver;
+
+        if ( world.getBlockState(takeChestDestination).getBlock() instanceof ChestBlock )
+        {
+            final BlockEntity blockEntity = world.getBlockEntity(takeChestDestination);
+
+            if ( blockEntity != null && blockEntity instanceof ChestBlockEntity)
+            {
+                ChestBlockEntity takeChest = (ChestBlockEntity) blockEntity;
+
+                if ( basicMiscActions(takeChest, fairy.getBlockX(), fairy.getBlockY(), fairy.getBlockZ(), world ) )
+                {
+                    fairy.postedCount = 2;
+                    return;
+                }
+                else
+                {
+                    for ( int p = 0; p < takeChest.getContainerSize(); p++ )
+                    {
+
+                        ItemStack stack = takeChest.getItem(p);
+
+                        //&& FairyUtils.doesItemMatchItemInFrameOnChest(fairy, takeChest, stack)
+                        if(!stack.isEmpty() && FairyUtils.doesItemMatchItemInFrameOnChest(fairy, takeChest, stack))
+                        {
+
+                            fairy.getNavigation().moveTo((double)takeChestDestination.getX() + 0.5, takeChestDestination.getY() + 1, (double)takeChestDestination.getZ() + 0.5, 0.3D);
+
+                            if(fairy.blockPosition().closerThan(takeChestDestination, 3D))
                             {
+                                fairy.armSwing( !fairy.didSwing );
+                                fairy.setHeldItem(new ItemStack(stack.getItem(), stack.getCount()));
+                                //fairy.setTempItem(stack.getItem());
+
+                                //cleanSlotInChest(takeChest, p );
+
+                                takeChest.removeItem(p, stack.getCount());
+
                                 fairy.postedCount = 2;
-                                return;
-                            }
 
-                            for ( int p = 0; p < chest.getContainerSize(); p++ )
-                            {
-                                if ( checkChestItem(chest, p, x, y, z, world ) )
-                                {
-                                    cleanSlotInChest(chest, p );
-                                    fairy.postedCount = 2;
-                                    return;
-                                }
-                            }
-
-                            if ( miscActions(chest, x, y, z, world ) )
-                            {
-                                fairy.postedCount = 2;
-                                return;
+                                break;
                             }
                         }
                     }
@@ -193,86 +380,151 @@ public class FairyJobManager
         }
     }
 
-    private void getNearbyChest3( final int x, final int y, final int z, final Level world )
+    private void storeItemInStoreChest(BlockPos storeChestDestination, ItemStack heldStack, Level world)
     {
-        int i, j, k;
-
-        for ( int a = -radius; a <= radius; a++ )
+        if (world.getBlockState(storeChestDestination).getBlock() instanceof ChestBlock)
         {
-            for ( int b = -2; b <= 2; b++ )
+            final BlockEntity blockEntity = world.getBlockEntity(storeChestDestination);
+
+            if (blockEntity != null && blockEntity instanceof ChestBlockEntity)
             {
-                for ( int c = -radius; c <= radius; c++ )
+                ChestBlockEntity storeChest = (ChestBlockEntity) blockEntity;
+
+                if ( basicMiscActions(storeChest, fairy.getBlockX(), fairy.getBlockY(), fairy.getBlockZ(), world ) )
                 {
-                    i = x + a;
-                    j = y + b;
-                    k = z + c;
+                    fairy.postedCount = 2;
+                    return;
+                }
+                else
+                {
+                    fairy.getNavigation().moveTo((double) storeChestDestination.getX() + 0.5, storeChestDestination.getY(), (double) storeChestDestination.getZ() + 0.5, 0.3D);
+                    //fairy.getNavigation().moveTo((double) storeChestDestination.getX(), storeChestDestination.getY(), (double) storeChestDestination.getZ(), 0.3D);
 
-                    final BlockPos pos = new BlockPos( i, j, k );
-
-                    if ( world.getBlockState(pos).getBlock() instanceof ChestBlock )
+                    if(fairy.blockPosition().closerThan(storeChestDestination, 3D))
                     {
-                        final BlockEntity tent = world.getBlockEntity(pos);
+                        final int emptySpace = getEmptySpace(storeChest, heldStack);
 
-                        if ( tent != null && tent instanceof ChestBlockEntity )
+                        if (emptySpace >= 0)
                         {
-                            triedBreeding = false;
-                            triedShearing = false;
-                            final ChestBlockEntity chest = (ChestBlockEntity) tent;
-
-                            for ( int p = 0; p < chest.getContainerSize(); p++ )
-                            {
-                                final ItemStack stack = chest.getItem( p );
-
-                                JobFishing fishingJob = (JobFishing) fairyJobs.get(9);
-
-                                if ( stack != null && FairyUtils.isFishingItem( stack )
-                                        &&  fishingJob.canRun( stack, x, y, z, world ) )
-                                {
-                                    cleanSlotInChest( chest, p );
-                                    fairy.postedCount = 2;
-                                    return;
-                                }
-                            }
+                            storeChest.setItem(emptySpace, heldStack);
                         }
+
+                        fairy.armSwing(!fairy.didSwing);
+                        fairy.setHeldItem(ItemStack.EMPTY);
+                        fairy.setTempItem(null);
+
+                        fairy.postedCount = 2;
+
+                        //return;
                     }
                 }
             }
         }
     }
 
-    public BlastFurnaceBlockEntity getNearbyBlastFurnace( final int x, final int y, final int z, final Level world )
+    public BlockPos getTakeChestDestination()
     {
-        int i, j, k;
+        return getValidTakePos();
+    }
 
-        for ( int a = -radius; a <= radius; a++ )
+    public BlockPos getStoreChestDestination(ItemStack stack)
+    {
+        return getValidStorePos(stack);
+    }
+
+
+    // ---------- Code from https://github.com/baileyholl/Ars-Nouveau/blob/main/src/main/java/com/hollingsworth/arsnouveau/common/entity/goal/carbuncle/StarbyTransportBehavior.java ----------
+
+    public @Nullable BlockPos getValidTakePos()
+    {
+
+        if (fairy.FROM_LIST == null)
+            return null;
+
+        for (BlockPos p : fairy.FROM_LIST)
         {
-            for ( int b = -2; b <= 2; b++ )
-            {
-                for ( int c = -radius; c <= radius; c++ )
-                {
-                    i = x + a;
-                    j = y + b;
-                    k = z + c;
-
-                    final BlockPos pos = new BlockPos(i, j, k);
-
-                    if ( world.getBlockState(pos).getBlock() instanceof BlastFurnaceBlock )
-                    {
-                        final BlockEntity blockEntity = world.getBlockEntity(pos);
-
-                        if ( blockEntity != null && blockEntity instanceof BlastFurnaceBlockEntity)
-                        {
-                            BlastFurnaceBlockEntity blastFurnaceBlockEntity = (BlastFurnaceBlockEntity) blockEntity;
-
-                            return  blastFurnaceBlockEntity;
-                        }
-                    }
-                }
-            }
+            if(isPositionValidTake(p))
+                return p;
         }
 
         return null;
     }
+
+    public boolean isPositionValidTake(BlockPos p)
+    {
+        if(p == null || fairy.level.getBlockEntity(p) == null)
+            return false;
+
+        ChestBlockEntity chestBlockEntity = (ChestBlockEntity) fairy.level.getBlockEntity(p);
+
+        if (chestBlockEntity == null)
+            return false;
+
+        for (int j = 0; j < chestBlockEntity.getContainerSize(); j++)
+        {
+            if (!chestBlockEntity.getItem(j).isEmpty() && isValidItem(chestBlockEntity.getItem(j)) && getValidStorePos(chestBlockEntity.getItem(j)) != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public BlockPos getValidStorePos(ItemStack stack)
+    {
+        if (fairy.TO_LIST == null)
+            return null;
+
+        BlockPos returnPos = null;
+
+        for (BlockPos b : fairy.TO_LIST)
+        {
+//            if(b != null)
+//            {
+//
+//            }
+
+            boolean validStorePos = isValidStorePos(b, stack);
+
+            if(validStorePos)
+                returnPos = b;
+        }
+
+        return returnPos;
+    }
+
+    public boolean isValidStorePos(@Nullable BlockPos b, ItemStack stack)
+    {
+        if(stack == null || stack.isEmpty() || b == null)
+            return false;
+
+        BlockEntity blockEntity = fairy.level.getBlockEntity(b);
+
+        if(blockEntity != null)
+        {
+            return FairyUtils.doesItemMatchItemInFrameOnChest(fairy, blockEntity, stack);
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public boolean isValidItem(ItemStack stack)
+    {
+        if (stack.isEmpty())
+            return false;
+
+        if (getValidStorePos(stack) == null)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    // --------------------
 
     // Actions related to specific items.
     private boolean checkChestItem(ChestBlockEntity chest, int slot, final int x, final int y, final int z, final Level world )
@@ -286,21 +538,26 @@ public class FairyJobManager
                 return false;
             }
 
-            for (FairyJob fairyJob: fairyJobs )
-            {
-                fairyJob.setChest(chest);
-                fairyJob.setItemStack(stack);
+            BlockPos postPos = new BlockPos(fairy.postX, fairy.postY, fairy.postZ);
 
-                if(fairyJob.canRun(stack, x, y, z, world))
+            if (fairy.blockPosition().closerThan(postPos, radius))
+            {
+                for (FairyJob fairyJob: fairyJobs )
+                {
+                    fairyJob.setChest(chest);
+                    fairyJob.setItemStack(stack);
+
+                    if(fairyJob.canRun(stack, x, y, z, world))
+                    {
+                        return true;
+                    }
+                }
+
+                // Snack
+                if (FairyUtils.acceptableFoods(fairy, stack) && snackTime(stack))
                 {
                     return true;
                 }
-            }
-
-            // Snack
-            if (FairyUtils.acceptableFoods(fairy, stack) && snackTime(stack))
-            {
-                return true;
             }
 
             return false;
@@ -367,20 +624,28 @@ public class FairyJobManager
         return false;
     }
 
+    // Misc Actions that dont require a chest.
+    private boolean basicMiscActions( final ChestBlockEntity chest, final int x, final int y, final int z,
+                                 final Level world )
+    {
+
+        for (FairyMiscAction fairyBasicMiscAction: fairyBasicMiscActions )
+        {
+            if(fairyBasicMiscAction.canRun(chest, x, y, z, world) && !fairy.isEmotional())
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     // Remove an itemstack that's been used up.
     private void cleanSlotInChest(final ChestBlockEntity chest, final int p )
     {
         if ( chest.getItem(p) != null && chest.getItem( p ).getItem() == null )
         {
             chest.setItem( p, (ItemStack) null );
-        }
-    }
-
-    public void cleanSlotInBlastFurnace(final BlastFurnaceBlockEntity blastFurnace, final int p )
-    {
-        if ( blastFurnace.getItem(p) != null && blastFurnace.getItem( p ).getItem() == null )
-        {
-            blastFurnace.setItem( p, (ItemStack) null );
         }
     }
 
@@ -604,6 +869,7 @@ public class FairyJobManager
         {
             final ItemEntity entity = (ItemEntity) goodies.get( i );
             final ItemStack stack = entity.getItem();
+
             final int emptySpace = getEmptySpace( chest, stack );
 
             if ( emptySpace >= 0 )
@@ -612,6 +878,19 @@ public class FairyJobManager
                 entity.discard();
                 count++;
             }
+
+//            if (doesItemMatchItemInFrame(chest, stack))
+//            {
+//                final int emptySpace = getEmptySpace( chest, stack );
+//
+//                if ( emptySpace >= 0 )
+//                {
+//                    chest.setItem( emptySpace, stack );
+//                    entity.discard();
+//                    count++;
+//                }
+//            }
+
         }
 
         if (count > 0)
