@@ -114,4 +114,14 @@ public class FairyBedItem extends Item
 
         return InteractionResultHolder.pass(itemStack);
     }
+
+    public FairyBedEntity.LogType getLogType()
+    {
+        return logType;
+    }
+
+    public FairyBedEntity.WoolType getWoolType()
+    {
+        return woolType;
+    }
 }
