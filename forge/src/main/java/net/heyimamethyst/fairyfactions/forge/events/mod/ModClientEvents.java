@@ -59,6 +59,11 @@ public class ModClientEvents
 			event.accept(ModItems.FAIRY_SPAWN_EGG);
 		}
 
+		if(event.getTab() == CreativeModeTabs.TOOLS_AND_UTILITIES)
+		{
+			event.accept(ModItems.FAIRY_WAND);
+		}
+
 		if(event.getTab() == CreativeModeTabs.COLORED_BLOCKS)
 		{
 			for (RegistrySupplier<FairyBedItem> supplier:ModItems.FAIRY_BED_ITEMS.values())
