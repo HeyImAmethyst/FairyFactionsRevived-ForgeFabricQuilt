@@ -11,6 +11,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -34,21 +35,22 @@ public class DataGenerators
 	public static void GatherData(GatherDataEvent event)
 	{
 			DataGenerator generator = event.getGenerator();
-			
+
+			PackOutput packOutput = event.getGenerator().getPackOutput();
 			ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
-			
-			Path outputFolder = generator.getOutputFolder();
-			RegistryAccess registries = RegistryAccess.builtinCopy();
-			RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, registries);
-			Gson gson = new GsonBuilder()
-				.setPrettyPrinting()
-				.create();
+
+//			Path outputFolder = generator.getOutputFolder();
+//			RegistryAccess registries = RegistryAccess.builtinCopy();
+//			RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, registries);
+//			Gson gson = new GsonBuilder()
+//				.setPrettyPrinting()
+//				.create();
 			
 			//generator.addProvider(MakeBuiltinRegistryProvider(MagiThings.MOD_ID, outputFolder, gson, ops, registries, Registry.CONFIGURED_FEATURE_REGISTRY, ConfiguredFeature.DIRECT_CODEC, ArcaneLevelStem.ARCANE));
-			generator.addProvider(event.includeServer(), new ModRecipeProvider(generator));
+			generator.addProvider(event.includeServer(), new ModRecipeProvider(packOutput));
 			//generator.addProvider(new ModLootTableProvider(generator));
 
-			generator.addProvider(event.includeClient(), new ModItemModelProvider(generator, existingFileHelper));
+			generator.addProvider(event.includeClient(), new ModItemModelProvider(packOutput, existingFileHelper));
 			//generator.addProvider(new ModBlockStateProvider(generator, existingFileHelper));
 	}
 }

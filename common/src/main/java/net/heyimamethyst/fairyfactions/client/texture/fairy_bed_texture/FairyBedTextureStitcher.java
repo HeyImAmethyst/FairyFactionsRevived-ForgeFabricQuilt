@@ -4,18 +4,18 @@ package net.heyimamethyst.fairyfactions.client.texture.fairy_bed_texture;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.renderer.texture.StitcherException;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.renderer.texture.Stitcher;
-import net.minecraft.client.renderer.texture.StitcherException;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 
 @Environment(value=EnvType.CLIENT)
 
@@ -60,7 +60,7 @@ public class FairyBedTextureStitcher
         return this.storageY;
     }
 
-    public void registerSprite(TextureAtlasSprite.Info info, int index)
+    public void registerSprite(FairyBedTextureAtlasSprite.Info info, int index)
     {
         Holder holder = new Holder(info, this.mipLevel, index);
         this.texturesToBeStitched.add(holder);
@@ -68,14 +68,15 @@ public class FairyBedTextureStitcher
 
     public void stitch()
     {
-        ArrayList<FairyBedTextureStitcher.Holder> list = Lists.newArrayList(this.texturesToBeStitched);
+        ArrayList<Holder> list = Lists.newArrayList(this.texturesToBeStitched);
         list.sort(HOLDER_COMPARATOR);
         //System.out.println(list);
-        for (FairyBedTextureStitcher.Holder holder2 : list)
+        for (Holder holder2 : list)
         {
             if (this.addToStorage(holder2)) continue;
-            throw new StitcherException(holder2.spriteInfo, list.stream().map(holder -> holder.spriteInfo).collect(ImmutableList.toImmutableList()));
+            throw new ModStitcherException(holder2.spriteInfo, list.stream().map(holder -> holder.spriteInfo).collect(ImmutableList.toImmutableList()));
         }
+
         this.storageX = Mth.smallestEncompassingPowerOfTwo(this.storageX);
         this.storageY = Mth.smallestEncompassingPowerOfTwo(this.storageY);
     }
@@ -87,7 +88,7 @@ public class FairyBedTextureStitcher
             region2.walk(region ->
             {
                 Holder holder = region.getHolder();
-                TextureAtlasSprite.Info info = holder.spriteInfo;
+                FairyBedTextureAtlasSprite.Info info = holder.spriteInfo;
                 spriteLoader.load(info, this.storageX, this.storageY, region.getX(), region.getY());
             });
         }
@@ -156,13 +157,13 @@ public class FairyBedTextureStitcher
     @Environment(value= EnvType.CLIENT)
     static class Holder
     {
-        public final TextureAtlasSprite.Info spriteInfo;
+        public final FairyBedTextureAtlasSprite.Info spriteInfo;
         public int width;
         public int height;
 
         public int index;
 
-        public Holder(TextureAtlasSprite.Info info, int i, int index)
+        public Holder(FairyBedTextureAtlasSprite.Info info, int i, int index)
         {
             this.spriteInfo = info;
             width = smallestFittingMinTexel(info.width(), i);
@@ -190,7 +191,7 @@ public class FairyBedTextureStitcher
             return index;
         }
 
-        public TextureAtlasSprite.Info getSpriteInfo()
+        public FairyBedTextureAtlasSprite.Info getSpriteInfo()
         {
             return spriteInfo;
         }
@@ -313,6 +314,6 @@ public class FairyBedTextureStitcher
     @Environment(value=EnvType.CLIENT)
     public static interface SpriteLoader
     {
-        public void load(TextureAtlasSprite.Info var1, int var2, int var3, int var4, int var5);
+        public void load(FairyBedTextureAtlasSprite.Info var1, int var2, int var3, int var4, int var5);
     }
 }
