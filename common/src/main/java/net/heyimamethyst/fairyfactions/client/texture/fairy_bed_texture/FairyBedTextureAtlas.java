@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.platform.PngInfo;
 import com.mojang.blaze3d.platform.TextureUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
@@ -19,6 +18,7 @@ import net.minecraft.ReportedException;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.texture.*;
 import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
+import net.minecraft.client.resources.metadata.animation.AnimationMetadataSectionSerializer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FairyBedTextureAtlas extends TextureAtlas
+public class FairyBedTextureAtlas extends AbstractTexture implements Tickable
 {
     private static final Logger LOGGER = LogUtils.getLogger();
     @Deprecated
@@ -46,12 +46,12 @@ public class FairyBedTextureAtlas extends TextureAtlas
     private static final String FILE_EXTENSION = ".png";
     private final List<Tickable> animatedTextures = Lists.newArrayList();
     private final Set<ResourceLocation> sprites = Sets.newHashSet();
-    private final Map<ResourceLocation, TextureAtlasSprite> texturesByName = Maps.newHashMap();
+    private final Map<ResourceLocation, FairyBedTextureAtlasSprite> texturesByName = Maps.newHashMap();
     private final ResourceLocation location;
     private final int maxSupportedTextureSize;
 
-    public FairyBedTextureAtlas(ResourceLocation resourceLocation) {
-        super(resourceLocation);
+    public FairyBedTextureAtlas(ResourceLocation resourceLocation)
+    {
         this.location = resourceLocation;
         maxSupportedTextureSize = RenderSystem.maxSupportedTextureSize();
     }
@@ -60,13 +60,13 @@ public class FairyBedTextureAtlas extends TextureAtlas
     public void load(ResourceManager resourceManager) {
     }
 
-    public void reload(TextureAtlas.Preparations preparations) {
+    public void reload(Preparations preparations) {
         this.sprites.clear();
         this.sprites.addAll(preparations.sprites);
         LOGGER.info("Created: {}x{}x{} {}-atlas", preparations.width, preparations.height, preparations.mipLevel, this.location);
         TextureUtil.prepareImage(this.getId(), preparations.mipLevel, preparations.width, preparations.height);
         this.clearTextureData();
-        for (TextureAtlasSprite textureAtlasSprite : preparations.regions) {
+        for (FairyBedTextureAtlasSprite textureAtlasSprite : preparations.regions) {
             this.texturesByName.put(textureAtlasSprite.getName(), textureAtlasSprite);
             try {
                 textureAtlasSprite.uploadFirstFrame();
@@ -83,7 +83,7 @@ public class FairyBedTextureAtlas extends TextureAtlas
         }
     }
 
-    public TextureAtlas.Preparations prepareToStitch(ResourceManager resourceManager, Stream<ResourceLocation> stream, ProfilerFiller profilerFiller, int i) {
+    public Preparations prepareToStitch(ResourceManager resourceManager, Stream<ResourceLocation> stream, ProfilerFiller profilerFiller, int i) {
         int m;
         profilerFiller.push("preparing");
         Set<ResourceLocation> set = stream.peek(resourceLocation -> {
@@ -96,7 +96,7 @@ public class FairyBedTextureAtlas extends TextureAtlas
         int k = Integer.MAX_VALUE;
         int l = 1 << i;
         profilerFiller.popPush("extracting_frames");
-        for (TextureAtlasSprite.Info info2 : this.getBasicSpriteInfos(resourceManager, set)) {
+        for (FairyBedTextureAtlasSprite.Info info2 : this.getBasicSpriteInfos(resourceManager, set)) {
             k = Math.min(k, Math.min(info2.width(), info2.height()));
             m = Math.min(Integer.lowestOneBit(info2.width()), Integer.lowestOneBit(info2.height()));
             if (m < l) {
@@ -165,7 +165,7 @@ public class FairyBedTextureAtlas extends TextureAtlas
             m = i;
         }
         profilerFiller.popPush("register");
-        stitcher.registerSprite(MissingTextureAtlasSprite.info(), 100);
+        stitcher.registerSprite(MissingFairyBedTextureAtlasSprite.info(), 100);
         profilerFiller.popPush("stitching");
         try {
             stitcher.stitch();
@@ -177,9 +177,9 @@ public class FairyBedTextureAtlas extends TextureAtlas
             throw new ReportedException(crashReport);
         }
         profilerFiller.popPush("loading");
-        List<TextureAtlasSprite> list = this.getLoadedSprites(resourceManager, stitcher, m);
+        List<FairyBedTextureAtlasSprite> list = this.getLoadedSprites(resourceManager, stitcher, m);
         profilerFiller.pop();
-        return new TextureAtlas.Preparations(set, stitcher.getWidth(), stitcher.getHeight(), m, list);
+        return new Preparations(set, stitcher.getWidth(), stitcher.getHeight(), m, list);
     }
 
 //    private Collection<TextureAtlasSprite.Info> getBasicSpriteInfos(ResourceManager resourceManager, Set<ResourceLocation> set) {
@@ -212,9 +212,9 @@ public class FairyBedTextureAtlas extends TextureAtlas
 //        return queue;
 //    }
 
-    private Collection<TextureAtlasSprite.Info> getBasicSpriteInfos(ResourceManager resourceManager, Set<ResourceLocation> set) {
+    private Collection<FairyBedTextureAtlasSprite.Info> getBasicSpriteInfos(ResourceManager resourceManager, Set<ResourceLocation> set) {
         List<CompletableFuture<?>> list = Lists.newArrayList();
-        Queue<TextureAtlasSprite.Info> queue = new ConcurrentLinkedQueue();
+        Queue<FairyBedTextureAtlasSprite.Info> queue = new ConcurrentLinkedQueue();
         Iterator var5 = set.iterator();
 
         while(var5.hasNext()) {
@@ -255,16 +255,16 @@ public class FairyBedTextureAtlas extends TextureAtlas
                             return;
                         }
 
-                        AnimationMetadataSection animationMetadataSection;
+                        ModAnimationMetadataSection animationMetadataSection;
                         try {
-                            animationMetadataSection = (AnimationMetadataSection)resource.metadata().getSection(AnimationMetadataSection.SERIALIZER).orElse(AnimationMetadataSection.EMPTY);
+                            animationMetadataSection = (ModAnimationMetadataSection)resource.metadata().getSection(ModAnimationMetadataSection.SERIALIZER).orElse(ModAnimationMetadataSection.EMPTY);
                         } catch (Exception var13) {
                             LOGGER.error("Unable to parse metadata from {} : {}", resourceLocation2, var13);
                             return;
                         }
 
                         Pair<Integer, Integer> pair = animationMetadataSection.getFrameSize(pngInfo.width, pngInfo.height);
-                        TextureAtlasSprite.Info info = new TextureAtlasSprite.Info(resourceLocation, (Integer)pair.getFirst(), (Integer)pair.getSecond(), animationMetadataSection);
+                        FairyBedTextureAtlasSprite.Info info = new FairyBedTextureAtlasSprite.Info(resourceLocation, (Integer)pair.getFirst(), (Integer)pair.getSecond(), animationMetadataSection);
                         queue.add(info);
                     }
                 }, Util.backgroundExecutor()));
@@ -320,16 +320,16 @@ public class FairyBedTextureAtlas extends TextureAtlas
 //        return Lists.newArrayList(queue);
 //    }
 
-    private List<TextureAtlasSprite> getLoadedSprites(ResourceManager resourceManager, FairyBedTextureStitcher stitcher, int i) {
-        Queue<TextureAtlasSprite> queue = new ConcurrentLinkedQueue();
+    private List<FairyBedTextureAtlasSprite> getLoadedSprites(ResourceManager resourceManager, FairyBedTextureStitcher stitcher, int i) {
+        Queue<FairyBedTextureAtlasSprite> queue = new ConcurrentLinkedQueue();
         List<CompletableFuture<?>> list = Lists.newArrayList();
         stitcher.gatherSprites((info, j, k, l, m) -> {
-            if (info == MissingTextureAtlasSprite.info()) {
-                MissingTextureAtlasSprite missingTextureAtlasSprite = MissingTextureAtlasSprite.newInstance(this, i, j, k, l, m);
+            if (info == MissingFairyBedTextureAtlasSprite.info()) {
+                MissingFairyBedTextureAtlasSprite missingTextureAtlasSprite = MissingFairyBedTextureAtlasSprite.newInstance(this, i, j, k, l, m);
                 queue.add(missingTextureAtlasSprite);
             } else {
                 list.add(CompletableFuture.runAsync(() -> {
-                    TextureAtlasSprite textureAtlasSprite = this.load(resourceManager, info, j, k, i, l, m);
+                    FairyBedTextureAtlasSprite textureAtlasSprite = this.load(resourceManager, info, j, k, i, l, m);
                     if (textureAtlasSprite != null) {
                         queue.add(textureAtlasSprite);
                     }
@@ -377,16 +377,16 @@ public class FairyBedTextureAtlas extends TextureAtlas
 //    }
 
     @Nullable
-    private TextureAtlasSprite load(ResourceManager resourceManager, TextureAtlasSprite.Info info, int i, int j, int k, int l, int m) {
+    private FairyBedTextureAtlasSprite load(ResourceManager resourceManager, FairyBedTextureAtlasSprite.Info info, int i, int j, int k, int l, int m) {
         ResourceLocation resourceLocation = this.getResourceLocation(info.name());
 
         try {
             InputStream inputStream = resourceManager.open(resourceLocation);
 
-            TextureAtlasSprite var11;
+            FairyBedTextureAtlasSprite var11;
             try {
                 NativeImage nativeImage = NativeImage.read(inputStream);
-                var11 = new TextureAtlasSprite(this, info, k, i, j, l, m, nativeImage);
+                var11 = new FairyBedTextureAtlasSprite(this, info, k, i, j, l, m, nativeImage);
             } catch (Throwable var13) {
                 if (inputStream != null) {
                     try {
@@ -433,8 +433,8 @@ public class FairyBedTextureAtlas extends TextureAtlas
         }
     }
 
-    public TextureAtlasSprite getSprite(ResourceLocation resourceLocation) {
-        TextureAtlasSprite textureAtlasSprite = this.texturesByName.get(resourceLocation);
+    public FairyBedTextureAtlasSprite getSprite(ResourceLocation resourceLocation) {
+        FairyBedTextureAtlasSprite textureAtlasSprite = this.texturesByName.get(resourceLocation);
         if (textureAtlasSprite == null) {
             return this.texturesByName.get(MissingTextureAtlasSprite.getLocation());
         }
@@ -442,7 +442,7 @@ public class FairyBedTextureAtlas extends TextureAtlas
     }
 
     public void clearTextureData() {
-        for (TextureAtlasSprite textureAtlasSprite : this.texturesByName.values()) {
+        for (FairyBedTextureAtlasSprite textureAtlasSprite : this.texturesByName.values()) {
             textureAtlasSprite.close();
         }
         this.texturesByName.clear();
@@ -453,7 +453,26 @@ public class FairyBedTextureAtlas extends TextureAtlas
         return this.location;
     }
 
-    public void updateFilter(TextureAtlas.Preparations preparations) {
+    public void updateFilter(Preparations preparations)
+    {
         this.setFilter(false, preparations.mipLevel > 0);
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static class Preparations
+    {
+        public final Set<ResourceLocation> sprites;
+        public final int width;
+        public final int height;
+        public final int mipLevel;
+        public final List<FairyBedTextureAtlasSprite> regions;
+
+        public Preparations(Set<ResourceLocation> set, int i, int j, int k, List<FairyBedTextureAtlasSprite> list) {
+            this.sprites = set;
+            this.width = i;
+            this.height = j;
+            this.mipLevel = k;
+            this.regions = list;
+        }
     }
 }

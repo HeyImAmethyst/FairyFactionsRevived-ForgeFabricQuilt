@@ -7,7 +7,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.tags.TagLoader;
 import net.minecraft.world.entity.EntityType;
@@ -34,28 +33,28 @@ public class ModExpectPlatformImpl
         return null;
     }
 
-    public static Iterator<Item> getItemsOfTag(TagKey<Item> tag)
-    {
-        Iterable<Holder<Item>> tags = Registry.ITEM.getTagOrEmpty(tag);
+//    public static Iterator<Item> getItemsOfTag(TagKey<Item> tag)
+//    {
+//        Iterable<Holder<Item>> tags = Registry.ITEM.getTagOrEmpty(tag);
+//
+//        List<Item> items = new ArrayList<>();
+//
+//        while(tags.iterator().hasNext())
+//        {
+//            Item item = tags.iterator().next().value();
+//            items.add(item);
+//        }
+//
+//        return items.iterator();
+//    }
 
-        List<Item> items = new ArrayList<>();
-
-        while(tags.iterator().hasNext())
-        {
-            Item item = tags.iterator().next().value();
-            items.add(item);
-        }
-
-        return items.iterator();
-    }
-
-    public static Potion getStartingPotionFromMix(PotionBrewing.Mix<Potion> potionMix)
-    {
-        return potionMix.from;
-    }
-
-    public static Item getStartingContainerFromMix(PotionBrewing.Mix<Item> potionMix)
-    {
-        return potionMix.from;
-    }
+//    public static Potion getStartingPotionFromMix(PotionBrewing.Mix<Potion> potionMix)
+//    {
+//        return potionMix.from;
+//    }
+//
+//    public static Item getStartingContainerFromMix(PotionBrewing.Mix<Item> potionMix)
+//    {
+//        return potionMix.from;
+//    }
 }

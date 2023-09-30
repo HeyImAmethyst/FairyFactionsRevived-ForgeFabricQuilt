@@ -11,6 +11,7 @@ import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -33,18 +34,18 @@ import java.util.stream.Stream;
 public class ModRecipeProvider extends RecipeProvider implements IConditionBuilder
 {
 
-	public ModRecipeProvider(DataGenerator p_125973_)
+	public ModRecipeProvider(PackOutput p_125973_)
 	{
 		super(p_125973_);
 	}
 
 	@Override
-	protected void buildCraftingRecipes(Consumer<FinishedRecipe> finishedRecipeConsumer)
+	protected void buildRecipes(Consumer<FinishedRecipe> finishedRecipeConsumer)
 	{
 
 		AddFairyBedRecipies(finishedRecipeConsumer);
 
-		ShapedRecipeBuilder.shaped(ModItems.FAIRY_WAND.get(), 1)
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC ,ModItems.FAIRY_WAND.get())
 				.define('#', Items.STICK)
 				.define('W', Items.PINK_STAINED_GLASS)
 				.define('G', Items.GLOWSTONE)
@@ -63,7 +64,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
 
 	protected static RecipeBuilder fairyBedBuilder(ItemLike itemResult, FairyBedEntity.LogType logType, FairyBedEntity.WoolType woolType)
 	{
-		return ShapedRecipeBuilder.shaped(itemResult, 1).group("fairy_bed")
+		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, itemResult).group("fairy_bed")
 				.define('#', ForgeRegistries.ITEMS.getValue(new ResourceLocation(logType.getName() + "_log")))
 				.define('W', ForgeRegistries.ITEMS.getValue(new ResourceLocation(woolType.getName() + "_wool")))
 				.define('G', Items.GLOWSTONE)
@@ -74,6 +75,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
 	
 	protected static SimpleCookingRecipeBuilder cook(ItemLike itemResult, Ingredient ingredient)
 	{
-		return SimpleCookingRecipeBuilder.smelting(ingredient, itemResult, 0.7F, 200).unlockedBy(getHasName(itemResult), has(itemResult));
+		return SimpleCookingRecipeBuilder.smelting(ingredient, RecipeCategory.FOOD, itemResult, 0.7F, 200).unlockedBy(getHasName(itemResult), has(itemResult));
 	}
 }
