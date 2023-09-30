@@ -8,6 +8,7 @@ import com.mojang.math.Axis;
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.client.model.ModModelLayers;
 import net.heyimamethyst.fairyfactions.client.model.entity.fairy_bed.FairyBedModel;
+import net.heyimamethyst.fairyfactions.client.texture.fairy_bed_texture.FairyBedTextureAtlas;
 import net.heyimamethyst.fairyfactions.client.texture.fairy_bed_texture.FairyBedTextureGenerator;
 import net.heyimamethyst.fairyfactions.entities.FairyBedEntity;
 import net.minecraft.client.Minecraft;
@@ -38,7 +39,7 @@ public class FairyBedRenderer extends EntityRenderer<FairyBedEntity>
 {
     //private final Map<FairyBedEntity.Type, Pair<ResourceLocation, FairyBedModel>> fairyBedResources;
     //private final Map<Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType>, Pair<ResourceLocation, FairyBedModel>> fairyBedResources = new HashMap<>();
-    private final Map<Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType>, Pair<TextureAtlas, FairyBedModel>> fairyBedResources = new HashMap<>();
+    private final Map<Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType>, Pair<FairyBedTextureAtlas, FairyBedModel>> fairyBedResources = new HashMap<>();
 
     public FairyBedRenderer(EntityRendererProvider.Context context)
     {
@@ -98,10 +99,10 @@ public class FairyBedRenderer extends EntityRenderer<FairyBedEntity>
 
         Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType> typePair = Pair.of(fairyBed.getFairyBedLogType(), fairyBed.getFairyBedWoolType());
         //Pair<ResourceLocation, FairyBedModel> pair = this.fairyBedResources.get(typePair);
-        Pair<TextureAtlas, FairyBedModel> pair = this.fairyBedResources.get(typePair);
+        Pair<FairyBedTextureAtlas, FairyBedModel> pair = this.fairyBedResources.get(typePair);
 
         //ResourceLocation resourceLocation = pair.getFirst();
-        TextureAtlas textureAtlas = pair.getFirst();
+        FairyBedTextureAtlas textureAtlas = pair.getFirst();
         FairyBedModel fairyBedModel = pair.getSecond();
 
         //poseStack.scale(-1.0f, -1.0f, 1.0f);

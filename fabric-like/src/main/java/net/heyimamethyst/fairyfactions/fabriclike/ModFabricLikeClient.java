@@ -2,7 +2,6 @@ package net.heyimamethyst.fairyfactions.fabriclike;
 
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
-import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.heyimamethyst.fairyfactions.client.model.ModModelLayers;
 import net.heyimamethyst.fairyfactions.client.model.entity.fairy.FairyEyesModel;

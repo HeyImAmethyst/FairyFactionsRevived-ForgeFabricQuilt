@@ -8,6 +8,7 @@ import net.heyimamethyst.fairyfactions.items.ModSpawnEggItem;
 import net.heyimamethyst.fairyfactions.registry.ModItems;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -20,9 +21,9 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 public class ModItemModelProvider extends ItemModelProvider
 {
 
-	public ModItemModelProvider(DataGenerator generator, ExistingFileHelper existingFileHelper)
+	public ModItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper)
 	{
-		super(generator, FairyFactions.MOD_ID, existingFileHelper);
+		super(output, FairyFactions.MOD_ID, existingFileHelper);
 	}
 
 	@Override

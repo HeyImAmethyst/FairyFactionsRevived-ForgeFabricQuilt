@@ -45,15 +45,15 @@ public class ModExpectPlatform {
         throw new AssertionError();
     }
 
-    @ExpectPlatform
-    public static Potion getStartingPotionFromMix(PotionBrewing.Mix<Potion> potionMix)
-    {
-        return null;
-    }
-
-    @ExpectPlatform
-    public static Item getStartingContainerFromMix(PotionBrewing.Mix<Item> potionMix)
-    {
-        return null;
-    }
+//    @ExpectPlatform
+//    public static Potion getStartingPotionFromMix(PotionBrewing.Mix<Potion> potionMix)
+//    {
+//        return null;
+//    }
+//
+//    @ExpectPlatform
+//    public static Item getStartingContainerFromMix(PotionBrewing.Mix<Item> potionMix)
+//    {
+//        return null;
+//    }
 }
