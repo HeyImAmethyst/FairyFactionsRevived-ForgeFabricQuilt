@@ -22,7 +22,7 @@ public abstract class MixinMinecraft
     public void insertFairyBedTextureGenerator(GameConfig gameConfig, CallbackInfo callbackInfo)
     {
         ResourceManagerHelper resourceManagerHelper = ResourceManagerHelper.get(PackType.CLIENT_RESOURCES);
-        resourceManagerHelper.registerReloadListener(new ReloadListenerWrapper<>(
+        resourceManagerHelper.registerReloadListener(new ReloadListenerWrapper(
                 new ResourceLocation("fairyfactions", "fairy_bed_texture_generator"),
                 FairyBedTextureGenerator.INSTANCE
         ));

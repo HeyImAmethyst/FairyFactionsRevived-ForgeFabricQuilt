@@ -1,35 +1,27 @@
 package net.heyimamethyst.fairyfactions.client.texture.fairy_bed_texture;
 
-import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.datafixers.util.Pair;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.heyimamethyst.fairyfactions.entities.FairyBedEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.*;
-import net.minecraft.client.resources.metadata.texture.TextureMetadataSection;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @Environment(value= EnvType.CLIENT)
-public class FairyBedTextureGenerator extends SimplePreparableReloadListener<Map<FairyBedTextureAtlas, TextureAtlas.Preparations>>
+public class FairyBedTextureGenerator extends SimplePreparableReloadListener<Map<FairyBedTextureAtlas, FairyBedTextureAtlas.Preparations>>
         implements AutoCloseable
 {
     //private final TextureAtlas textureAtlas;
@@ -65,20 +57,6 @@ public class FairyBedTextureGenerator extends SimplePreparableReloadListener<Map
 
     protected Stream<ResourceLocation> getResourcesToLoad(FairyBedEntity.LogType logType, FairyBedEntity.WoolType woolType)
     {
-//        Map<Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType>, ResourceLocation> map = new HashMap<>();
-//
-//        for (FairyBedEntity.LogType logType : FairyBedEntity.LogType.values())
-//        {
-//            for (FairyBedEntity.WoolType woolType : FairyBedEntity.WoolType.values())
-//            {
-//                Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType> pair = Pair.of(logType, woolType);
-//                map.put(pair, ModModelLayers.createFairyBedModelName(logType, woolType));
-//            }
-//        }
-//
-//        return Stream.concat(Registry.MOTIVE.keySet().stream(), Stream.of(BACK_SPRITE_LOCATION));
-
-        //return Registry.MOB_EFFECT.keySet().stream();
 
         ArrayList<ResourceLocation> textures = new ArrayList<>();
 
@@ -94,13 +72,13 @@ public class FairyBedTextureGenerator extends SimplePreparableReloadListener<Map
         return textures.stream();
     }
 
-    public TextureAtlasSprite getSprite(ResourceLocation resourceLocation)
+    public FairyBedTextureAtlasSprite getSprite(ResourceLocation resourceLocation)
     {
         //return this.textureAtlas.getSprite(this.resolveLocation(resourceLocation));
 
         if(FAIRY_BED_TEXTURE_ATLASES != null)
         {
-            for (TextureAtlas atlas : FAIRY_BED_TEXTURE_ATLASES.values())
+            for (FairyBedTextureAtlas atlas : FAIRY_BED_TEXTURE_ATLASES.values())
             {
                 return atlas.getSprite(this.resolveLocation(resourceLocation));
                 //return atlas.getSprite(resourceLocation);
@@ -117,7 +95,7 @@ public class FairyBedTextureGenerator extends SimplePreparableReloadListener<Map
         return new ResourceLocation(resourceLocation.getNamespace(), resourceLocation.getPath());
     }
 
-    public static Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType> getKeyByValue(Map<Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType>, FairyBedTextureAtlas> map, TextureAtlas value)
+    public static Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType> getKeyByValue(Map<Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType>, FairyBedTextureAtlas> map, FairyBedTextureAtlas value)
     {
         for (Map.Entry<Pair<FairyBedEntity.LogType, FairyBedEntity.WoolType>, FairyBedTextureAtlas> entry : map.entrySet())
         {

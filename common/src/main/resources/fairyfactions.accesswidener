@@ -3,23 +3,11 @@ accessWidener   v2  named
 accessible field net/minecraft/world/entity/LivingEntity jumping Z
 accessible method net/minecraft/world/entity/projectile/Projectile <init> (Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;)V
 accessible method net/minecraft/server/level/ServerLevel getEntities ()Lnet/minecraft/world/level/entity/LevelEntityGetter;
-accessible field net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity recipeType Lnet/minecraft/world/item/crafting/RecipeType;
 accessible method net/minecraft/world/level/block/CropBlock getAgeProperty ()Lnet/minecraft/world/level/block/state/properties/IntegerProperty;
 accessible field net/minecraft/world/item/alchemy/PotionBrewing POTION_MIXES Ljava/util/List;
 accessible field net/minecraft/world/item/alchemy/PotionBrewing CONTAINER_MIXES Ljava/util/List;
-accessible class net/minecraft/world/item/alchemy/PotionBrewing$Mix
-accessible field net/minecraft/world/item/alchemy/PotionBrewing$Mix from Ljava/lang/Object;
-accessible field net/minecraft/world/item/alchemy/PotionBrewing$Mix to Ljava/lang/Object;
-accessible field net/minecraft/world/item/alchemy/PotionBrewing$Mix ingredient Lnet/minecraft/world/item/crafting/Ingredient;
 accessible method net/minecraft/world/level/block/entity/ChestBlockEntity getItems ()Lnet/minecraft/core/NonNullList;
 accessible field net/minecraft/world/level/block/entity/BrewingStandBlockEntity items Lnet/minecraft/core/NonNullList;
 accessible method net/minecraft/world/level/block/entity/BrewingStandBlockEntity isBrewable (Lnet/minecraft/core/NonNullList;)Z
 accessible class net/minecraft/client/renderer/texture/SimpleTexture$TextureImage
-accessible method net/minecraft/client/renderer/texture/TextureAtlasSprite <init> (Lnet/minecraft/client/renderer/texture/TextureAtlas;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite$Info;IIIIILcom/mojang/blaze3d/platform/NativeImage;)V
-accessible method net/minecraft/client/renderer/texture/SimpleTexture getTextureImage (Lnet/minecraft/server/packs/resources/ResourceManager;)Lnet/minecraft/client/renderer/texture/SimpleTexture$TextureImage;
-accessible field net/minecraft/client/renderer/texture/TextureAtlas$Preparations mipLevel I
-accessible field net/minecraft/client/renderer/texture/TextureAtlas$Preparations regions Ljava/util/List;
-accessible field net/minecraft/client/renderer/texture/TextureAtlas$Preparations width I
-accessible field net/minecraft/client/renderer/texture/TextureAtlas$Preparations height I
-accessible field net/minecraft/client/renderer/texture/TextureAtlas$Preparations sprites Ljava/util/Set;
-accessible field net/minecraft/client/renderer/texture/TextureAtlas maxSupportedTextureSize I
+accessible method net/minecraft/client/renderer/texture/TextureAtlasSprite <init> (Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/client/renderer/texture/SpriteContents;IIII)V

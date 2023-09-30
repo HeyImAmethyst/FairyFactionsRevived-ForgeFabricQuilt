@@ -1,6 +1,5 @@
 package net.heyimamethyst.fairyfactions.util;
 
-import dev.architectury.registry.registries.Registries;
 import net.heyimamethyst.fairyfactions.FairyFactions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -113,8 +112,8 @@ public class NBTUtil {
         return readStrings(tag, prefix).stream().map(ResourceLocation::new).collect(Collectors.toList());
     }
 
-    public static String getItemKey(ItemStack stack, String prefix)
-    {
-        return prefix + Registries.getId(stack.getItem(), (ResourceKey<Registry<Item>>) null).toString();
-    }
+//    public static String getItemKey(ItemStack stack, String prefix)
+//    {
+//        return prefix + Registries.getId(stack.getItem(), (ResourceKey<Registry<Item>>) null).toString();
+//    }
 }
