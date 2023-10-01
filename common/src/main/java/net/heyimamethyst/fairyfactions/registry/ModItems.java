@@ -33,7 +33,7 @@ public class ModItems
             new ModSpawnEggItem(ModEntities.FAIRY_ENTITY, 0xea8fde, 0x8658bf, new Item.Properties()));
 
     public static final RegistrySupplier<FairyWandItem> FAIRY_WAND = ITEMS.register("fairy_wand", () ->
-            new FairyWandItem(new Item.Properties()));
+            new FairyWandItem(new Item.Properties().stacksTo(1)));
 
 //    public static final Map<FairyBedEntity.Type, RegistrySupplier<Item>> FAIRY_BED_ITEMS = creatFairyBedItemMap();
 //
