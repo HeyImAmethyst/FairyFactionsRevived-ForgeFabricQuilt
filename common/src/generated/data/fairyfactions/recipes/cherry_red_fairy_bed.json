@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "fairy_bed",
+  "key": {
+    "#": {
+      "item": "minecraft:cherry_log"
+    },
+    "G": {
+      "item": "minecraft:glowstone"
+    },
+    "W": {
+      "item": "minecraft:red_wool"
+    }
+  },
+  "pattern": [
+    "###",
+    "#G#",
+    "#W#"
+  ],
+  "result": {
+    "item": "fairyfactions:cherry_red_fairy_bed"
+  },
+  "show_notification": true
+}

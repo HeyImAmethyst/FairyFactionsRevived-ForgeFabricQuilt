@@ -28,5 +28,6 @@
     "recipes": [
       "fairyfactions:jungle_blue_fairy_bed"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

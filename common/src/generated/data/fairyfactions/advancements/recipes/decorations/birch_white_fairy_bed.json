@@ -28,5 +28,6 @@
     "recipes": [
       "fairyfactions:birch_white_fairy_bed"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

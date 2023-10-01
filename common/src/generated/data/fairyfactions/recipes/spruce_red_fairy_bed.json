@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "group": "fairy_bed",
   "key": {
     "#": {
@@ -19,5 +20,6 @@
   ],
   "result": {
     "item": "fairyfactions:spruce_red_fairy_bed"
-  }
+  },
+  "show_notification": true
 }

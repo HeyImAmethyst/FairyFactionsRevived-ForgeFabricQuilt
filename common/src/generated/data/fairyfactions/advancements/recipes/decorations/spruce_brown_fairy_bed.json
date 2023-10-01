@@ -28,5 +28,6 @@
     "recipes": [
       "fairyfactions:spruce_brown_fairy_bed"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }
