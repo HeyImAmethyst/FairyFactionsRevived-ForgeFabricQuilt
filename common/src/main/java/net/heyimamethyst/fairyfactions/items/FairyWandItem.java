@@ -67,7 +67,7 @@ public class FairyWandItem extends Item
         {
             data.setStoredEntityID(target.getId());
 
-            if (playerEntity.level.isClientSide || hand != InteractionHand.MAIN_HAND)
+            if (playerEntity.level().isClientSide || hand != InteractionHand.MAIN_HAND)
                 playerEntity.displayClientMessage(Component.translatable(Loc.FAIRY_WAND_STORED_ENTITY.get()), false);
 
             //CommonMethods.sendChat((ServerPlayer) playerEntity, new TranslatableComponent(Loc.FAIRY_WAND_STORED_ENTITY.get()));
@@ -115,7 +115,7 @@ public class FairyWandItem extends Item
         Vec3 look = playerEntity.getViewVector(0).scale(100);
         Vec3 pos = playerEntity.getPosition(0);
 
-        List<Entity> targets = EntityHelper.rayTraceEntities(playerEntity.level, pos.add(0, playerEntity.getEyeHeight(), 0), look, Optional.of(e -> e != playerEntity), Entity.class);
+        List<Entity> targets = EntityHelper.rayTraceEntities(playerEntity.level(), pos.add(0, playerEntity.getEyeHeight(), 0), look, Optional.of(e -> e != playerEntity), Entity.class);
 
         Entity assumedToBeLookedAt = EntityHelper.getClosest(targets, playerEntity);
 

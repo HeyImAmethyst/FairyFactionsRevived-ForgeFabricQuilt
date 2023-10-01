@@ -452,10 +452,10 @@ public class FairyJobManager
 
     public boolean isPositionValidTake(BlockPos p)
     {
-        if(p == null || fairy.level.getBlockEntity(p) == null)
+        if(p == null || fairy.level().getBlockEntity(p) == null)
             return false;
 
-        ChestBlockEntity chestBlockEntity = (ChestBlockEntity) fairy.level.getBlockEntity(p);
+        ChestBlockEntity chestBlockEntity = (ChestBlockEntity) fairy.level().getBlockEntity(p);
 
         if (chestBlockEntity == null)
             return false;
@@ -499,7 +499,7 @@ public class FairyJobManager
         if(stack == null || stack.isEmpty() || b == null)
             return false;
 
-        BlockEntity blockEntity = fairy.level.getBlockEntity(b);
+        BlockEntity blockEntity = fairy.level().getBlockEntity(b);
 
         if(blockEntity != null)
         {
