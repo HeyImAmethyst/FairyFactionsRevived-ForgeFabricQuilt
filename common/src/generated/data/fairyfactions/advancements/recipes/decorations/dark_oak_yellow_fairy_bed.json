@@ -28,5 +28,6 @@
     "recipes": [
       "fairyfactions:dark_oak_yellow_fairy_bed"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }
