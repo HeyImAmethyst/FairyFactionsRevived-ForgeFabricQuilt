@@ -2,6 +2,7 @@ package net.heyimamethyst.fairyfactions.entities.ai.fairy_job;
 
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.registry.ModItemTags;
+import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -18,6 +19,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlastFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -80,14 +82,19 @@ public class JobSmelt extends FairyJob
 
                 fairy.getNavigation().moveTo(x + 0.5, y, z + 0.5, 0.3D);
 
-                if (populateFuel(blastFurnace, stack))
+                if(blastFurnace.getItem(1).isEmpty())
                 {
-                    return true;
+                    if (BlastFurnaceBlockEntity.isFuel(stack) && populateFuel(blastFurnace, stack))
+                    {
+                        return true;
+                    }
                 }
-
-                if (populateInput(world, blastFurnace, stack))
+                else
                 {
-                    return true;
+                    if (!BlastFurnaceBlockEntity.isFuel(stack) && populateInput(world, blastFurnace, stack))
+                    {
+                        return true;
+                    }
                 }
             }
         }
@@ -97,36 +104,11 @@ public class JobSmelt extends FairyJob
 
     private boolean populateFuel(BlastFurnaceBlockEntity blastFurnace, ItemStack stack)
     {
-        if(BlastFurnaceBlockEntity.isFuel(stack))
+
+        if (stack.getCount() > 0)
         {
-            if (stack.getCount() > 0)
-            {
 
-                ItemStack furnaceStack = blastFurnace.getItem(1);
-                ItemStack itemStackForFurnace = new ItemStack(stack.getItem());
-
-                if(furnaceStack.getCount() == furnaceStack.getMaxStackSize())
-                {
-                    return false;
-                }
-
-                itemStackForFurnace.setCount(furnaceStack.getCount() + stack.getCount());
-
-                blastFurnace.setItem(1, itemStackForFurnace);
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private boolean populateInput(Level world, BlastFurnaceBlockEntity blastFurnace, ItemStack stack)
-    {
-
-        if(stack.is(ModItemTags.ITEM_TO_SMELT))
-        {
-            ItemStack furnaceStack = blastFurnace.getItem(0);
+            ItemStack furnaceStack = blastFurnace.getItem(1);
             ItemStack itemStackForFurnace = new ItemStack(stack.getItem());
 
             if(furnaceStack.getCount() == furnaceStack.getMaxStackSize())
@@ -136,12 +118,63 @@ public class JobSmelt extends FairyJob
 
             itemStackForFurnace.setCount(furnaceStack.getCount() + stack.getCount());
 
-            blastFurnace.setItem(0, itemStackForFurnace);
+            blastFurnace.setItem(1, itemStackForFurnace);
 
             return true;
         }
 
         return false;
+    }
+
+    private boolean populateInput(Level world, BlastFurnaceBlockEntity blastFurnace, ItemStack stack)
+    {
+
+        //Recipe recipe = world.getRecipeManager().getRecipeFor(blastFurnace.recipeType, blastFurnace, world).orElse(null);
+        int i = blastFurnace.getMaxStackSize();
+
+        if(FairyUtils.doesItemMatchItemInFrameOnChest(fairy, blastFurnace, stack))
+        {
+            List<BlastingRecipe> list = world.getRecipeManager().getAllRecipesFor(RecipeType.BLASTING);
+
+            for (BlastingRecipe recipe : list)
+            {
+                if (inputHasRecipe(recipe, stack, i))
+                {
+                    ItemStack furnaceStack = blastFurnace.getItem(0);
+                    ItemStack itemStackForFurnace = new ItemStack(stack.getItem());
+
+                    if (furnaceStack.getCount() == furnaceStack.getMaxStackSize())
+                    {
+                        return false;
+                    }
+
+                    itemStackForFurnace.setCount(furnaceStack.getCount() + stack.getCount());
+
+                    blastFurnace.setItem(0, itemStackForFurnace);
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean inputHasRecipe(@Nullable Recipe<?> recipe, ItemStack input, int i)
+    {
+        if (input.isEmpty() || recipe == null)
+        {
+            return false;
+        }
+
+        ItemStack itemStack = recipe.getResultItem();
+
+        if (itemStack.isEmpty())
+        {
+            return false;
+        }
+
+        return (recipe.getIngredients().get(0).test(input)) && (input.getCount() < itemStack.getMaxStackSize());
     }
 
     @Override
