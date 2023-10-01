@@ -137,7 +137,7 @@ public class JobSmelt extends FairyJob
 
             for (BlastingRecipe recipe : list)
             {
-                if (inputHasRecipe(recipe, stack, i))
+                if (inputHasRecipe(world, recipe, stack, i))
                 {
                     ItemStack furnaceStack = blastFurnace.getItem(0);
                     ItemStack itemStackForFurnace = new ItemStack(stack.getItem());
@@ -159,14 +159,14 @@ public class JobSmelt extends FairyJob
         return false;
     }
 
-    private static boolean inputHasRecipe(@Nullable Recipe<?> recipe, ItemStack input, int i)
+    private static boolean inputHasRecipe(Level level, @Nullable Recipe<?> recipe, ItemStack input, int i)
     {
         if (input.isEmpty() || recipe == null)
         {
             return false;
         }
 
-        ItemStack itemStack = recipe.getResultItem();
+        ItemStack itemStack = recipe.getResultItem(level.registryAccess());
 
         if (itemStack.isEmpty())
         {
