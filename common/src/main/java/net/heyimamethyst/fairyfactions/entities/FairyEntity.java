@@ -590,7 +590,7 @@ public class FairyEntity extends FairyEntityBase
 
         String n = getActualName(getNamePrefix(), getNameSuffix());
 
-        if (playerEntity.level.isClientSide)
+        if (playerEntity.level().isClientSide)
             playerEntity.displayClientMessage( Component.literal(n).append(Component.translatable(Loc.FAIRY_CLEARED.get())), false);
 
         //CommonMethods.sendChat((ServerPlayer) playerEntity, new TranslatableComponent(Loc.FAIRY_CLEARED.get()));
@@ -606,7 +606,7 @@ public class FairyEntity extends FairyEntityBase
 
         if(posted())
         {
-            if (level.getBlockEntity(storedPos) != null && isChestContainer(storedPos, level))
+            if (level().getBlockEntity(storedPos) != null && isChestContainer(storedPos, level()))
             {
                 if(getDeliveryMode())
                 {
@@ -635,7 +635,7 @@ public class FairyEntity extends FairyEntityBase
 
                 String n = getActualName(getNamePrefix(), getNameSuffix());
 
-                if (playerEntity.level.isClientSide)
+                if (playerEntity.level().isClientSide)
                     playerEntity.displayClientMessage( Component.translatable(Loc.FAIRY_SET_BED.get()).append(Component.literal(n)), false);
 
                 fairyBedEntity.setFairyOwner(n);
@@ -659,14 +659,14 @@ public class FairyEntity extends FairyEntityBase
 
             String n = getActualName(getNamePrefix(), getNameSuffix());
 
-            if (level.getBlockEntity(storedPos) != null && isChestContainer(storedPos, level))
+            if (level().getBlockEntity(storedPos) != null && isChestContainer(storedPos, level()))
             {
 
                 if(getDeliveryMode())
                 {
                     //CommonMethods.sendChat((ServerPlayer) playerEntity, new TranslatableComponent(Loc.FAIRY_TAKE.get()));
 
-                    if (playerEntity.level.isClientSide)
+                    if (playerEntity.level().isClientSide)
                         playerEntity.displayClientMessage(Component.literal(n).append(Component.translatable(Loc.FAIRY_TAKE.get())), false);
 
                     setFromPos(storedPos);
@@ -675,7 +675,7 @@ public class FairyEntity extends FairyEntityBase
                 {
                     //CommonMethods.sendChat((ServerPlayer) playerEntity, new TranslatableComponent(Loc.FAIRY_CANT_ASSIGN_TAKE_CHEST.get()));
 
-                    if (playerEntity.level.isClientSide)
+                    if (playerEntity.level().isClientSide)
                         playerEntity.displayClientMessage(Component.translatable(Loc.FAIRY_CANT_ASSIGN_TAKE_CHEST.get()), false);
 
                     return;
@@ -1389,7 +1389,7 @@ public class FairyEntity extends FairyEntityBase
 //            }
 //        }
 
-        final List<?> list = level.getEntitiesOfClass(FairyBedEntity.class, getBoundingBox().inflate(5D, 5D, 5D));
+        final List<?> list = level().getEntitiesOfClass(FairyBedEntity.class, getBoundingBox().inflate(5D, 5D, 5D));
 
         boolean foundBed = false;
 
@@ -1781,40 +1781,6 @@ public class FairyEntity extends FairyEntityBase
         // Converts actual name
         final String actualName = getActualName(getNamePrefix(), getNameSuffix());
         return signContains(sign, actualName);
-    }
-
-    public boolean mySecondSign(SignBlockEntity sign)
-    {
-        // Converts actual name
-        final String actualName = getActualName(getNamePrefix(), getNameSuffix());
-
-        if( signContains(sign, actualName))
-        {
-            // loops through for all sign lines
-            for (int i = 0; i < 4; i++)
-            {
-                // If the sign's text is messed up or something
-                if (sign.getMessage(i, false) == null)
-                {
-                    return false;
-                }
-
-                // name just has to be included in full on one of the lines.
-                Component text = sign.getMessage(i, true);
-
-//            if(text.getString() != null)
-//                FairyFactions.LOGGER.debug(this.toString()+": " + text.getString());
-
-                if(text.getString().equalsIgnoreCase("Second Post"))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        return false;
     }
 
     public void abandonPost()
@@ -2346,7 +2312,7 @@ public class FairyEntity extends FairyEntityBase
             {
                 // faction members can be tamed in peaceful
                 if (( getFaction() == 0
-                        || level.getDifficulty() == Difficulty.PEACEFUL )
+                        || level().getDifficulty() == Difficulty.PEACEFUL )
                         && !( (queen() || posted() || tamed()) && tamed()) && !crying()
                         && !angry() && stack != null
                         && FairyUtils.acceptableFoods(this, stack)

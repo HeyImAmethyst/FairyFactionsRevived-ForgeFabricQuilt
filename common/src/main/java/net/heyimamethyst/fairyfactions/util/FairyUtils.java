@@ -503,7 +503,7 @@ public class FairyUtils
 
     public static boolean doesItemMatchItemInFrameOnChest(FairyEntity fairy, BlockEntity tile, ItemStack stack)
     {
-        List<ItemFrame> list = fairy.level.getEntitiesOfClass(ItemFrame.class, new AABB(tile.getBlockPos()).inflate(1));
+        List<ItemFrame> list = fairy.level().getEntitiesOfClass(ItemFrame.class, new AABB(tile.getBlockPos()).inflate(1));
 
         if(list == null || list.size() == 0)
         {
@@ -514,7 +514,7 @@ public class FairyUtils
             for (ItemFrame i : list)
             {
                 // Check if these frames are attached to the tile
-                BlockEntity adjTile = fairy.level.getBlockEntity(i.blockPosition().relative(i.getDirection().getOpposite()));
+                BlockEntity adjTile = fairy.level().getBlockEntity(i.blockPosition().relative(i.getDirection().getOpposite()));
 
                 if (adjTile == null || !adjTile.equals(tile))
                     continue;
