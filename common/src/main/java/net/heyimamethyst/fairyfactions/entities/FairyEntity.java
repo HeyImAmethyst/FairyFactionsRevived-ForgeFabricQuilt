@@ -1527,10 +1527,18 @@ public class FairyEntity extends FairyEntityBase
 
         postX = postY = postZ = -1;
 
-        setPosted(false);
+        if (posted())
+        {
+            String n = getActualName(getNamePrefix(), getNameSuffix());
+            //CommonMethods.sendChat((ServerPlayer) ruler, Component.literal(n).append( Component.translatable(Loc.FAIRY_ABANDON_POST.get())));
 
-        String n = getActualName(getNamePrefix(), getNameSuffix());
-        CommonMethods.sendChat((ServerPlayer) ruler, Component.literal(n).append( Component.translatable(Loc.FAIRY_ABANDON_POST.get())));
+//            if(ruler != null)
+//                if (ruler.level().isClientSide)
+//                    ((Player)ruler).displayClientMessage(Component.literal(n).append( Component.translatable(Loc.FAIRY_ABANDON_POST.get())), false);
+//
+
+            setPosted(false);
+        }
     }
 
     public void setFromPos(BlockPos fromPos)
@@ -2352,8 +2360,9 @@ public class FairyEntity extends FairyEntityBase
             if (pos != null)
                 this.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
 
-            if (ruler instanceof Player)
+            if (ruler instanceof Player player)
             {
+
                 String name = getActualName(getNamePrefix(), getNameSuffix());
 
                 String queenString = "";
@@ -2403,10 +2412,14 @@ public class FairyEntity extends FairyEntityBase
                 String finalQueenString = queenString;
                 String finalS = s2;
 
-                if (ruler instanceof ServerPlayer)
-                {
-                    CommonMethods.sendChat((ServerPlayer) ruler, Component.translatable(finalQueenString).append(name).append(Component.translatable(finalS)));
-                }
+//                if (player instanceof ServerPlayer)
+//                {
+//                    CommonMethods.sendChat((ServerPlayer) player, Component.translatable(finalQueenString).append(name).append(Component.translatable(finalS)));
+//                }
+
+                if (player.level().isClientSide)
+                    player.displayClientMessage(Component.translatable(finalQueenString).append(name).append(Component.translatable(finalS)), false);
+
             }
         }
 
