@@ -58,29 +58,48 @@ public class CommonMethods
     // Packet that handles fairy mounting.
     public static void sendFairyMount(final Entity rider, final Entity vehicle)
     {
-        final Entity newVehicle;
-
-        if (rider.getVehicle() != null && rider.getVehicle() == vehicle)
-        {
-            newVehicle = null;
-        }
-        else
-        {
-            newVehicle = vehicle;
-        }
+//        final Entity newVehicle;
+//
+//        if (rider.getVehicle() != null && rider.getVehicle() == vehicle)
+//        {
+//            newVehicle = null;
+//        }
+//        else
+//        {
+//            newVehicle = vehicle;
+//        }
 
         //final S1BPacketEntityAttach packet = new S1BPacketEntityAttach(0, rider, newVehicle);
         //sendToAllPlayers(packet);
 
+//        if (!(rider instanceof FishingHook))
+//        {
+//            if(newVehicle != null)
+//            {
+//                rider.startRiding(newVehicle);
+//            }
+//            else
+//            {
+//                //rider.stopRiding();
+//
+//                if(rider.getVehicle() != null)
+//                    rider.stopRiding();
+//            }
+//        }
+
         if (!(rider instanceof FishingHook))
         {
-            if(newVehicle != null)
+
+            if(rider.getVehicle() == null)
             {
-                rider.startRiding(newVehicle);
+                rider.startRiding(vehicle);
             }
             else
             {
-                rider.stopRiding();
+                //rider.stopRiding();
+
+                if(rider.getVehicle() != null)
+                    rider.stopRiding();
             }
         }
     }
