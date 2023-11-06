@@ -402,13 +402,6 @@ public class FairyEntity extends FairyEntityBase
             BlockPos blockPos = new BlockPos(tag.getInt("bedPosX"), tag.getInt("bedPosY"), tag.getInt("bedPosZ"));
 
             this.setBedLocation(blockPos);
-
-//            this.entityData.set(DATA_POSE, Pose.SLEEPING);
-//
-//            if (!this.firstTick)
-//            {
-//                this.setPosToBed(blockPos);
-//            }
         }
 
         if (tag.contains("chestPosX") && tag.contains("chestPosY") && tag.contains("chestPosZ"))
@@ -416,13 +409,6 @@ public class FairyEntity extends FairyEntityBase
             BlockPos blockPos = new BlockPos(tag.getInt("chestPosX"), tag.getInt("chestPosY"), tag.getInt("chestPosZ"));
 
             this.setPostChestLocation(blockPos);
-
-//            this.entityData.set(DATA_POSE, Pose.SLEEPING);
-//
-//            if (!this.firstTick)
-//            {
-//                this.setPosToBed(blockPos);
-//            }
         }
 
         if (!this.level.isClientSide)
@@ -436,14 +422,6 @@ public class FairyEntity extends FairyEntityBase
     public void onSyncedDataUpdated(EntityDataAccessor<?> entityDataAccessor)
     {
         super.onSyncedDataUpdated(entityDataAccessor);
-
-//        if (BED_LOCATION.equals(entityDataAccessor))
-//        {
-//            if (this.level.isClientSide)
-//            {
-//                this.getBedLocation().ifPresent(this::setPosToBed);
-//            }
-//        }
     }
 
     public static AttributeSupplier.Builder createAttributes()
@@ -1181,68 +1159,16 @@ public class FairyEntity extends FairyEntityBase
             }
         }
 
-        ++listActions;
-
-        if (listActions >= 8)
-        {
-            listActions = this.getRandom().nextInt(3);
-
-            fairyBehavior.handleRuler();
-        }
+//        ++listActions;
+//
+//        if (listActions >= 8)
+//        {
+//            listActions = this.getRandom().nextInt(3);
+//
+//            fairyBehavior.handleRuler();
+//        }
 
         //System.out.println(this + ": " + this.entityData.get(BED_LOCATION).toString());
-
-        if(tamed() && level.isNight() && this.getVehicle() == null && posted())
-        {
-            //System.out.println(this.toString() + ": myBed is null");
-            setFlymode(false);
-
-            int x = (int)Math.floor( this.position().x );
-            int y = (int)Math.floor( this.getBoundingBox().minY );
-
-            if ( this.flymode() )
-            {
-                y--;
-            }
-
-            int z = (int)Math.floor( this.position().z );
-
-            if ( y < 0 || y >= this.level.getHeight() )
-            {
-                return;
-            }
-
-            moveToBed();
-
-        }
-
-        if(tamed() && level.isDay() && getBedLocation().isPresent())
-        {
-            if(this.getVehicle() != null && this.getVehicle() instanceof FairyBedEntity)
-            {
-                stopRiding();
-            }
-
-            setSitting(false);
-            setSleeping(false);
-        }
-
-        if(tamed() && isSleeping())
-        {
-            if(flymode())
-                setFlymode(false);
-
-            if(!isSitting())
-                setSitting(true);
-
-            if(this.getVehicle() == null)
-            {
-                setSitting(false);
-                setSleeping(false);
-                //myBed = null;
-                //clearBedLocation();
-            }
-        }
 
         if(!posted() && isEmotional())
         {
@@ -1296,227 +1222,6 @@ public class FairyEntity extends FairyEntityBase
 
         return Mth.sqrt(f * f + g * g + h * h);
     }
-
-    private void moveToBed()
-    {
-//        if(getBedLocation().isPresent())
-//        {
-//            BlockPos bedPos = getBedLocation().get();
-//            getNavigation().moveTo(bedPos.getX(), bedPos.getY(), bedPos.getZ(), 0.3D);
-//
-//            final List<?> list = level.getEntitiesOfClass(FairyBedEntity.class, getBoundingBox().inflate(5D, 5D, 5D));
-//
-//            boolean foundBed = false;
-//
-//            if (list.size() >= 1)
-//            {
-//                int tries = 0;
-//
-//                for (int t = 0; t < 4; t++)
-//                {
-//                    for (int i = 0; i < list.size(); i++)
-//                    {
-//                        final FairyBedEntity entity1 = (FairyBedEntity) list.get(i);
-//
-//                        if (entity1.getPassengers().size() == 1)
-//                        {
-//                            continue;
-//                        }
-//
-//                        if (entity1.getPassengers().size() == 0)
-//                        {
-////                            if(entity1.distanceToSqr(bedPos.getX(),bedPos.getY(),bedPos.getZ()) <= 0.5)
-////                            {
-////                                //getNavigation().moveTo(bedPos.getX(), bedPos.getY(), bedPos.getZ(), 0.3D);
-////
-////                                if(this.distanceTo(entity1) < 2.1F)//if(myBed != null && this.distanceTo(myBed) < 1.1F)
-////                                {
-////                                    startRiding(entity1);
-////                                    setSitting(true);
-////                                    setSleeping(true);
-////
-////                                    foundBed = true;
-////                                }
-////                            }
-//
-////                            if(entity1.blockPosition() == bedPos)
-////                            {
-////                                //getNavigation().moveTo(bedPos.getX(), bedPos.getY(), bedPos.getZ(), 0.3D);
-////
-////                                if(this.distanceTo(entity1) < 2.1F)//if(myBed != null && this.distanceTo(myBed) < 1.1F)
-////                                {
-////                                    startRiding(entity1);
-////                                    setSitting(true);
-////                                    setSleeping(true);
-////
-////                                    foundBed = true;
-////                                }
-////                            }
-//
-//                            if(Objects.equals(entity1.getFairyOwner(), getActualName(getNamePrefix(), getNameSuffix())))
-//                            {
-//                                getNavigation().moveTo(entity1, 0.3D);
-//
-//                                if(this.distanceTo(entity1) < 2.1F)//if(myBed != null && this.distanceTo(myBed) < 1.1F)
-//                                {
-//                                    startRiding(entity1);
-//                                    setSitting(true);
-//                                    setSleeping(true);
-//
-//                                    foundBed = true;
-//                                }
-//                            }
-//                        }
-//                    }
-//
-//                    tries++;
-//                }
-//
-//                if(tries == 3)
-//                {
-//                    //clearBedLocation();
-//
-//                    return;
-//                }
-//            }
-//        }
-
-        final List<?> list = level.getEntitiesOfClass(FairyBedEntity.class, getBoundingBox().inflate(5D, 5D, 5D));
-
-        boolean foundBed = false;
-
-        if (list.size() >= 1)
-        {
-            int tries = 0;
-
-            for (int t = 0; t < 4; t++)
-            {
-                for (int i = 0; i < list.size(); i++)
-                {
-                    final FairyBedEntity entity1 = (FairyBedEntity) list.get(i);
-
-                    if (entity1.getPassengers().size() == 1)
-                    {
-                        continue;
-                    }
-
-                    if (entity1.getPassengers().size() == 0)
-                    {
-                        if(Objects.equals(entity1.getFairyOwner(), getActualName(getNamePrefix(), getNameSuffix())))
-                        {
-                            getNavigation().moveTo(entity1, 0.3D);
-
-                            if(this.distanceTo(entity1) < 2.1F)//if(myBed != null && this.distanceTo(myBed) < 1.1F)
-                            {
-                                startRiding(entity1);
-                                setSitting(true);
-                                setSleeping(true);
-
-                                foundBed = true;
-                            }
-                        }
-                    }
-                }
-
-                tries++;
-            }
-
-            if(tries == 3)
-            {
-                //clearBedLocation();
-
-                return;
-            }
-        }
-
-    }
-
-//    private void findBed(final Level world, final int x, final int y, final int z )
-//    {
-//        setFlymode(false);
-//
-//        final BlockPos pos = new BlockPos(x,y,z);
-//
-//        final List<?> list = world.getEntitiesOfClass(FairyBedEntity.class, getBoundingBox().inflate(5D, 5D, 5D));
-//
-////        if(getBedLocation().isEmpty())
-////        {
-////            if (list.size() >= 1)
-////            {
-////                for (int i = 0; i < list.size(); i++)
-////                {
-////                    final FairyBedEntity entity1 = (FairyBedEntity) list.get(i);
-////
-////                    if (entity1.getPassengers().size() == 1)
-////                    {
-////                        continue;
-////                    }
-////
-////                    if (entity1.getPassengers().size() == 0)
-////                    {
-////                        //myBed = entity1;
-////                        setBedLocation(entity1.blockPosition());
-////                        //return true;
-////                    }
-////                }
-////
-////            }
-////        }
-//        if(getBedLocation().isPresent())
-//        {
-//            BlockPos bedPos = getBedLocation().get();
-//
-//            boolean foundBed = false;
-//
-//            if (list.size() >= 1)
-//            {
-//                int tries = 0;
-//
-//                for (int t = 0; t < 4; t++)
-//                {
-//                    for (int i = 0; i < list.size(); i++)
-//                    {
-//                        final FairyBedEntity entity1 = (FairyBedEntity) list.get(i);
-//
-//                        if (entity1.getPassengers().size() == 1)
-//                        {
-//                            continue;
-//                        }
-//
-//                        if (entity1.getPassengers().size() == 0 && entity1.blockPosition() == bedPos)
-//                        {
-//                            if(entity1.distanceToSqr(bedPos.getX(),bedPos.getY(),bedPos.getZ()) < 2)
-//                            {
-//                                //getNavigation().moveTo(bedPos.getX(), bedPos.getY(), bedPos.getZ(), 0.3D);
-//
-//                                if(this.distanceTo(entity1) < 2.1F)//if(myBed != null && this.distanceTo(myBed) < 1.1F)
-//                                {
-//                                    startRiding(entity1);
-//                                    setSitting(true);
-//                                    setSleeping(true);
-//
-//                                    foundBed = true;
-//                                }
-//                            }
-//                        }
-//                    }
-//
-//                    tries++;
-//                }
-//
-//                if(tries == 3)
-//                {
-//                    //clearBedLocation();
-//
-//                    return;
-//                }
-//            }
-//        }
-////        else
-////        {
-////            clearBedLocation();
-////        }
-//    }
 
     private void setPosToBed(BlockPos blockPos)
     {

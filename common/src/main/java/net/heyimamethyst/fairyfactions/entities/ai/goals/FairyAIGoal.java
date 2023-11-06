@@ -69,7 +69,7 @@ public class FairyAIGoal extends Goal
             }
             else
             {
-                //theFairy.fairyBehavior.handleRuler();
+                theFairy.fairyBehavior.handleRuler();
 
                 if (theFairy.medic())
                 {
@@ -85,6 +85,7 @@ public class FairyAIGoal extends Goal
                 }
 
                 theFairy.fairyBehavior.handlePosted(theFairy.level,true);
+                theFairy.fairyBehavior.handleBed(theFairy.level);
             }
 
         }
