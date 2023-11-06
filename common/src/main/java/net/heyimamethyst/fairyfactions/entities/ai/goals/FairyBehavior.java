@@ -1,6 +1,7 @@
 package net.heyimamethyst.fairyfactions.entities.ai.goals;
 
 import net.heyimamethyst.fairyfactions.FairyConfigValues;
+import net.heyimamethyst.fairyfactions.entities.FairyBedEntity;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.entities.ai.fairy_job.FairyJobManager;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.pathfinder.Path;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class FairyBehavior
 {
@@ -977,6 +979,112 @@ public class FairyBehavior
         {
             new FairyJobManager(theFairy).discover(level);
         }
+    }
+
+    public void handleBed(Level level)
+    {
+        if(theFairy.tamed() && level.isNight() && theFairy.getVehicle() == null && theFairy.posted())
+        {
+            //System.out.println(this.toString() + ": myBed is null");
+            theFairy.setFlymode(false);
+
+            int x = (int)Math.floor( theFairy.position().x );
+            int y = (int)Math.floor( theFairy.getBoundingBox().minY );
+
+            if ( theFairy.flymode() )
+            {
+                y--;
+            }
+
+            int z = (int)Math.floor( theFairy.position().z );
+
+            if ( y < 0 || y >= level.getHeight() )
+            {
+                return;
+            }
+
+            moveToBed(level);
+
+        }
+
+        if(theFairy.tamed() && level.isDay() && theFairy.getBedLocation().isPresent())
+        {
+            if(theFairy.getVehicle() != null && theFairy.getVehicle() instanceof FairyBedEntity)
+            {
+                theFairy.stopRiding();
+            }
+
+            theFairy.setSitting(false);
+            theFairy.setSleeping(false);
+        }
+
+        if(theFairy.tamed() && theFairy.isSleeping())
+        {
+            if(theFairy.flymode())
+                theFairy.setFlymode(false);
+
+            if(!theFairy.isSitting())
+                theFairy.setSitting(true);
+
+            if(theFairy.getVehicle() == null)
+            {
+                theFairy.setSitting(false);
+                theFairy.setSleeping(false);
+                //myBed = null;
+                //clearBedLocation();
+            }
+        }
+    }
+
+    private void moveToBed(Level level)
+    {
+        final List<?> list = level.getEntitiesOfClass(FairyBedEntity.class, theFairy.getBoundingBox().inflate(5D, 5D, 5D));
+
+        boolean foundBed = false;
+
+        if (list.size() >= 1)
+        {
+            int tries = 0;
+
+            for (int t = 0; t < 4; t++)
+            {
+                for (int i = 0; i < list.size(); i++)
+                {
+                    final FairyBedEntity entity1 = (FairyBedEntity) list.get(i);
+
+                    if (entity1.getPassengers().size() == 1)
+                    {
+                        continue;
+                    }
+
+                    if (entity1.getPassengers().size() == 0)
+                    {
+                        if(Objects.equals(entity1.getFairyOwner(), theFairy.getActualName(theFairy.getNamePrefix(), theFairy.getNameSuffix())))
+                        {
+                            theFairy.getNavigation().moveTo(entity1, 0.3D);
+
+                            if(theFairy.distanceTo(entity1) < 2.1F)//if(myBed != null && this.distanceTo(myBed) < 1.1F)
+                            {
+                                theFairy.startRiding(entity1);
+                                theFairy.setSitting(true);
+                                theFairy.setSleeping(true);
+
+                                foundBed = true;
+                            }
+                        }
+                    }
+                }
+
+                tries++;
+            }
+
+            if(tries == 3)
+            {
+                //clearBedLocation();
+                return;
+            }
+        }
+
     }
 
     private boolean isStandingSign(Block block)
