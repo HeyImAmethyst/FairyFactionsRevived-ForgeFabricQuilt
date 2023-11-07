@@ -12,6 +12,7 @@ import net.heyimamethyst.fairyfactions.registry.ModEntities;
 import net.heyimamethyst.fairyfactions.registry.ModItems;
 import net.heyimamethyst.fairyfactions.registry.ModSounds;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
+import net.heyimamethyst.fairyfactions.util.MathUtil;
 import net.heyimamethyst.fairyfactions.util.NBTUtil;
 import net.heyimamethyst.fairyfactions.world.FairyGroupGenerator;
 import net.minecraft.ChatFormatting;
@@ -84,6 +85,8 @@ public class FairyEntity extends FairyEntityBase
     private boolean				cower;
     public boolean				didHearts;
     public boolean				didSwing;
+
+    private boolean             hasFlapped = false;
 
     private boolean				wasFishing;
     public int                  fishingSpeedBonus;
@@ -1006,6 +1009,25 @@ public class FairyEntity extends FairyEntityBase
     public void aiStep()
     {
         super.aiStep();
+
+        if (FairyConfigValues.ENABLE_FAIRY_WING_SOUNDS && flymode())
+        {
+
+            if(!MathUtil.isNegative(Math.sin(sinage)))
+            {
+                if(!hasFlapped)
+                {
+                    this.playSound(ModSounds.FAIRY_FLAP.get(), 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+                    hasFlapped = true;
+                }
+            }
+
+            if(MathUtil.isNegative(Math.sin(sinage)))
+            {
+                hasFlapped = false;
+            }
+        }
+
         setHeldFairyItem(MAIN_FAIRY_HAND);
     }
 
