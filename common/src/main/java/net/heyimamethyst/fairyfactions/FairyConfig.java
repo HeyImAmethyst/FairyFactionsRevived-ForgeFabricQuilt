@@ -47,14 +47,29 @@ public class FairyConfig
 
     public static int DEF_MAX_PARTICLES;
 
-//    public String minSpawnGroupString = "minimum.fairy.spawn.group.size";
-//    public String maxSpawnGroupString = "maximum.fairy.spawn.group.size";
-//    public String baseMaximumHealthString = "base.maximum.health";
-//    public String minSpawnGroupString = "minimum.fairy.spawn.group.size";
-//    public String minSpawnGroupString = "minimum.fairy.spawn.group.size";
-//    public String minSpawnGroupString = "minimum.fairy.spawn.group.size";
-//    public String minSpawnGroupString = "minimum.fairy.spawn.group.size";
-//    public String minSpawnGroupString = "minimum.fairy.spawn.group.size";
+
+    public static boolean ENABLE_FAIRY_WING_SOUNDS;
+
+    public static String minSpawnGroupString = "Minimum.Fairy.Spawn.Group.Size";
+    public static String maxSpawnGroupString = "Maximum.Fairy.Spawn.Group.Size";
+    public static String baseMaximumHealthString = "Base.Maximum.Health";
+    public static String baseMovememtSpeedString = "Base.Move.Speed";
+    public static String scoutMovementSpeedString = "Move.Speed.For.Scouts";
+    public static String witheredMovementSpeedMultString = "Move.Speed.Wither.Mult";
+    public static String pathingRangeString = "Path.Range";
+    public static String pursueRangeMultString = "Pursue.Range.Mult";
+    public static String defendRangeMultString = "Defend.Range.Mult";
+    public static String fearRangeString = "Fear.Range";
+    public static String behaviorAggroTimerString = "BEHAVIOR.AGGRO.TIMER";
+    public static String fallSpeedString = "Fall.Speed";
+    public static String flySpeedString = "Fly.Speed";
+    public static String soloFlapMultString = "DEF.SOLO.FLAP.MULT";
+    public static String liftoffMultString = "DEF.LIFTOFF.MULT";
+    public static String maxParticlesString = "DEF.MAX.PARTICLES";
+    public static String enableAlwaysTeleportString = "Always.Fairy.Teleport";
+    public static String fairyTeleportRangeString = "Always.Fairy.Teleport.Range";
+    public static String baseEmotionalPercentChanceString = "Base.Emotional.Percent.Chance";
+    public static String enableFairyWingSoundsString = "Enable.Fairy.Wing.Sounds";
 
     public static void registerConfigs()
     {
@@ -68,39 +83,57 @@ public class FairyConfig
 
     private static void createConfigs()
     {
-        configs.addKeyValuePair(new Pair<>("minimum.fairy.spawn.group.size", 10), 0, 30, "maximum fairy spawn group size");
-        configs.addKeyValuePair(new Pair<>("maximum.fairy.spawn.group.size", 8), 0, 30, "maximum fairy spawn group size");
+        /**
+         * Spawning behaviors
+         */
 
-        configs.addKeyValuePair(new Pair<>("always.fairy.teleport", true), "whether or not a fairy will always teleport to a player who is its ruler, regardless if the player has an ender pearl");
-        configs.addKeyValuePair(new Pair<>("always.fairy.teleport.range", 6), "the distance between between the fairy and its ruler for teleportation");
+        configs.addComment("Spawning Behaviors");
 
-        configs.addKeyValuePair(new Pair<>("base.emotional.percent.chance", 0.02D), "the percent chance for a fairy to request food");
+        configs.addKeyValuePair(new Pair<>(minSpawnGroupString, 10), 0, 30, "maximum fairy spawn group size");
+        configs.addKeyValuePair(new Pair<>(maxSpawnGroupString, 8), 0, 30, "maximum fairy spawn group size");
 
         /**
          * General fairy stats
          */
 
-        configs.addKeyValuePair(new Pair<>("base.maximum.health", 15.0D), 1F, 40F, "base maximum health");
-        configs.addKeyValuePair(new Pair<>("base.move.speed", 0.9F), 0.1F, 2.0F, "base move health");
-        configs.addKeyValuePair(new Pair<>("move.speed.for.scouts", 1.05F), 0.1F, 2.0F, "move speed for scouts");
-        configs.addKeyValuePair(new Pair<>("move.speed.wither.mult", 0.08F), 0.05F, 0.95F, "multiplier to speed for wither debuff (lower is slower)");
+        configs.addComment("General Fairy Stats");
+
+        configs.addKeyValuePair(new Pair<>(baseMaximumHealthString, 15.0D), 1F, 40F, "base maximum health");
+        configs.addKeyValuePair(new Pair<>(baseMovememtSpeedString, 0.9F), 0.1F, 2.0F, "base move speed");
+        configs.addKeyValuePair(new Pair<>(scoutMovementSpeedString, 1.05F), 0.1F, 2.0F, "move speed for scouts");
+        configs.addKeyValuePair(new Pair<>(witheredMovementSpeedMultString, 0.08F), 0.05F, 0.95F, "multiplier to speed for wither debuff (lower is slower)");
 
         /**
          * Behavior modifiers
          */
 
-        configs.addKeyValuePair(new Pair<>("path.range", 16), 4, 32, "how far will we path to something?");
-        configs.addKeyValuePair(new Pair<>("pursue.range.mult", 1.0F), 0.25F, 2F, "how much farther will we chase something than our normal pathing?");
-        configs.addKeyValuePair(new Pair<>("defend.range.mult", 0.5F),  0.25F, 2F, "how close will guards stay to the queen?");
-        configs.addKeyValuePair(new Pair<>("fear.range", 12F), 4.0F, 32F, "how far will we run away when afraid?");
+        configs.addComment("Behavior Modifiers");
 
-        configs.addKeyValuePair(new Pair<>("BEHAVIOR.AGGRO.TIMER", 15), 1, 100, "how long will tame fairies stay angry? (wild are 3x this)");
+        configs.addKeyValuePair(new Pair<>(pathingRangeString, 16), 4, 32, "how far will we path to something?");
+        configs.addKeyValuePair(new Pair<>(pursueRangeMultString, 1.0F), 0.25F, 2F, "how much farther will we chase something than our normal pathing?");
+        configs.addKeyValuePair(new Pair<>(defendRangeMultString, 0.5F),  0.25F, 2F, "how close will guards stay to the queen?");
+        configs.addKeyValuePair(new Pair<>(fearRangeString, 12F), 4.0F, 32F, "how far will we run away when afraid?");
 
-        configs.addKeyValuePair(new Pair<>("fall.speed", -0.2D), "how much farther will we chase something than our normal pathing?");
-        configs.addKeyValuePair(new Pair<>("fly.speed", 0.15D), "how close will guards stay to the queen?");
-        configs.addKeyValuePair(new Pair<>("DEF.SOLO.FLAP.MULT",  -0.9375D), "bonus to flight while unburdened");
-        configs.addKeyValuePair(new Pair<>("DEF.LIFTOFF.MULT",  2.0D), "bonus to flight when launching");
-        configs.addKeyValuePair(new Pair<>("DEF.MAX.PARTICLES",  5), "max particles");
+        configs.addKeyValuePair(new Pair<>(behaviorAggroTimerString, 15), 1, 100, "how long will tame fairies stay angry? (wild are 3x this)");
+
+        configs.addKeyValuePair(new Pair<>(fallSpeedString, -0.2D), "how much farther will we chase something than our normal pathing?");
+        configs.addKeyValuePair(new Pair<>(flySpeedString, 0.15D), "how close will guards stay to the queen?");
+        configs.addKeyValuePair(new Pair<>(soloFlapMultString,  -0.9375D), "bonus to flight while unburdened");
+        configs.addKeyValuePair(new Pair<>(liftoffMultString,  2.0D), "bonus to flight when launching");
+        configs.addKeyValuePair(new Pair<>(maxParticlesString,  5), "max particles");
+
+        /**
+         * Other settings
+         */
+
+        configs.addComment("Other Settings");
+
+        configs.addKeyValuePair(new Pair<>(enableAlwaysTeleportString, true), "whether or not a fairy will always teleport to a player who is its ruler, regardless if the player has an ender pearl");
+        configs.addKeyValuePair(new Pair<>(fairyTeleportRangeString, 6), "the distance between between the fairy and its ruler for teleportation");
+
+        configs.addKeyValuePair(new Pair<>(baseEmotionalPercentChanceString, 0.02D), "the percent chance for a fairy to request food");
+
+        configs.addKeyValuePair(new Pair<>(enableFairyWingSoundsString, false), "whether to have the fairies make wing flapping noises while flying like in the older beta version");
 
     }
 
@@ -116,46 +149,51 @@ public class FairyConfig
 //        SOME_DOUBLE = CONFIG.getOrDefault("key.test.value3", 42.0d);
 //        MAX_DAMAGE_DOWSING_ROD = CONFIG.getOrDefault("dowsing.rod.max.damage", 32);
 
-        ALWAYS_FAIRY_TELETPORT = CONFIG.getOrDefault("always.fairy.teleport", true);
-        TELEPORT_RANGE = CONFIG.getOrDefault("always.fairy.teleport.range", 16);
-
-        BASE_EMOTIONAL_PERCENT_CHANCE = CONFIG.getOrDefault("base.emotional.percent.chance", 0.02D);
-
         /**
          * Spawning behaviors
          */
 
-        SPAWN_FACTION_MAX_SIZE = CONFIG.getOrDefault("minimum.fairy.spawn.group.size", 10);
-        SPAWN_FACTION_MIN_SIZE = CONFIG.getOrDefault("maximum.fairy.spawn.group.size", 8);
+        SPAWN_FACTION_MAX_SIZE = CONFIG.getOrDefault(minSpawnGroupString, 10);
+        SPAWN_FACTION_MIN_SIZE = CONFIG.getOrDefault(maxSpawnGroupString, 8);
 
         /**
          * General fairy stats
          */
 
-        GENERAL_HEALTH_BASE = CONFIG.getOrDefault("base.maximum.health", 15.0D);
-        GENERAL_SPEED_BASE = CONFIG.getOrDefault("base.move.speed", 0.9F);
-        GENERAL_SPEED_SCOUT = CONFIG.getOrDefault("move.speed.for.scouts", 1.05F);
-        GENERAL_SPEED_WITHER_MULT = CONFIG.getOrDefault("move.speed.wither.mult", 0.08F);
+        GENERAL_HEALTH_BASE = CONFIG.getOrDefault(baseMaximumHealthString, 15.0D);
+        GENERAL_SPEED_BASE = CONFIG.getOrDefault(baseMovememtSpeedString, 0.9F);
+        GENERAL_SPEED_SCOUT = CONFIG.getOrDefault(scoutMovementSpeedString, 1.05F);
+        GENERAL_SPEED_WITHER_MULT = CONFIG.getOrDefault(witheredMovementSpeedMultString, 0.08F);
 
         /**
          * Behavior modifiers
          */
 
-        BEHAVIOR_PATH_RANGE = CONFIG.getOrDefault("path.range", 16);
-        pursue_range_mult = CONFIG.getOrDefault("pursue.range.mult", 1.0F);
-        defend_range_mult = CONFIG.getOrDefault("defend.range.mult", 0.5F);
-        BEHAVIOR_FEAR_RANGE = CONFIG.getOrDefault("fear.range", 12F);
+        BEHAVIOR_PATH_RANGE = CONFIG.getOrDefault(pathingRangeString, 16);
+        pursue_range_mult = CONFIG.getOrDefault(pursueRangeMultString, 1.0F);
+        defend_range_mult = CONFIG.getOrDefault(defendRangeMultString, 0.5F);
+        BEHAVIOR_FEAR_RANGE = CONFIG.getOrDefault(fearRangeString, 12F);
 
-        BEHAVIOR_AGGRO_TIMER = CONFIG.getOrDefault("BEHAVIOR.AGGRO.TIMER", 15);
+        BEHAVIOR_AGGRO_TIMER = CONFIG.getOrDefault(behaviorAggroTimerString, 15);
 
         //---
 
-        DEF_FLOAT_RATE = CONFIG.getOrDefault("fall.speed", -0.2D);
-        DEF_FLAP_RATE = CONFIG.getOrDefault("fly.speed", 0.15D);
-        DEF_SOLO_FLAP_MULT = CONFIG.getOrDefault("DEF.SOLO.FLAP.MULT",  -0.9375D);
-        DEF_LIFTOFF_MULT = CONFIG.getOrDefault("DEF.LIFTOFF.MULT",  2.0D);
+        DEF_FLOAT_RATE = CONFIG.getOrDefault(fallSpeedString, -0.2D);
+        DEF_FLAP_RATE = CONFIG.getOrDefault(flySpeedString, 0.15D);
+        DEF_SOLO_FLAP_MULT = CONFIG.getOrDefault(soloFlapMultString,  -0.9375D);
+        DEF_LIFTOFF_MULT = CONFIG.getOrDefault(liftoffMultString,  2.0D);
 
-        DEF_MAX_PARTICLES = CONFIG.getOrDefault("DEF.MAX.PARTICLES",  5);
+        DEF_MAX_PARTICLES = CONFIG.getOrDefault(maxParticlesString,  5);
+
+        /**
+         * Other settings
+         */
+
+        ALWAYS_FAIRY_TELETPORT = CONFIG.getOrDefault(enableAlwaysTeleportString, true);
+        TELEPORT_RANGE = CONFIG.getOrDefault(fairyTeleportRangeString, 16);
+
+        BASE_EMOTIONAL_PERCENT_CHANCE = CONFIG.getOrDefault(baseEmotionalPercentChanceString, 0.02D);
+        ENABLE_FAIRY_WING_SOUNDS = CONFIG.getOrDefault(enableFairyWingSoundsString, false);
 
         System.out.println("All " + configs.getConfigsList().size() + " have been set properly");
     }
@@ -164,11 +202,6 @@ public class FairyConfig
     {
         FairyConfigValues.SPAWN_FACTION_MIN_SIZE = SPAWN_FACTION_MIN_SIZE;
         FairyConfigValues.SPAWN_FACTION_MAX_SIZE = SPAWN_FACTION_MAX_SIZE;
-
-        FairyConfigValues.ALWAYS_FAIRY_TELEPORT = ALWAYS_FAIRY_TELETPORT;
-        FairyConfigValues.TELEPORT_RANGE = TELEPORT_RANGE;
-
-        FairyConfigValues.BASE_EMOTIONAL_PERCENT_CHANCE = BASE_EMOTIONAL_PERCENT_CHANCE;
 
         FairyConfigValues.GENERAL_HEALTH_BASE = GENERAL_HEALTH_BASE;
         FairyConfigValues.GENERAL_SPEED_BASE = GENERAL_SPEED_BASE;
@@ -193,5 +226,10 @@ public class FairyConfig
 
         FairyConfigValues.BEHAVIOR_PURSUE_RANGE = BEHAVIOR_PATH_RANGE * FairyConfig.pursue_range_mult;
         FairyConfigValues.BEHAVIOR_DEFEND_RANGE = BEHAVIOR_PATH_RANGE * FairyConfig.defend_range_mult;
+
+        FairyConfigValues.ALWAYS_FAIRY_TELEPORT = ALWAYS_FAIRY_TELETPORT;
+        FairyConfigValues.TELEPORT_RANGE = TELEPORT_RANGE;
+        FairyConfigValues.BASE_EMOTIONAL_PERCENT_CHANCE = BASE_EMOTIONAL_PERCENT_CHANCE;
+        FairyConfigValues.ENABLE_FAIRY_WING_SOUNDS = ENABLE_FAIRY_WING_SOUNDS;
     }
 }

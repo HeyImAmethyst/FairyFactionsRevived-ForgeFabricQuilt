@@ -29,6 +29,8 @@ public class ModSounds
     public static RegistrySupplier<SoundEvent> FAIRY_ANGRY = registerSoundEvent("fairy_angry");
     public static RegistrySupplier<SoundEvent> FAIRY_QUEEN_ANGRY = registerSoundEvent("fairy_queen_angry");
 
+    public static RegistrySupplier<SoundEvent> FAIRY_FLAP = registerSoundEvent("fairy_flap");
+
 
     private static RegistrySupplier<SoundEvent> registerSoundEvent(String name)
     {
