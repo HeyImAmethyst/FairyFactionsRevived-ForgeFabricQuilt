@@ -77,6 +77,7 @@ public class FairyJobManager
         fairyJobs.add(new JobCook(fairy));
         fairyJobs.add(new JobMakePotion(fairy));
         fairyJobs.add(new JobButcher(fairy));
+        fairyJobs.add(new JobMilkCow(fairy));
     }
 
     public void createFairyMiscActions()
@@ -912,7 +913,7 @@ public class FairyJobManager
     }
 
     // Look for a spot to put collected items
-    private int getEmptySpace( final ChestBlockEntity chest, final ItemStack stack )
+    public int getEmptySpace( final ChestBlockEntity chest, final ItemStack stack )
     {
         int temp = -1;
 
