@@ -222,5 +222,8 @@
 
 	"text.position" : "X: %1$d Y: %2$d Z: %3$d",
 
-	"text.fairy.set_bed": "§aBed set for "
+	"text.fairy.set_bed": "§aBed set for ",
+
+	"text.chest.filter.allow": "Allow",
+	"text.chest.filter.deny": "Deny"
 }
