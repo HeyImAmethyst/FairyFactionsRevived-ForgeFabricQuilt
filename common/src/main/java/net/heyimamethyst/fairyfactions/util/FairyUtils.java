@@ -9,14 +9,16 @@ import net.heyimamethyst.fairyfactions.entities.ai.fairy_job.FairyJobManager;
 import net.heyimamethyst.fairyfactions.registry.ModItemTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.animal.*;
 import net.minecraft.world.entity.decoration.ItemFrame;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -25,9 +27,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class FairyUtils
 {
@@ -462,19 +462,64 @@ public class FairyUtils
                 if (i.getItem().isEmpty())
                     continue;
 
-                if (i.getItem().getItem() != stack.getItem())
+                ItemStack stackInFrame = i.getItem();
+
+                if (stackInFrame.is(Items.WRITABLE_BOOK))
+                {
+                    ItemStack writableBookStack = i.getItem();
+                    WritableBookItem writableBookItem = (WritableBookItem) i.getItem().getItem();
+
+                    CompoundTag writableBookTag = writableBookStack.getTag();
+
+                    if (writableBookTag != null)
+                    {
+                        ListTag listTag = writableBookTag.getList("pages", 8);
+
+                        List<String> lines = new ArrayList<>();
+
+                        for (int index = 0; index < listTag.size(); index++)
+                        {
+                            String pageString = listTag.getString(index);
+                            lines.addAll(Arrays.stream(pageString.split("\n")).toList());
+                        }
+
+                        System.out.println(lines);
+
+                        if (stack.getItem().arch$registryName() != null)
+                        {
+
+                            Component bookNameComponent = stackInFrame.getDisplayName();
+                            String bookName = stackInFrame.getDisplayName().getString();
+
+                            if (bookNameComponent.getString().contains(new TranslatableComponent(Loc.CHEST_FILTER_ALLOW.get()).getString()))
+                            {
+                                if (lines.contains(Objects.requireNonNull(stack.getItem().arch$registryName()).toString()))
+                                {
+                                    return true;
+                                }
+                            }
+
+                            if (bookNameComponent.getString().contains(new TranslatableComponent(Loc.CHEST_FILTER_DENY.get()).getString()))
+                            {
+                                return !lines.contains(Objects.requireNonNull(stack.getItem().arch$registryName()).toString());
+                            }
+                        }
+                    }
+                }
+                else if (stackInFrame.getItem() != stack.getItem())
                 {
                     return false;
                 }
-                else if (i.getItem().getItem() == stack.getItem())
+                else if (stackInFrame.getItem() == stack.getItem())
                 {
                     return true;
                 }
             }
 
-            return true;
+            return false;
         }
     }
 
     // --------------------
 }
+
