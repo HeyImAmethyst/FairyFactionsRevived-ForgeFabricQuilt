@@ -10,6 +10,7 @@ public class FairyConfigValues
 
     public static double BASE_EMOTIONAL_PERCENT_CHANCE = 0;
     public static boolean EXTEND_HANGING_SIGN_TEXT_LIMIT = true;
+    public static boolean ENABLE_FAIRY_WING_SOUNDS = false;
 
     public static double GENERAL_HEALTH_BASE= 0;
     public static double GENERAL_SPEED_BASE= 0;

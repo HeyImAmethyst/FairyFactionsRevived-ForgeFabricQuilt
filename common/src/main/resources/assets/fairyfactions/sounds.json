@@ -74,5 +74,13 @@
       "fairyfactions:angry1",
       "fairyfactions:angry2"
     ]
+  },
+  "fairy_flap":
+  {
+    "subtitle": "sounds.fairyfactions.fairy_flap",
+    "sounds":
+    [
+      "fairyfactions:fairywing"
+    ]
   }
 }
