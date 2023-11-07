@@ -419,6 +419,11 @@ public class FairyUtils
         return i.is(ModItemTags.IS_SHEARING_ITEM);
     }
 
+    public static boolean isBucket( ItemStack i )
+    {
+        return i.is(Items.BUCKET);
+    }
+
     public static boolean isClothBlock( final ItemStack i )
     {
         return i.is(ItemTags.WOOL);
