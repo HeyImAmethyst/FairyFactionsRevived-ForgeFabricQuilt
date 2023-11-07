@@ -81,7 +81,10 @@ public enum Loc
 
     FAIRY_CANT_ASSIGN_TAKE_CHEST("text.fairy.cant_assign_take_chest"),
 
-    FAIRY_SET_BED("text.fairy.set_bed");
+    FAIRY_SET_BED("text.fairy.set_bed"),
+
+    CHEST_FILTER_ALLOW("text.chest.filter.allow"),
+    CHEST_FILTER_DENY("text.chest.filter.deny");
 
     public final String key;
 

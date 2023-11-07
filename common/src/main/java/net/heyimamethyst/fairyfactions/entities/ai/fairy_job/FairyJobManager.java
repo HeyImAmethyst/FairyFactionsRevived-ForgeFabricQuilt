@@ -353,9 +353,8 @@ public class FairyJobManager
                         ItemStack stack = takeChest.getItem(p);
 
                         //&& FairyUtils.doesItemMatchItemInFrameOnChest(fairy, takeChest, stack)
-                        if(!stack.isEmpty() && FairyUtils.doesItemMatchItemInFrameOnChest(fairy, takeChest, stack))
+                        if(!stack.isEmpty() && getValidStorePos(stack) != null)
                         {
-
                             fairy.getNavigation().moveTo((double)takeChestDestination.getX() + 0.5, takeChestDestination.getY() + 1, (double)takeChestDestination.getZ() + 0.5, 0.3D);
 
                             if(fairy.blockPosition().closerThan(takeChestDestination, 3D))
@@ -479,15 +478,13 @@ public class FairyJobManager
 
         for (BlockPos b : fairy.TO_LIST)
         {
-//            if(b != null)
-//            {
-//
-//            }
+            if(b != null)
+            {
+                boolean validStorePos = isValidStorePos(b, stack);
 
-            boolean validStorePos = isValidStorePos(b, stack);
-
-            if(validStorePos)
-                returnPos = b;
+                if(validStorePos)
+                    returnPos = b;
+            }
         }
 
         return returnPos;
