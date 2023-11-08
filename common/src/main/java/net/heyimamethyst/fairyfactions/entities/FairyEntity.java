@@ -2446,7 +2446,7 @@ public class FairyEntity extends FairyEntityBase
 //                    CommonMethods.sendChat((ServerPlayer) player, Component.translatable(finalQueenString).append(name).append(Component.translatable(finalS)));
 //                }
 
-                if (player.level().isClientSide)
+                if (player.level.isClientSide)
                     player.displayClientMessage(Component.translatable(finalQueenString).append(name).append(Component.translatable(finalS)), false);
 
             }
