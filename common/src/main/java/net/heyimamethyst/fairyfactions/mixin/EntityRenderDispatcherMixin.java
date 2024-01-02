@@ -6,10 +6,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
 import net.heyimamethyst.fairyfactions.client.render.entity.EmoticonRenderHelper;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.Entity;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,6 +24,10 @@ public abstract class EntityRenderDispatcherMixin
 {
     @Shadow
     public abstract Quaternion cameraOrientation();
+
+    @Final
+    @Shadow
+    private Font font;
 
     @Inject(
             method = "render", at = @At(
@@ -36,8 +42,7 @@ public abstract class EntityRenderDispatcherMixin
         if(entity instanceof FairyEntity)
         {
             FairyEntity fairy = (FairyEntity) entity;
-
-            EmoticonRenderHelper.renderEmoticon(fairy, cameraOrientation(), poseStack, buffers , worldX, worldY, worldZ, entityYRot, partialTicks, light);
+            EmoticonRenderHelper.renderEmoticon(fairy, font, cameraOrientation(), poseStack, buffers , worldX, worldY, worldZ, entityYRot, partialTicks, light);
         }
     }
 }
