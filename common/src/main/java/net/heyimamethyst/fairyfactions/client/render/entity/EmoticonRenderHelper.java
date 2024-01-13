@@ -17,8 +17,6 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -124,7 +122,7 @@ public class EmoticonRenderHelper
         final float textScale = 0.005f;
 
         Component component = icon.getHoverName();
-        MutableComponent mutableComponent = new TextComponent(component.getString()).withStyle(ChatFormatting.BLACK);
+        MutableComponent mutableComponent = Component.literal(component.getString()).withStyle(ChatFormatting.BLACK);
         String text = mutableComponent.getString();
 
         boolean bl = !fairy.isDiscrete();
