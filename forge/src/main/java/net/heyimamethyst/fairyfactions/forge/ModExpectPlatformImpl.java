@@ -42,6 +42,16 @@ public class ModExpectPlatformImpl {
 
     public static Item getStartingContainerFromMix(PotionBrewing.Mix<Item> potionMix)
     {
+        return potionMix.f_43532_.get();
+    }
+
+    public static Potion getEndPotionFromMix(PotionBrewing.Mix<Potion> potionMix)
+    {
+        return potionMix.f_43534_.get();
+    }
+
+    public static Item getEndContainerFromMix(PotionBrewing.Mix<Item> potionMix)
+    {
         return potionMix.f_43534_.get();
     }
 }

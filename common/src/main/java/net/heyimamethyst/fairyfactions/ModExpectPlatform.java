@@ -52,7 +52,19 @@ public class ModExpectPlatform {
     }
 
     @ExpectPlatform
+    public static Potion getEndPotionFromMix(PotionBrewing.Mix<Potion> potionMix)
+    {
+        return null;
+    }
+
+    @ExpectPlatform
     public static Item getStartingContainerFromMix(PotionBrewing.Mix<Item> potionMix)
+    {
+        return null;
+    }
+
+    @ExpectPlatform
+    public static Item getEndContainerFromMix(PotionBrewing.Mix<Item> potionMix)
     {
         return null;
     }

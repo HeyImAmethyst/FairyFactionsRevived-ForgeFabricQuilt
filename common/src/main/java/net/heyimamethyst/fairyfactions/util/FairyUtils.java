@@ -483,7 +483,7 @@ public class FairyUtils
                             lines.addAll(Arrays.stream(pageString.split("\n")).toList());
                         }
 
-                        System.out.println(lines);
+                        //System.out.println(lines);
 
                         if (stack.getItem().arch$registryName() != null)
                         {
@@ -517,6 +517,43 @@ public class FairyUtils
             }
 
             return false;
+        }
+    }
+
+    public static ItemStack getItemFromItemFrameOnChest(FairyEntity fairy, BlockEntity tile, ItemStack stack)
+    {
+        List<ItemFrame> list = fairy.level.getEntitiesOfClass(ItemFrame.class, new AABB(tile.getBlockPos()).inflate(1));
+
+        if(list == null || list.size() == 0)
+        {
+            return ItemStack.EMPTY;
+        }
+        else
+        {
+            for (ItemFrame i : list)
+            {
+                // Check if these frames are attached to the tile
+                BlockEntity adjTile = fairy.level.getBlockEntity(i.blockPosition().relative(i.getDirection().getOpposite()));
+
+                if (adjTile == null || !adjTile.equals(tile))
+                    continue;
+
+                if (i.getItem().isEmpty())
+                    continue;
+
+                ItemStack stackInFrame = i.getItem();
+
+                if (stackInFrame.getItem() != stack.getItem())
+                {
+                    return ItemStack.EMPTY;
+                }
+                else if (stackInFrame.getItem() == stack.getItem())
+                {
+                    return stackInFrame;
+                }
+            }
+
+            return ItemStack.EMPTY;
         }
     }
 

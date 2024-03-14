@@ -75,7 +75,7 @@ public class FairyJobManager
         fairyJobs.add(new JobFishing(fairy));
         fairyJobs.add(new JobSmelt(fairy));
         fairyJobs.add(new JobCook(fairy));
-        fairyJobs.add(new JobMakePotion(fairy));
+        //fairyJobs.add(new JobMakePotion(fairy));
         fairyJobs.add(new JobButcher(fairy));
         fairyJobs.add(new JobMilkCow(fairy));
     }

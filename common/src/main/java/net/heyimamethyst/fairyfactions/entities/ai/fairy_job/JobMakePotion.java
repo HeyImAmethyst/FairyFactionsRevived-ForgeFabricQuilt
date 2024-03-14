@@ -1,38 +1,35 @@
 package net.heyimamethyst.fairyfactions.entities.ai.fairy_job;
 
-import com.google.common.collect.ImmutableSet;
 import net.heyimamethyst.fairyfactions.ModExpectPlatform;
 import net.heyimamethyst.fairyfactions.entities.FairyEntity;
-import net.heyimamethyst.fairyfactions.registry.ModItemTags;
 import net.heyimamethyst.fairyfactions.util.FairyUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
-import net.minecraft.world.item.BottleItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BrewingStandBlock;
-import net.minecraft.world.level.block.SmokerBlock;
-import net.minecraft.world.level.block.entity.BlastFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
-import net.minecraft.world.level.block.entity.SmokerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 //TODO: Not yet finished implementing, still WIP!!
 
 public class JobMakePotion extends FairyJob
 {
+    //List<Potion> potionsToInsert = new ArrayList<>();
+
+    ConcurrentLinkedQueue<Potion> potionsToInsert = new ConcurrentLinkedQueue<>();
+
+    Potion currentPotion;
 
     public JobMakePotion(FairyEntity fairy)
     {
@@ -53,7 +50,8 @@ public class JobMakePotion extends FairyJob
         final int m = x;
         final int n = z;
 
-        for (int a = 0; a < 9; a++) {
+        for (int a = 0; a < 9; a++)
+        {
             x = m + ((a / 3) % 9) - 1;
             z = n + (a % 3) - 1;
 
@@ -95,21 +93,49 @@ public class JobMakePotion extends FairyJob
 
                 fairy.getNavigation().moveTo(x + 0.5, y, z + 0.5, 0.3D);
 
-                if (populateBlasePowder(brewingStand, stack))
+                if(brewingStand.getItem(4).isEmpty())
                 {
-                    return true;
+                    if (stack.is(Items.BLAZE_POWDER) && populateBlasePowder(brewingStand, stack))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    if (!stack.is(Items.BLAZE_POWDER) && !brewingStand.getItem(4).isEmpty())
+                    {
+                        int valid = 0;
+
+                        for (int slotNumber = 0; slotNumber < 3; ++slotNumber)
+                        {
+                            if(brewingStand.getItem(slotNumber).isEmpty() && PotionBrewing.isBrewablePotion(PotionUtils.getPotion(stack)) && canPutPotionIn(brewingStand, stack))
+                            {
+                                if (!stack.is(Items.BLAZE_POWDER) && populatePotions(brewingStand, stack, slotNumber))
+                                {
+                                    return true;
+                                }
+                            }
+
+                            if(!brewingStand.getItem(slotNumber).isEmpty() && PotionBrewing.isIngredient(stack))
+                            {
+                                if(checkPotion(brewingStand, stack, slotNumber))
+                                {
+                                    valid += 1;
+                                }
+                            }
+                        }
+
+                        if(valid == 3 && populateIngredient(brewingStand, stack))
+                        {
+                            return true;
+                        }
+                    }
                 }
 
-                if (populateInput(brewingStand, stack))
-                {
-                    return true;
-                }
-
-                if (setStandForClearing(brewingStand))
-                {
-
-                    return true;
-                }
+//                if (setStandForClearing(brewingStand))
+//                {
+//                    return true;
+//                }
             }
         }
 
@@ -118,21 +144,106 @@ public class JobMakePotion extends FairyJob
 
     private boolean populateBlasePowder(BrewingStandBlockEntity brewingStand, ItemStack stack)
     {
-        if(stack.is(Items.BLAZE_POWDER))
+        if (stack.getCount() > 0)
         {
-            if (stack.getCount() > 0)
+            ItemStack brewingStandStack = brewingStand.getItem(4);
+            ItemStack itemStackForBrewingStand = new ItemStack(stack.getItem());
+
+            if(brewingStandStack.getCount() == brewingStandStack.getMaxStackSize())
             {
-                ItemStack brewingStandStack = brewingStand.getItem(1);
-                ItemStack itemStackForBrewingStand = new ItemStack(stack.getItem());
+                return false;
+            }
 
-                if(brewingStandStack.getCount() == brewingStandStack.getMaxStackSize())
-                {
-                    return false;
-                }
+            itemStackForBrewingStand.setCount(brewingStandStack.getCount() + stack.getCount());
 
-                itemStackForBrewingStand.setCount(brewingStandStack.getCount() + stack.getCount());
+            brewingStand.setItem(4, itemStackForBrewingStand);
 
-                brewingStand.setItem(4, itemStackForBrewingStand);
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean populateIngredient(BrewingStandBlockEntity brewingStand, ItemStack stack)
+    {
+        //ItemStack itemFrameStack = FairyUtils.getItemFromItemFrameOnChest(fairy, chest, stack);
+        //Potion itemFramePotion = PotionUtils.getPotion(itemFrameStack);
+
+//        if(!itemFrameStack.isEmpty())
+//        {
+////            for (PotionBrewing.Mix<Potion> potionMix: PotionBrewing.POTION_MIXES)
+////            {
+////                if (ModExpectPlatform.getStartingPotionFromMix(potionMix) == currentPotion)
+////                {
+////                    ItemStack[] mixIngredientItems = potionMix.ingredient.getItems();
+////
+////                    if(PotionBrewing.isIngredient(stack) && stack == mixIngredientItems[0])
+////                    {
+////                        ItemStack brewingStandStack = brewingStand.getItem(3);
+////                        ItemStack itemStackForBrewingStand = new ItemStack(stack.getItem());
+////
+////                        if (brewingStandStack.getCount() == brewingStandStack.getMaxStackSize())
+////                        {
+////                            return false;
+////                        }
+////
+////                        itemStackForBrewingStand.setCount(brewingStandStack.getCount() + stack.getCount());
+////
+////                        brewingStand.setItem(3, itemStackForBrewingStand);
+////
+////                        return true;
+////                    }
+////
+////                }
+////            }
+//
+//
+//
+//        }
+
+        if(PotionBrewing.isIngredient(stack))
+        {
+//            if(PotionBrewing.hasMix(stack, brewingStand.getItem(0)))
+//            {
+//
+//            }
+
+            ItemStack brewingStandStack = brewingStand.getItem(3);
+            ItemStack itemStackForBrewingStand = stack.copy();
+
+            if (brewingStandStack.getCount() == brewingStandStack.getMaxStackSize())
+            {
+                return false;
+            }
+
+            itemStackForBrewingStand.setCount(brewingStandStack.getCount() + stack.getCount());
+
+            brewingStand.setItem(3, itemStackForBrewingStand);
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private boolean checkPotion(BrewingStandBlockEntity brewingStand, ItemStack stack, int slotNumber)
+    {
+
+        if(!brewingStand.getItem(slotNumber).isEmpty())
+        {
+            ItemStack brewingStandStack = brewingStand.getItem(slotNumber);
+
+            if(PotionBrewing.hasMix(stack, brewingStandStack))
+            {
+//                for (PotionBrewing.Mix<Potion> potionMix: PotionBrewing.POTION_MIXES)
+//                {
+//                    if (ModExpectPlatform.getStartingPotionFromMix(potionMix) == PotionUtils.getPotion(brewingStandStack))
+//                    {
+//                        return true;
+//                    }
+//                }
 
                 return true;
             }
@@ -141,46 +252,157 @@ public class JobMakePotion extends FairyJob
         return false;
     }
 
-    private boolean populateInput(BrewingStandBlockEntity brewingStand, ItemStack stack)
+    private void findPotionToInsert(BrewingStandBlockEntity brewingStand, Potion potion,ItemStack stack)
     {
-//        if(canPutPotionIn(brewingStand, stack))
-//        {
-//            for (int j = 0; j < 3; ++j)
-//            {
-//                ItemStack brewingStandStack = brewingStand.getItem(j);
-//                ItemStack itemStackForBrewingStand = new ItemStack(stack.getItem());
-//
-////                if(brewingStandStack.isEmpty())
-////                {
-////                    return true;
-////                }
-//            }
-//
-//            return true;
-//        }
-
-        if(PotionBrewing.isIngredient(stack))
+        for (PotionBrewing.Mix<Potion> potionMix: PotionBrewing.POTION_MIXES)
         {
-            ItemStack brewingStandStack = brewingStand.getItem(3);
-            ItemStack itemStackForBrewingStand = new ItemStack(stack.getItem());
+            if (ModExpectPlatform.getEndPotionFromMix(potionMix) == potion)
+            {
+                Potion startingPotion = ModExpectPlatform.getStartingPotionFromMix(potionMix);
 
-//            if(brewingStandStack.getCount() == brewingStandStack.getMaxStackSize())
-//            {
-//                return false;
-//            }
-//            else
-//            {
-//                itemStackForBrewingStand.setCount(brewingStandStack.getCount() + stack.getCount());
-//                brewingStand.setItem(3, itemStackForBrewingStand);
-//
-//                return true;
-//            }
+                ItemStack normalPotion = PotionUtils.setPotion(new ItemStack(Items.POTION), startingPotion);
+                ItemStack splashPotion = PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), startingPotion);
+                ItemStack lingeringPotion = PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), startingPotion);
 
-            itemStackForBrewingStand.setCount(brewingStandStack.getCount() + stack.getCount());
-            brewingStand.setItem(3, itemStackForBrewingStand);
+                if(ItemStack.isSameItemSameTags(stack, normalPotion))
+                {
+                    potionsToInsert.add(PotionUtils.getPotion(normalPotion));
+                    System.out.println("Added " + normalPotion.getDisplayName().getString() + " to list");
 
-            return true;
+                    return;
+                }
+                else if(ItemStack.isSameItemSameTags(stack, splashPotion))
+                {
+                    potionsToInsert.add(PotionUtils.getPotion(splashPotion));
+                    System.out.println("Added " + splashPotion.getDisplayName().getString() + " to list");
+
+                    return;
+                }
+                else if (ItemStack.isSameItemSameTags(stack, lingeringPotion))
+                {
+                    potionsToInsert.add(PotionUtils.getPotion(lingeringPotion));
+                    System.out.println("Added " + lingeringPotion.getDisplayName().getString() + " to list");
+
+                    return;
+                }
+                else
+                {
+                    if(doesChestHaveItem(chest, Items.POTION) || doesChestHaveItem(chest, Items.SPLASH_POTION) || doesChestHaveItem(chest, Items.LINGERING_POTION))
+                    {
+                        if(ItemStack.isSameItemSameTags(stack, PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER))
+                            || ItemStack.isSameItemSameTags(stack, PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), Potions.WATER))
+                            || ItemStack.isSameItemSameTags(stack, PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), Potions.WATER)))
+                        {
+                            potionsToInsert.add(PotionUtils.getPotion(stack));
+                            System.out.println("Added " + stack.getDisplayName().getString() + "to list");
+
+                            return;
+                        }
+                        else
+                        {
+                            //System.out.println("Stack " + stack.getDisplayName().getString() + " does not match potion " + startingPotion.getName(normalPotion.getDescriptionId() + ".effect.") + ". Recursing" );
+                            System.out.println("Stack " + stack.getDisplayName().getString() + " does not match potion " + normalPotion.getDisplayName().getString() + ". Recursing" );
+
+                            findPotionToInsert(brewingStand, startingPotion, stack);
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    private boolean populatePotions(BrewingStandBlockEntity brewingStand, ItemStack stack, int slotNumber)
+    {
+        //ItemStack itemFrameStack = FairyUtils.getItemFromItemFrameOnChest(fairy, chest, stack);
+        Potion potion = PotionUtils.getPotion(stack);
+        
+        if(/*!itemFrameStack.isEmpty() && itemFramePotion != null &&*/ potion != null  && !PotionBrewing.isIngredient(stack))
+        {
+            findPotionToInsert(brewingStand, potion, stack);
+
+            System.out.println(potionsToInsert.size());
+
+//            for (Potion potion: potionsToInsert)
+//            {
+//                currentPotion = potion;
+//
+//                for (PotionBrewing.Mix<Potion> potionMix: PotionBrewing.POTION_MIXES)
+//                {
+//                    if (ModExpectPlatform.getStartingPotionFromMix(potionMix) == potion)
+//                    {
+//                        ItemStack normalPotion = PotionUtils.setPotion(new ItemStack(Items.POTION), potion);
+//                        ItemStack splashPotion = PotionUtils.setPotion(new ItemStack(Items.SPLASH_POTION), potion);
+//                        ItemStack lingeringPotion = PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), potion);
+//
+//                        if(stack == normalPotion
+//                                || stack == splashPotion
+//                                || stack == lingeringPotion)
+//                        {
+//                            ItemStack brewingStandStack = brewingStand.getItem(slotNumber);
+//                            ItemStack itemStackForBrewingStand = new ItemStack(stack.getItem());
+//
+//                            if (brewingStandStack.getCount() == brewingStandStack.getMaxStackSize())
+//                            {
+//                                return false;
+//                            }
+//
+//                            itemStackForBrewingStand.setCount(brewingStandStack.getCount() + stack.getCount());
+//                            brewingStand.setItem(slotNumber, itemStackForBrewingStand);
+//
+//                            return true;
+//                        }
+//                    }
+//                }
+//
+//                potionsToInsert.remove(potion);
+//            }
+            if(potionsToInsert != null)
+            {
+                currentPotion = potionsToInsert.remove();
+
+                if(currentPotion != null && PotionUtils.getPotion(stack) == currentPotion)
+                {
+
+                    ItemStack prevBrewingStandStack = null;
+
+                    if(slotNumber != 0)
+                    {
+                        prevBrewingStandStack = brewingStand.getItem(slotNumber - 1);
+                    }
+
+                    if(prevBrewingStandStack != null)
+                    {
+                        if(ItemStack.isSameItemSameTags(stack, prevBrewingStandStack))
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+
+                    ItemStack brewingStandStack = brewingStand.getItem(slotNumber);
+                    //ItemStack itemStackForBrewingStand = new ItemStack(stack.getItem());
+                    ItemStack itemStackForBrewingStand = stack.copy();
+
+                    if (brewingStandStack.getCount() == brewingStandStack.getMaxStackSize())
+                    {
+                        return false;
+                    }
+
+                    itemStackForBrewingStand.setCount(brewingStandStack.getCount() + stack.getCount());
+                    brewingStand.setItem(slotNumber, itemStackForBrewingStand);
+
+                    return true;
+                }
+            }
+        }
+        else
+        {
+            return false;
+        }
+
 
         return false;
     }

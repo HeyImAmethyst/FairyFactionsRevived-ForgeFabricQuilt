@@ -58,4 +58,14 @@ public class ModExpectPlatformImpl
     {
         return potionMix.from;
     }
+
+    public static Potion getEndPotionFromMix(PotionBrewing.Mix<Potion> potionMix)
+    {
+        return potionMix.to;
+    }
+
+    public static Item getEndContainerFromMix(PotionBrewing.Mix<Item> potionMix)
+    {
+        return potionMix.to;
+    }
 }

@@ -10,6 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionBrewing;
+import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import org.spongepowered.tools.obfuscation.ObfuscationDataProvider;
@@ -54,5 +55,15 @@ public class ModExpectPlatformImpl
     public static Item getStartingContainerFromMix(PotionBrewing.Mix<Item> potionMix)
     {
         return potionMix.from;
+    }
+
+    public static Potion getEndPotionFromMix(PotionBrewing.Mix<Potion> potionMix)
+    {
+        return potionMix.to;
+    }
+
+    public static Item getEndContainerFromMix(PotionBrewing.Mix<Item> potionMix)
+    {
+        return potionMix.to;
     }
 }

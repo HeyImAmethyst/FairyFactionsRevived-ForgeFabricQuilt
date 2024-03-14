@@ -44,18 +44,21 @@ public class JobSmelt extends FairyJob
         final int m = x;
         final int n = z;
 
-        for (int a = 0; a < 9; a++) {
+        for (int a = 0; a < 9; a++)
+        {
             x = m + ((a / 3) % 9) - 1;
             z = n + (a % 3) - 1;
 
-            if (assesBlastFurnace(stack, world, x, y, z)) {
+            if (assesBlastFurnace(stack, world, x, y, z))
+            {
                 stack.shrink(1);
                 fairy.armSwing(!fairy.didSwing);
                 fairy.setTempItem(stack.getItem());
 
                 fairy.attackAnim = 30;
 
-                if (!fairy.flymode() && fairy.getFlyTime() > 0) {
+                if (!fairy.flymode() && fairy.getFlyTime() > 0)
+                {
                     fairy.setFlyTime(0);
                 }
 
