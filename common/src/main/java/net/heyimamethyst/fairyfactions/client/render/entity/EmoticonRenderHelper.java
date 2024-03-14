@@ -144,7 +144,7 @@ public class EmoticonRenderHelper
         //font.drawInBatch(mutableComponent, width , (float)j, 0x20FFFFFF, false, matrix4f, buffers, bl, alpha , combinedLightIn);
         //font.drawInBatch(mutableComponent, width , (float)j, -1, false, matrix4f, buffers, false, 0, combinedLightIn);
 
-        font.drawInBatch(mutableComponent, width, 0f, -1, false, matrix4f, buffers, Font.DisplayMode.NORMAL, 0, combinedLightIn);
+        font.drawInBatch(mutableComponent, width, 0f, -1, false, matrix4f, buffers, Font.DisplayMode.SEE_THROUGH, 0, combinedLightIn);
         //font.drawInBatch8xOutline(mutableComponent.getVisualOrderText(), width, 0f, -1, 0, matrix4f, buffers, combinedLightIn);
 
         poseStack.popPose();
